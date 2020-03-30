@@ -154,11 +154,6 @@ D:\AdminTorneos\Web\TorneosAdmin.Web\TorneosAdmin.Web\obj\Debug\netcoreapp3.1\Ra
 D:\AdminTorneos\Web\TorneosAdmin.Web\TorneosAdmin.Web\obj\Debug\netcoreapp3.1\Razor\Views\Home\Index.cshtml.g.cs
 D:\AdminTorneos\Web\TorneosAdmin.Web\TorneosAdmin.Web\obj\Debug\netcoreapp3.1\Razor\Views\Home\Privacy.cshtml.g.cs
 D:\AdminTorneos\Web\TorneosAdmin.Web\TorneosAdmin.Web\obj\Debug\netcoreapp3.1\Razor\Views\Portada\Inicio.cshtml.g.cs
-D:\AdminTorneos\Web\TorneosAdmin.Web\TorneosAdmin.Web\obj\Debug\netcoreapp3.1\Razor\Views\Roles\Create.cshtml.g.cs
-D:\AdminTorneos\Web\TorneosAdmin.Web\TorneosAdmin.Web\obj\Debug\netcoreapp3.1\Razor\Views\Roles\Delete.cshtml.g.cs
-D:\AdminTorneos\Web\TorneosAdmin.Web\TorneosAdmin.Web\obj\Debug\netcoreapp3.1\Razor\Views\Roles\Details.cshtml.g.cs
-D:\AdminTorneos\Web\TorneosAdmin.Web\TorneosAdmin.Web\obj\Debug\netcoreapp3.1\Razor\Views\Roles\Edit.cshtml.g.cs
-D:\AdminTorneos\Web\TorneosAdmin.Web\TorneosAdmin.Web\obj\Debug\netcoreapp3.1\Razor\Views\Roles\Index.cshtml.g.cs
 D:\AdminTorneos\Web\TorneosAdmin.Web\TorneosAdmin.Web\obj\Debug\netcoreapp3.1\Razor\Views\Shared\Components\Menu\Default.cshtml.g.cs
 D:\AdminTorneos\Web\TorneosAdmin.Web\TorneosAdmin.Web\obj\Debug\netcoreapp3.1\Razor\Views\Shared\Error.cshtml.g.cs
 D:\AdminTorneos\Web\TorneosAdmin.Web\TorneosAdmin.Web\obj\Debug\netcoreapp3.1\Razor\Views\Shared\_Layout.cshtml.g.cs
@@ -174,3 +169,15 @@ D:\AdminTorneos\Web\TorneosAdmin.Web\TorneosAdmin.Web\obj\Debug\netcoreapp3.1\To
 D:\AdminTorneos\Web\TorneosAdmin.Web\TorneosAdmin.Web\obj\Debug\netcoreapp3.1\TorneosAdmin.Web.csprojAssemblyReference.cache
 D:\AdminTorneos\Web\TorneosAdmin.Web\TorneosAdmin.Web\obj\Debug\netcoreapp3.1\TorneosAdmin.Web.csproj.CoreCompileInputs.cache
 D:\AdminTorneos\Web\TorneosAdmin.Web\TorneosAdmin.Web\obj\Debug\netcoreapp3.1\TorneosAdmin.Web.genruntimeconfig.cache
+D:\AdminTorneos\Web\TorneosAdmin.Web\TorneosAdmin.Web\obj\Debug\netcoreapp3.1\Razor\Views\Administracion\Permisos.cshtml.g.cs
+D:\AdminTorneos\Web\TorneosAdmin.Web\TorneosAdmin.Web\obj\Debug\netcoreapp3.1\Razor\Views\Administracion\Usuarios.cshtml.g.cs
+D:\AdminTorneos\Web\TorneosAdmin.Web\TorneosAdmin.Web\obj\Debug\netcoreapp3.1\Razor\Views\Administracion\UsuariosRoles.cshtml.g.cs
+D:\AdminTorneos\Web\TorneosAdmin.Web\TorneosAdmin.Web\obj\Debug\netcoreapp3.1\Razor\Views\Registros\Arbitros.cshtml.g.cs
+D:\AdminTorneos\Web\TorneosAdmin.Web\TorneosAdmin.Web\obj\Debug\netcoreapp3.1\Razor\Views\Registros\Campeonatos.cshtml.g.cs
+D:\AdminTorneos\Web\TorneosAdmin.Web\TorneosAdmin.Web\obj\Debug\netcoreapp3.1\Razor\Views\Registros\Dirigentes.cshtml.g.cs
+D:\AdminTorneos\Web\TorneosAdmin.Web\TorneosAdmin.Web\obj\Debug\netcoreapp3.1\Razor\Views\Registros\Inscripciones.cshtml.g.cs
+D:\AdminTorneos\Web\TorneosAdmin.Web\TorneosAdmin.Web\obj\Debug\netcoreapp3.1\Razor\Views\Registros\Jugadores.cshtml.g.cs
+D:\AdminTorneos\Web\TorneosAdmin.Web\TorneosAdmin.Web\obj\Debug\netcoreapp3.1\Razor\Views\Registros\Pases.cshtml.g.cs
+D:\AdminTorneos\Web\TorneosAdmin.Web\TorneosAdmin.Web\obj\Debug\netcoreapp3.1\Razor\Views\Vocalistas\AsignacionArbitros.cshtml.g.cs
+D:\AdminTorneos\Web\TorneosAdmin.Web\TorneosAdmin.Web\obj\Debug\netcoreapp3.1\Razor\Views\Vocalistas\AsignacionVocales.cshtml.g.cs
+D:\AdminTorneos\Web\TorneosAdmin.Web\TorneosAdmin.Web\obj\Debug\netcoreapp3.1\Razor\Views\Registros\Equipos.cshtml.g.cs

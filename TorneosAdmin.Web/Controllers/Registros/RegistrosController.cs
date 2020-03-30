@@ -23,6 +23,11 @@ namespace TorneosAdmin.Web.Controllers
             return View();
         }
 
+        public IActionResult Equipos()
+        {
+            return View();
+        }
+
         public IActionResult Inscripciones()
         {
             return View();
