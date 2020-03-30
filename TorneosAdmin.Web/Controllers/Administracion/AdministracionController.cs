@@ -17,5 +17,10 @@ namespace TorneosAdmin.Web.Controllers
         {
             return View();
         }
+
+        public IActionResult UsuariosRoles()
+        {
+            return View();
+        }
     }
 }
