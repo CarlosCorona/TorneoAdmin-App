@@ -59,11 +59,11 @@
         })
 
         jQuery(grid_selector).jqGrid({
-            url: "/Roles/ObtenerRoles",
+            url: "/Usuarios/ObtenerUsuarios",
             datatype: 'json',
             mtype: 'GET',
             height: 250,
-            colNames: [' ', 'ID', 'Descripción', 'Eliminado'],
+            colNames: [' ', 'ID', 'Usuario', 'Nombre', 'Apellido Paterno', 'Apellido Materno', 'Correo Electrónico', 'Telefono', 'Eliminado'],
             colModel: [
                 {
                     name: 'myac', index: '', width: 80, fixed: true, sortable: false, resize: false,
@@ -77,8 +77,13 @@
                     }
                 },
                 { key: true, hidden: true, name: 'id', index: 'id', editable: true },
-                { name: 'descripcion', index: 'descripcion', width: 150, editable: true, editoptions: { size: "20", maxlength: "30" } },
-                { name: 'eliminado', index: 'stock', width: 70, editable: true, edittype: "checkbox", align: 'center', formatter: checkTable, unformat: aceSwitch }
+                { name: 'usuario', index: 'usuario', width: 150, editable: false, editoptions: { size: "20", maxlength: "30" } },
+                { name: 'nombre', index: 'uombre', width: 150, editable: true, editoptions: { size: "20", maxlength: "30" } },
+                { name: 'apellidoPaterno', index: 'apellidoPaterno', width: 150, editable: true, editoptions: { size: "20", maxlength: "30" } },
+                { name: 'apellidoMaterno', index: 'apellidoMaterno', width: 150, editable: true, editoptions: { size: "20", maxlength: "30" } },
+                { name: 'correoElectronico', index: 'correoElectronico', width: 150, editable: true, editoptions: { size: "20", maxlength: "30" } },
+                { name: 'telefono', index: 'telefono', width: 150, editable: true, editoptions: { size: "20", maxlength: "30" } },
+                { name: 'eliminado', index: 'eliminado', width: 70, editable: false, edittype: "checkbox", align: 'center', formatter: checkTable, unformat: aceSwitch }
             ],
 
             viewrecords: true,
@@ -88,9 +93,9 @@
             altRows: true,
             //toppager: true,
 
-            multiselect: true,
+            multiselect: false,
             //multikey: "ctrlKey",
-            multiboxonly: true,
+            //multiboxonly: true,
 
             loadComplete: function () {
                 var table = this;
@@ -104,17 +109,19 @@
             },
 
             editurl: "/Roles/Editar",
+            editData: {
+                eliminado: function () {
+                    return ($("#eliminado").val() == 'on') ? true : false;
+                },
+                __RequestVerificationToken: function () {
+                    return jQuery("input[name=__RequestVerificationToken]").val();
+                }
+            },
             caption: "Roles",
 
         });
+
         $(window).triggerHandler('resize.jqGrid');//trigger window resize to make the grid get the correct size
-
-
-
-        //enable search/filter toolbar
-        //jQuery(grid_selector).jqGrid('filterToolbar',{defaultSearch:true,stringResult:true})
-        //jQuery(grid_selector).filterToolbar({});
-
 
         //switch element when editing inline
         function checkTable(cellvalue, options, cell) {

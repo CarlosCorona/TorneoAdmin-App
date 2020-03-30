@@ -107,6 +107,7 @@ namespace TorneosAdmin.Web.Controllers
             return RedirectToAction(nameof(Index));
         }
 
+        [NonAction]
         private bool RolesExists(int id)
         {
             return _context.Roles.Any(e => e.ID == id);

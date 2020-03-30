@@ -8058,6 +8058,7 @@ button.btn:active {
                 display: inline-block;
                 font-family: 'Font Awesome 5 Free';
                 font-size: 11px;
+                font-weight: 900;
                 color: #FFF;
                 position: absolute;
                 left: 0;
@@ -8746,6 +8747,7 @@ input[type=checkbox].ace + .lbl, input[type=radio].ace + .lbl {
 input[type=checkbox].ace:checked + .lbl::before, input[type=radio].ace:checked + .lbl::before {
     display: inline-block;
     content: '\f00c';
+    font-weight: 900;
     color: #32A3CE;
     background-color: #F5F8FC;
     border-color: #ADB8C0;
@@ -8910,6 +8912,7 @@ input[type=checkbox].ace.ace-switch {
 
     input[type=checkbox].ace.ace-switch.ace-switch-3:checked + .lbl::after {
         content: "\f00c";
+        font-weight: 900;
         color: #8AB2C9;
         text-shadow: none
     }
@@ -9020,6 +9023,7 @@ input[type=checkbox].ace.ace-switch {
 
     input[type=checkbox].ace.ace-switch.ace-switch-6:checked + .lbl::before {
         content: "\f00c";
+        font-weight: 900;
         text-indent: 6px;
         color: #FFF;
         border-color: #B7D3E5;
@@ -9094,6 +9098,7 @@ input[type=checkbox].ace.ace-switch {
         input[type=checkbox].ace.ace-switch.ace-switch-7:checked + .lbl::after {
             left: 3px;
             content: '\f00c';
+            font-weight: 900;
             background-color: #468FCC;
             color: #FFF
         }
@@ -15962,6 +15967,7 @@ div.dataTables_processing {
                 z-index: 3;
                 font-family: 'Font Awesome 5 Free';
                 font-size: 17px;
+                font-weight: 900;
                 color: #87BA21
             }
 
@@ -18108,7 +18114,8 @@ th[aria-selected=true] {
 }
 
     .ui-jqgrid .ui-icon-pencil:before {
-        content: "\f040"
+        content: "\f303";
+        font-weight:900;
     }
 
 .ui-jqgrid .ui-icon-trash {
@@ -18116,7 +18123,8 @@ th[aria-selected=true] {
 }
 
     .ui-jqgrid .ui-icon-trash:before {
-        content: "\f014"
+        content: "\f1f8";
+        font-weight:900;
     }
 
 .ui-jqgrid .ui-icon-disk {
@@ -18124,7 +18132,8 @@ th[aria-selected=true] {
 }
 
     .ui-jqgrid .ui-icon-disk:before {
-        content: "\f00c"
+        content: "\f0c7";
+        font-weight: 900;
     }
 
 .ui-jqgrid .ui-icon-cancel {
@@ -18132,7 +18141,8 @@ th[aria-selected=true] {
 }
 
     .ui-jqgrid .ui-icon-cancel:before {
-        content: "\f00d"
+        content: "\f410";
+        font-weight: 900;
     }
 
 .ui-jqdialog .ui-jqdialog-content, .ui-jqdialog-content {
