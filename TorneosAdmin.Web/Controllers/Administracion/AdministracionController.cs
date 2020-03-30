@@ -8,6 +8,11 @@ namespace TorneosAdmin.Web.Controllers
 {
     public class AdministracionController : Controller
     {
+        public IActionResult Permisos()
+        {
+            return View();
+        }
+
         public IActionResult Roles()
         {
             return View();
