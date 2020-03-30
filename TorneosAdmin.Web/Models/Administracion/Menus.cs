@@ -8,7 +8,7 @@ namespace TorneosAdmin.Web.Models
 {
     public class Menus
     {
-        [Column("MenusID")]
+        [Column("MenuID")]
         public int ID { get; set; }
         
         [Display(Name = "Padre")]

@@ -18,7 +18,21 @@ namespace TorneosAdmin.Web.Controllers
 
         public IViewComponentResult Invoke(int usuarioID)
         {
-            var result = CrearMenus(_db.Menus.ToList());
+            //Variables
+            List<MenuViewModel> result = new List<MenuViewModel>();
+
+            if (usuarioID == 1)
+                result = CrearMenus(_db.Menus.ToList());
+            else
+            {
+                // Filtramos los roles del usuario
+                var roles = _db.UsuariosRoles.Where(x => x.UsuarioID == usuarioID).Select(x => x.RolID);
+
+                // Filtramos los permisos de los roles
+                var permisos = _db.Permisos.Where(x => roles.Contains(x.RolID)).Select(x => x.MenuID);
+
+                result = CrearMenus(_db.Menus.Where(x => permisos.Contains(x.ID)).ToList());
+            }
             return View(result);
         }
 
