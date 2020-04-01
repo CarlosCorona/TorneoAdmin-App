@@ -5083,6 +5083,7 @@ body.mob-safari .sidebar.sidebar-fixed {
         .breadcrumb > li + li:before {
             font-family: 'Font Awesome 5 Free';
             font-size: 14px;
+            font-weight: 900;
             content: "\f105";
             color: #B2B6BF;
             padding: 0;
@@ -8798,7 +8799,8 @@ input[type=radio].ace + .lbl::before {
 }
 
 input[type=radio].ace:checked + .lbl::before {
-    content: "\f111"
+    content: "\f111";
+    font-weight: 900;
 }
 
 input[type=checkbox].ace.input-lg + .lbl::before {
@@ -8900,6 +8902,7 @@ input[type=checkbox].ace.ace-switch {
     input[type=checkbox].ace.ace-switch.ace-switch-3 + .lbl::after {
         font-family: 'Font Awesome 5 Free';
         font-size: 13px;
+        font-weight: 900;
         line-height: 22px;
         content: "\f00d";
         top: -1px;
@@ -8984,6 +8987,7 @@ input[type=checkbox].ace.ace-switch {
 
         input[type=checkbox].ace.ace-switch.ace-switch-6 + .lbl::before {
             font-family: 'Font Awesome 5 Free';
+            font-weight: 900;
             content: "\f00d";
             text-shadow: 0 -1px 0 rgba(0,0,0,.25);
             box-shadow: none;
@@ -14783,7 +14787,7 @@ div.dataTables_scrollBody table, div.dataTables_scrollFoot table {
             content: "\f0dc";
             font-family: 'Font Awesome 5 Free';
             font-size: 13px;
-            font-weight: 400;
+            font-weight: 900;
             color: #555
         }
 
@@ -14809,12 +14813,14 @@ div.dataTables_scrollBody table, div.dataTables_scrollFoot table {
 
         .dataTable > thead > tr > th.sorting_desc:after {
             content: "\f0dd";
+            font-weight: 900;
             top: -6px;
             color: #307ECC
         }
 
         .dataTable > thead > tr > th.sorting_asc:after {
             content: "\f0de";
+            font-weight: 900;
             top: 4px;
             color: #307ECC
         }
@@ -15132,6 +15138,7 @@ div.dataTables_processing {
         color: #888;
         font-family: 'Font Awesome 5 Free';
         font-size: 13px;
+        font-weight: 900;
         position: absolute;
         right: 0;
         top: -7px
@@ -15155,13 +15162,15 @@ div.dataTables_processing {
     color: #888;
     font-family: 'Font Awesome 5 Free';
     font-size: 12px;
+    font-weight: 900;
     position: relative;
     top: -1px;
     left: 1px
 }
 
 .chosen-container-active.chosen-with-drop .chosen-single div b:before {
-    content: "\f0d8"
+    content: "\f0d8";
+    font-weight: 900;
 }
 
 .chosen-container-single .chosen-search {
@@ -15181,6 +15190,7 @@ div.dataTables_processing {
         color: #888;
         font-family: 'Font Awesome 5 Free';
         font-size: 14px;
+        font-weight: 900;
         position: absolute;
         top: 8px;
         right: 12px
@@ -15201,6 +15211,7 @@ div.dataTables_processing {
         color: #888;
         font-family: 'Font Awesome 5 Free';
         font-size: 13px;
+        font-weight: 900;
         position: absolute;
         right: 2px;
         top: -1px
@@ -15220,13 +15231,15 @@ div.dataTables_processing {
     color: #888;
     font-family: 'Font Awesome 5 Free';
     font-size: 12px;
+    font-weight: 900;
     position: relative;
     top: -1px;
     left: 1px
 }
 
 .chosen-container .chosen-results-scroll-up span:before, .chosen-container-active .chosen-single-with-drop div b:before {
-    content: "\f0d8"
+    content: "\f0d8";
+    font-weight: 900;
 }
 
 .chosen-rtl .chosen-search:after {
@@ -15236,7 +15249,8 @@ div.dataTables_processing {
 
 .chosen-rtl .chosen-search:before, .select2-search:before {
     content: "\f002";
-    font-family: 'Font Awesome 5 Free'
+    font-family: 'Font Awesome 5 Free';
+    font-weight: 900;
 }
 
 .chosen-rtl .chosen-search:before {
@@ -15488,6 +15502,7 @@ div.dataTables_processing {
     .select2-container .select2-choice abbr:before, .select2-search-choice-close:before {
         font-family: 'Font Awesome 5 Free';
         font-size: 12px;
+        font-weight: 900;
         display: inline;
         content: "\f00d";
         color: #888;
@@ -15545,6 +15560,7 @@ div.dataTables_processing {
         .select2-container .select2-choice .select2-arrow b:before {
             font-family: 'Font Awesome 5 Free';
             font-size: 12px;
+            font-weight: 900;
             display: inline;
             content: "\f0d7";
             color: #888;
@@ -15553,7 +15569,8 @@ div.dataTables_processing {
         }
 
 .select2-dropdown-open .select2-choice .select2-arrow b:before {
-    content: "\f0d8"
+    content: "\f0d8";
+    font-weight: 900;
 }
 
 .select2-search-field .select2-search .select2-input {
@@ -15564,6 +15581,7 @@ div.dataTables_processing {
 .select2-search-field .select2-search:after {
     font-family: 'Font Awesome 5 Free';
     font-size: 14px;
+    font-weight: 900;
     display: inline;
     content: "\f002";
     color: #777;
@@ -16438,6 +16456,7 @@ div.dataTables_processing {
     .gritter-close:before {
         font-family: 'Font Awesome 5 Free';
         font-size: 16px;
+        font-weight: 900;
         content: "\f00d"
     }
 
@@ -16956,6 +16975,7 @@ img.editable-click:hover {
         content: "\f057";
         font-family: 'Font Awesome 5 Free';
         font-size: 15px;
+        font-weight: 900;
         position: absolute;
         margin-top: -9px;
         width: 16px;
@@ -17373,6 +17393,7 @@ img.editable-click:hover {
         display: inline;
         font-family: 'Font Awesome 5 Free';
         font-size: 14px;
+        font-weight: 900;
         content: "\f060";
         color: #393939
     }
@@ -17382,7 +17403,8 @@ img.editable-click:hover {
 }
 
 .ui-datepicker .ui-datepicker-next:before {
-    content: "\f061"
+    content: "\f061";
+    font-weight: 900;
 }
 
 .ui-datepicker .ui-datepicker-prev-hover {
@@ -17498,7 +17520,8 @@ img.editable-click:hover {
             content: "\f00d";
             display: inline;
             font-family: 'Font Awesome 5 Free';
-            font-size: 16px
+            font-size: 16px;
+            font-weight: 900;
         }
 
         .ui-dialog .ui-dialog-titlebar-close:hover, .ui-dialog .ui-jqdialog-titlebar-close:hover, .ui-jqdialog .ui-dialog-titlebar-close:hover, .ui-jqdialog .ui-jqdialog-titlebar-close:hover {
@@ -17548,12 +17571,13 @@ img.editable-click:hover {
             display: inline;
             font-family: 'Font Awesome 5 Free';
             font-size: 15px;
+            font-weight: 900;
             content: "\f0da"
         }
 
     .ui-accordion .ui-accordion-header.ui-state-active .ui-accordion-header-icon:before {
         content: "\f0d7";
-        font-weight: 400
+        font-weight: 900;
     }
 
 .ui-accordion .ui-accordion-content {
@@ -17652,12 +17676,14 @@ img.editable-click:hover {
             content: "\f105";
             font-family: 'Font Awesome 5 Free';
             font-size: 14px;
+            font-weight: 900;
             display: inline
         }
 
 .ui-grid-ico-sort:before, .ui-selectmenu-button .ui-icon:before {
     content: "\f0d7";
-    font-family: 'Font Awesome 5 Free'
+    font-family: 'Font Awesome 5 Free';
+    font-weight: 900;
 }
 
 .ui-menu .ui-menu-item:hover, .ui-menu .ui-menu-item:hover > .ui-menu-icon, .ui-menu .ui-state-active, .ui-menu .ui-state-active > .ui-menu-icon, .ui-menu .ui-state-focus, .ui-menu .ui-state-focus > .ui-menu-icon {
@@ -18019,7 +18045,8 @@ th[aria-selected=true] {
 }
 
 .ui-icon-asc:before {
-    content: "\f0d8"
+    content: "\f0d8";
+    font-weight: 900;
 }
 
 .ui-pg-table > tbody > tr > .ui-pg-button > .ui-icon {
@@ -18435,12 +18462,14 @@ th[aria-selected=true] {
     .ui-jqgrid .ui-jqgrid-titlebar-close .ui-icon:before {
         display: inline-block;
         font-family: 'Font Awesome 5 Free';
+        font-weight: 900;
         content: "\f077";
         color: #FFF
     }
 
     .ui-jqgrid .ui-jqgrid-titlebar-close .ui-icon-circle-triangle-s:before {
-        content: "\f078"
+        content: "\f078";
+        font-weight: 900;
     }
 
 .ui-jqgrid .tree-wrap-ltr {
@@ -18942,7 +18971,8 @@ input.typeahead.scrollable ~ .tt-menu {
 }
 
     .cancel-on-png:before {
-        content: "\f057"
+        content: "\f057";
+        font-weight: 900;
     }
 
 .cancel-off-png {
@@ -18950,7 +18980,8 @@ input.typeahead.scrollable ~ .tt-menu {
 }
 
     .cancel-off-png:before {
-        content: "\f05c"
+        content: "\f05c";
+        font-weight: 900;
     }
 
 .star-on-png {
@@ -18958,7 +18989,8 @@ input.typeahead.scrollable ~ .tt-menu {
 }
 
     .star-on-png:before {
-        content: "\f005"
+        content: "\f005";
+        font-weight: 900;
     }
 
 .star-off-png {
@@ -18966,7 +18998,8 @@ input.typeahead.scrollable ~ .tt-menu {
 }
 
     .star-off-png:before {
-        content: "\f006"
+        content: "\f006";
+        font-weight: 900;
     }
 
 .star-half-png {
@@ -18974,7 +19007,8 @@ input.typeahead.scrollable ~ .tt-menu {
 }
 
     .star-half-png:before {
-        content: "\f123"
+        content: "\f123";
+        font-weight: 900;
     }
 
 .icon-animated-bell {

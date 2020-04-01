@@ -8,7 +8,7 @@ namespace TorneosAdmin.Web.Models
         [Column("UsuarioID"), ScaffoldColumn(false)]
         public int ID { get; set; }
 
-        [Required(ErrorMessage = "Ingrese el usuario.")]
+        //[Required(ErrorMessage = "Ingrese el usuario.")]
         public string Usuario { get; set; }
 
         [Required(ErrorMessage = "Ingrese el nombre.")]
@@ -20,7 +20,7 @@ namespace TorneosAdmin.Web.Models
         [Required(ErrorMessage = "Ingrese el apellido materno.")]
         public string ApellidoMaterno { get; set; }
 
-        [Required(ErrorMessage = "Ingrese la contraseña.")]
+        //[Required(ErrorMessage = "Ingrese el contraseña.")]
         [Display(Name = "Contraseña")]
         public string Contrasena { get; set; }
 

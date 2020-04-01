@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
+using TorneosAdmin.Web.Extensiones;
 using TorneosAdmin.Web.Models;
 
 namespace TorneosAdmin.Web.Controllers
@@ -34,7 +35,7 @@ namespace TorneosAdmin.Web.Controllers
             var totalPages = (int)Math.Ceiling((float)totalRecords / (float)rows);
             if (sort.ToUpper() == "DESC")
             {
-                rolesLista = rolesLista.OrderByDescending(t => t.ID);
+                rolesLista = rolesLista.OrderByDescending(t => t.Descripcion);
                 rolesLista = rolesLista.Skip(pageIndex * pageSize).Take(pageSize);
             }
             else
@@ -56,61 +57,108 @@ namespace TorneosAdmin.Web.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Crear([Bind("Descripcion,Eliminado")] Roles roles)
         {
-            if (ModelState.IsValid)
+            if (!ModelState.IsValid)
             {
-                _context.Add(roles);
-                await _context.SaveChangesAsync();
-                return RedirectToAction("Roles","Administracion");
+                return BadRequest(ModelState);
             }
-            return View(roles);
+            try
+            {
+                if (!RolExists(roles.Descripcion.Trim()))
+                {
+                    roles.Descripcion = roles.Descripcion.Trim();
+                    _context.Roles.Add(roles);
+                    await _context.SaveChangesAsync();
+                }
+                else
+                    return BadRequest("El rol ya se encuentra registrado, ingrese otra descripción.");
+            }
+            catch (DbUpdateConcurrencyException ex)
+            {
+                string errMsg = FormateadorCadenas.ObtenerMensajesErrores(ex);
+                return BadRequest(errMsg);
+            }
+            catch (Exception ex)
+            {
+                string errMsg = FormateadorCadenas.ObtenerMensajesErrores(ex);
+                return BadRequest(errMsg);
+            }
+
+            return Ok(roles);
         }
 
-        [HttpPost]
+        [HttpPut]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Editar(int id, [Bind("Descripcion,Eliminado")] Roles roles)
         {
-            if (id != roles.ID)
+            if (!ModelState.IsValid)
             {
-                return NotFound();
+                return BadRequest(ModelState);
             }
 
-            if (ModelState.IsValid)
+            try
             {
-                try
+                if (!RolExists(roles.Descripcion.Trim()))
                 {
-                    _context.Update(roles);
+                    Roles entidad = _context.Roles.Find(id);
+
+                    entidad.Descripcion = roles.Descripcion.Trim();
+
+                    _context.Roles.Update(entidad);
                     await _context.SaveChangesAsync();
                 }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!RolesExists(roles.ID))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
-                }
-                return RedirectToAction(nameof(Index));
+                else
+                    return BadRequest("El rol ya se encuentra registrado, ingrese otra descripción.");
             }
-            return View(roles);
+            catch (DbUpdateConcurrencyException ex)
+            {
+                string errMsg = FormateadorCadenas.ObtenerMensajesErrores(ex);
+                return BadRequest(errMsg);
+            }
+            catch (Exception ex)
+            {
+                string errMsg = FormateadorCadenas.ObtenerMensajesErrores(ex);
+                return BadRequest(errMsg);
+            }
+
+            return Ok(roles);
         }
 
-        [HttpPost]
+        [HttpPut]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Eliminar(int id)
         {
-            var roles = await _context.Roles.FindAsync(id);
-            _context.Roles.Remove(roles);
-            await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
+            
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+            try
+            {
+                Roles entidad = _context.Roles.Find(id);
+
+                entidad.Eliminado = true;
+
+                _context.Roles.Update(entidad);
+                await _context.SaveChangesAsync();
+            }
+            catch (DbUpdateConcurrencyException ex)
+            {
+                string errMsg = FormateadorCadenas.ObtenerMensajesErrores(ex);
+                return BadRequest(errMsg);
+            }
+            catch (Exception ex)
+            {
+                string errMsg = FormateadorCadenas.ObtenerMensajesErrores(ex);
+                return BadRequest(errMsg);
+            }
+
+            return Ok("Registro Actualizado");
         }
 
         [NonAction]
-        private bool RolesExists(int id)
+        private bool RolExists(string descripcion)
         {
-            return _context.Roles.Any(e => e.ID == id);
+            return _context.Roles.Any(e => e.Descripcion == descripcion);
         }
     }
 }

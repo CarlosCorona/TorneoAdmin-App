@@ -7,10 +7,10 @@ namespace TorneosAdmin.Web.Models
 {
     public class Acceso
     {
-        [Required(ErrorMessage = "*"), Display(Name = "Usuario")]
+        [Required(ErrorMessage = "Ingrese usuario."), Display(Name = "Usuario")]
         public string Usuario { get; set; }
 
-        [Required(ErrorMessage = "*"), Display(Name = "Contraseña")]
+        [Required(ErrorMessage = "Ingrese contraseña"), Display(Name = "Contraseña")]
         public string Contrasenia { get; set; }
 
         public bool Recuerdame { get; set; }

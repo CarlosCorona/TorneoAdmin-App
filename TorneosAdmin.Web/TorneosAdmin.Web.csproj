@@ -5,7 +5,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Folder Include="Extensiones\" />
     <Folder Include="wwwroot\css\images\" />
     <Folder Include="wwwroot\font-awesome\5.13.0\" />
     <Folder Include="wwwroot\fonts\" />

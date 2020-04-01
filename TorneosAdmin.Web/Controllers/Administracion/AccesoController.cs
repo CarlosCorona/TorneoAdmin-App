@@ -47,7 +47,7 @@ namespace TorneosAdmin.Web.Controllers
             {
                 // This doesn't count login failures towards account lockout
                 // To enable password failures to trigger account lockout, set lockoutOnFailure: true
-                var result = await _signInManager.PasswordSignInAsync(acceso.Usuario, acceso.Contrasenia, acceso.Recuerdame, lockoutOnFailure: false);
+                var result = await _signInManager.PasswordSignInAsync(acceso.Usuario.Trim(), acceso.Contrasenia.Trim(), acceso.Recuerdame, lockoutOnFailure: false);
 
                 if (result.Succeeded)
                 {
@@ -65,7 +65,7 @@ namespace TorneosAdmin.Web.Controllers
                 //}
                 else
                 {
-                    ModelState.AddModelError(string.Empty, "Accesos Incorrectos.");
+                    ModelState.AddModelError("ingreso", "Usuario y/o contraseñpa invalidos.");
                     return View(acceso);
                 }
             }

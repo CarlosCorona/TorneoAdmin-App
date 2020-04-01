@@ -1,9 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using TorneosAdmin.Web.Extensiones;
 using TorneosAdmin.Web.Models;
 
 namespace TorneosAdmin.Web.Controllers
@@ -40,12 +40,12 @@ namespace TorneosAdmin.Web.Controllers
 
             if (sort.ToUpper() == "DESC")
             {
-                rolesLista = rolesLista.OrderByDescending(t => t.ID);
+                rolesLista = rolesLista.OrderByDescending(t => t.Nombre);
                 rolesLista = rolesLista.Skip(pageIndex * pageSize).Take(pageSize);
             }
             else
             {
-                rolesLista = rolesLista.OrderBy(t => t.ID);
+                rolesLista = rolesLista.OrderBy(t => t.Nombre);
                 rolesLista = rolesLista.Skip(pageIndex * pageSize).Take(pageSize);
             }
             var jsonData = new
@@ -60,16 +60,59 @@ namespace TorneosAdmin.Web.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Editar(int id, [Bind("Usuario, Nombre, ApellidoPaterno, ApellidoMaterno, CorreoElectronico, Telefono, Eliminado")] Usuarios usuarios)
+        public async Task<IActionResult> Crear([Bind("Usuario, Nombre, ApellidoPaterno, ApellidoMaterno, CorreoElectronico, Telefono, Eliminado")] Usuarios usuarios)
         {
-            if (id != usuarios.ID)
+            if (!ModelState.IsValid)
             {
-                return NotFound();
+                return BadRequest(ModelState);
+            }
+            try
+            {
+                string usuario = CrearUsuario(usuarios.Nombre, usuarios.ApellidoPaterno);
+
+                Usuarios entidad = new Usuarios
+                {
+                    Usuario = usuario,
+                    Contrasena = FormateadorCadenas.HashedContraseña(usuario),
+                    Nombre = usuarios.Nombre,
+                    ApellidoPaterno = usuarios.ApellidoPaterno,
+                    ApellidoMaterno = usuarios.ApellidoMaterno,
+                    CorreoElectronico = usuarios.CorreoElectronico,
+                    Telefono = usuarios.Telefono,
+                    Bloqueo = false,
+                    Eliminado = false,
+                    Intentos = 0,
+                    PrimerInicio = true,
+                };
+
+                _context.Usuarios.Add(entidad);
+                await _context.SaveChangesAsync();
+            }
+            catch (DbUpdateConcurrencyException ex)
+            {
+                string errMsg = FormateadorCadenas.ObtenerMensajesErrores(ex);
+                return BadRequest(errMsg);
+            }
+            catch (Exception ex)
+            {
+                string errMsg = FormateadorCadenas.ObtenerMensajesErrores(ex);
+                return BadRequest(errMsg);
             }
 
-            if (ModelState.IsValid)
+            return Ok(usuarios);
+        }
+
+        [HttpPut]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Editar(int id, [Bind("Usuario, Nombre, ApellidoPaterno, ApellidoMaterno, CorreoElectronico, Telefono, Eliminado")] Usuarios usuarios)
+        {
+            if (!ModelState.IsValid)
             {
-                try
+                return BadRequest(ModelState);
+            }
+            try
+            {
+                if (UsuarioExiste(id))
                 {
                     Usuarios entidad = _context.Usuarios.Find(id);
 
@@ -79,28 +122,76 @@ namespace TorneosAdmin.Web.Controllers
                     entidad.CorreoElectronico = usuarios.CorreoElectronico;
                     entidad.Telefono = usuarios.Telefono;
 
-                    _context.Update(usuarios);
+                    _context.Usuarios.Update(entidad);
+                    await _context.SaveChangesAsync();
+                }else
+                    return BadRequest("No existe el usuario a modificar.");
+            }
+            catch (DbUpdateConcurrencyException ex)
+            {
+                string errMsg = FormateadorCadenas.ObtenerMensajesErrores(ex);
+                return BadRequest(errMsg);
+            }
+            catch (Exception ex)
+            {
+                string errMsg = FormateadorCadenas.ObtenerMensajesErrores(ex);
+                return BadRequest(errMsg);
+            }
+
+            return Ok("Registro Actualizado");
+        }
+
+        [HttpPut]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Eliminar(int id)
+        {
+            try
+            {
+                if (UsuarioExiste(id))
+                {
+                    Usuarios entidad = _context.Usuarios.Find(id);
+
+                    entidad.Eliminado = true;
+
+                    _context.Usuarios.Update(entidad);
                     await _context.SaveChangesAsync();
                 }
-                catch (DbUpdateConcurrencyException ex)
-                {
-                    if (!UsuarioExiste(usuarios.ID))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw ex;
-                    }
-                }
+                else
+                    return BadRequest("No existe el usuario a eliminar.");
             }
-            return View("Usurios", usuarios);
+            catch (DbUpdateConcurrencyException ex)
+            {
+                string errMsg = FormateadorCadenas.ObtenerMensajesErrores(ex);
+                return BadRequest(errMsg);
+            }
+            catch (Exception ex)
+            {
+                string errMsg = FormateadorCadenas.ObtenerMensajesErrores(ex);
+                return BadRequest(errMsg);
+            }
+
+            return Ok();
         }
 
         [NonAction]
         private bool UsuarioExiste(int id)
         {
             return _context.Usuarios.Any(e => e.ID == id);
+        }
+
+        [NonAction]
+        private string CrearUsuario(string nombre, string apellidoPaterno)
+        {
+            string u = nombre.ToCharArray().ElementAt(0).ToString().ToLower() + apellidoPaterno.ToLower();
+
+            for (int i = 1; i < 100; i++)
+            {
+                if (!_context.Usuarios.Any(e => e.Usuario == u))
+                    break;
+                else
+                    u = u + i.ToString();
+            }
+            return u;
         }
     }
 }

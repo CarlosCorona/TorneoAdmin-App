@@ -45,6 +45,7 @@ namespace TorneosAdmin.Web
             })
             .AddIdentityCookies(o => { });
 
+            services.AddRazorPages();
             services.AddControllersWithViews();
             services.AddControllers(config =>
             {

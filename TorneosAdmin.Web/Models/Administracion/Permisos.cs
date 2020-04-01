@@ -14,4 +14,12 @@ namespace TorneosAdmin.Web.Models
         [Display(Name = "Menu")]
         public int MenuID { get; set; }
     }
+
+    public class PermisosViewModel
+    {
+        public int MenuID { get; set; }
+        public bool Aplicado { get; set; }
+        public string MenuNombre { get; set; }
+        public string MenuDescripcion { get; set; }
+    }
 }

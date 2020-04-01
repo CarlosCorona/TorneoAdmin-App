@@ -1,5 +1,4 @@
-﻿
-@{
+﻿@{
     Layout = null;
 }
 
@@ -28,7 +27,7 @@
         <link rel="stylesheet" href="~/css/ace-part2.min.css" />
     <![endif]-->
     <link rel="stylesheet" href="~/css/ace-rtl.min.css" />
-
+    
     <!--[if lte IE 9]>
       <link rel="stylesheet" href="~/css/ace-ie.min.css" />
     <![endif]-->
@@ -39,6 +38,7 @@
     <![endif]-->
 </head>
 <body class="login-layout light-login">
+    <div id="spinnerContainer" class="spinner"></div>
     <div class="main-container">
         <div class="main-content">
             <div class="row">
@@ -66,8 +66,9 @@
 
                                         <div class="space-6"></div>
 
-                                        <form method="POST" action="/Acceso/Ingreso">
+                                        <form method="post" action="/Acceso/Ingreso">
                                             <fieldset>
+                                                <div asp-validation-summary="All" class="text-danger"></div>
                                                 <label class="block clearfix">
                                                     <span class="block input-icon input-icon-right">
                                                         <input name="Usuario" type="text" class="form-control" placeholder="Usuario" />
@@ -86,7 +87,7 @@
 
                                                 <div class="clearfix">
                                                     <label class="inline">
-                                                        <input type="checkbox" value="false" name="Recuerdame" class="ace"/>
+                                                        <input type="checkbox" value="false" name="Recuerdame" class="ace" />
                                                         <span class="lbl"> Recordar</span>
                                                     </label>
 
@@ -247,18 +248,20 @@
     <!-- basic scripts -->
     <!--[if !IE]> -->
     <script src="~/js/jquery-2.1.4.min.js"></script>
+    <script src="~/js/spin.js"></script>
 
     <!-- <![endif]-->
     <!--[if IE]>
     <script src="assets/js/jquery-1.11.3.min.js"></script>
     <![endif]-->
     <script type="text/javascript">
-			if('ontouchstart' in document.documentElement) document.write("<script src='~/js/jquery.mobile.custom.min.js'>"+"<"+"/script>");
+        if ('ontouchstart' in document.documentElement) document.write("<script src='~/js/jquery.mobile.custom.min.js'>" + "<" + "/script>");
     </script>
 
     <!-- inline scripts related to this page -->
     <script type="text/javascript">
         jQuery(function ($) {
+            
             $(document).on('click', '.toolbar a[data-target]', function (e) {
                 e.preventDefault();
                 var target = $(this).data('target');
