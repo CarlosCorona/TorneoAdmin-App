@@ -21,7 +21,6 @@ namespace TorneosAdmin.Web.Models
         public string ApellidoMaterno { get; set; }
 
         //[Required(ErrorMessage = "Ingrese el contraseña.")]
-        [Display(Name = "Contraseña")]
         public string Contrasena { get; set; }
 
         [Required(ErrorMessage = "Ingrese el correo electrónico."), Display(Name = "Correo electrónico")]
@@ -29,9 +28,8 @@ namespace TorneosAdmin.Web.Models
         public string CorreoElectronico { get; set; }
 
         [Required(ErrorMessage = "Ingrese el telefono.")]
-        public string Telefono { get; set; }
+        public string Telefono { get; set; } 
 
-        [Display(Name = "Esta Deshabilitado?")]
         public bool Eliminado { get; set; }
 
         [ScaffoldColumn(false)]

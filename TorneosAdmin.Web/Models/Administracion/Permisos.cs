@@ -8,10 +8,8 @@ namespace TorneosAdmin.Web.Models
         [Column("PermisosID"), ScaffoldColumn(false)]
         public int ID { get; set; }
 
-        [Display(Name = "Rol")]
         public int RolID { get; set; }
 
-        [Display(Name = "Menu")]
         public int MenuID { get; set; }
     }
 

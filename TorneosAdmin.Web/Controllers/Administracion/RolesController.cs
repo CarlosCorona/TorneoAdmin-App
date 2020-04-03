@@ -26,7 +26,8 @@ namespace TorneosAdmin.Web.Controllers
             int pageIndex = Convert.ToInt32(page) - 1;
             int pageSize = rows;
 
-            var rolesLista = _context.Roles.Select(x => new { 
+            // Nunca sera mostrado el rol administrador para su edición
+            var rolesLista = _context.Roles.Where(x => x.ID != 1).Select(x => new { 
                  x.ID,
                  x.Descripcion,
                  x.Eliminado

@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "dgSpecHash": "Nw025vUstbNpmeljvJ3OpgnYJnPh9WZzA4oacYg3CFlsCRu0AwarukCVCbHaWmGPxyOrLL9ftMoO/1UVheDqkQ==",
+  "dgSpecHash": "ZCNr39pi0ghssa5wjbIEGtrieGCF7Tl4xYh2GfJlfAr4NgD4dTQ4sKZNO+l+qCXXNpkgqDUgjuSbhCXWQzwOnw==",
   "success": true,
   "projectFilePath": "D:\\AdminTorneos\\Web\\TorneosAdmin.Web\\TorneosAdmin.Web\\TorneosAdmin.Web.csproj",
   "expectedPackageFiles": [
@@ -101,6 +101,7 @@
     "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder\\runtime.win-arm64.runtime.native.system.data.sqlclient.sni\\4.4.0\\runtime.win-arm64.runtime.native.system.data.sqlclient.sni.4.4.0.nupkg.sha512",
     "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder\\runtime.win-x64.runtime.native.system.data.sqlclient.sni\\4.4.0\\runtime.win-x64.runtime.native.system.data.sqlclient.sni.4.4.0.nupkg.sha512",
     "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder\\runtime.win-x86.runtime.native.system.data.sqlclient.sni\\4.4.0\\runtime.win-x86.runtime.native.system.data.sqlclient.sni.4.4.0.nupkg.sha512",
+    "C:\\Users\\carlo\\.nuget\\packages\\skiasharp\\1.68.1.1\\skiasharp.1.68.1.1.nupkg.sha512",
     "C:\\Users\\carlo\\.nuget\\packages\\sqlitepclraw.bundle_e_sqlite3\\2.0.2\\sqlitepclraw.bundle_e_sqlite3.2.0.2.nupkg.sha512",
     "C:\\Users\\carlo\\.nuget\\packages\\sqlitepclraw.core\\2.0.2\\sqlitepclraw.core.2.0.2.nupkg.sha512",
     "C:\\Users\\carlo\\.nuget\\packages\\sqlitepclraw.lib.e_sqlite3\\2.0.2\\sqlitepclraw.lib.e_sqlite3.2.0.2.nupkg.sha512",

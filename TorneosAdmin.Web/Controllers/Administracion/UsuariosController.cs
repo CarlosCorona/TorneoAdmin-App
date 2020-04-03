@@ -25,7 +25,7 @@ namespace TorneosAdmin.Web.Controllers
             int pageSize = rows;
 
             // Nunca sera mostrado el usuario administrador para su edición
-            var rolesLista = _context.Usuarios.Where(x => x.ID != 1).Select(x => new {
+            var usuariosLista = _context.Usuarios.Where(x => x.ID != 1).Select(x => new {
                 x.ID,
                 x.Usuario,
                 x.Nombre,
@@ -35,25 +35,25 @@ namespace TorneosAdmin.Web.Controllers
                 x.Telefono,
                 x.Eliminado
             });
-            int totalRecords = rolesLista.Count();
+            int totalRecords = usuariosLista.Count();
             var totalPages = (int)Math.Ceiling((float)totalRecords / (float)rows);
 
             if (sort.ToUpper() == "DESC")
             {
-                rolesLista = rolesLista.OrderByDescending(t => t.Nombre);
-                rolesLista = rolesLista.Skip(pageIndex * pageSize).Take(pageSize);
+                usuariosLista = usuariosLista.OrderByDescending(t => t.Nombre);
+                usuariosLista = usuariosLista.Skip(pageIndex * pageSize).Take(pageSize);
             }
             else
             {
-                rolesLista = rolesLista.OrderBy(t => t.Nombre);
-                rolesLista = rolesLista.Skip(pageIndex * pageSize).Take(pageSize);
+                usuariosLista = usuariosLista.OrderBy(t => t.Nombre);
+                usuariosLista = usuariosLista.Skip(pageIndex * pageSize).Take(pageSize);
             }
             var jsonData = new
             {
                 total = totalPages,
                 page,
                 records = totalRecords,
-                rows = rolesLista
+                rows = usuariosLista
             };
             return Json(jsonData);
         }
@@ -116,10 +116,10 @@ namespace TorneosAdmin.Web.Controllers
                 {
                     Usuarios entidad = _context.Usuarios.Find(id);
 
-                    entidad.Nombre = usuarios.Nombre;
-                    entidad.ApellidoPaterno = usuarios.ApellidoPaterno;
-                    entidad.ApellidoMaterno = usuarios.ApellidoMaterno;
-                    entidad.CorreoElectronico = usuarios.CorreoElectronico;
+                    entidad.Nombre = usuarios.Nombre.Trim();
+                    entidad.ApellidoPaterno = usuarios.ApellidoPaterno.Trim();
+                    entidad.ApellidoMaterno = usuarios.ApellidoMaterno.Trim();
+                    entidad.CorreoElectronico = usuarios.CorreoElectronico.Trim();
                     entidad.Telefono = usuarios.Telefono;
 
                     _context.Usuarios.Update(entidad);

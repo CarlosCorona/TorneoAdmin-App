@@ -11,12 +11,10 @@ namespace TorneosAdmin.Web.Models
         [Column("MenuID")]
         public int ID { get; set; }
         
-        [Display(Name = "Padre")]
         public int MenusPadre { get; set; }
 
         public string Titulo { get; set; }
 
-        [Display (Name ="Descripción")]
         public string Descripcion { get; set; }
 
         public string Ruta { get; set; }

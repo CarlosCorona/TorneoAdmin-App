@@ -8,10 +8,9 @@ namespace TorneosAdmin.Web.Models
         [Column("RolID"), ScaffoldColumn(false)]
         public int ID { get; set; }
 
-        [Required(ErrorMessage = "Debe ingresar descripción"), Display(Name = "Descripción")]
+        [Required(ErrorMessage = "Debe ingresar descripción")]
         public string Descripcion { get; set; }
 
-        [Display(Name = "Esta Deshabilitado?")]
         public bool Eliminado { get; set; }
     }
 }
