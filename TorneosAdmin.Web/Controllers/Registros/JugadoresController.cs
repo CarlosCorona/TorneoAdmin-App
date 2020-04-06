@@ -1,11 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using System;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using TorneosAdmin.Web.Extensiones;
 using TorneosAdmin.Web.Models;
 
@@ -27,7 +26,8 @@ namespace TorneosAdmin.Web.Controllers
             int pageIndex = Convert.ToInt32(page) - 1;
             int pageSize = rows;
 
-            var jugadoresLista = _context.Jugadores.Select(x => new {
+            var jugadoresLista = _context.Jugadores.Select(x => new
+            {
                 x.ID,
                 x.EquipoID,
                 x.EstadoCivilID,
@@ -41,6 +41,7 @@ namespace TorneosAdmin.Web.Controllers
                 x.FechaNacimiento,
                 x.Carnet,
                 x.FechaAfiliacion,
+                x.Estado,
                 x.Foto
             });
             int totalRecords = jugadoresLista.Count();
@@ -68,7 +69,7 @@ namespace TorneosAdmin.Web.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Crear([Bind("EquipoID, EstadoCivilID, InstruccionID, ProfesionID, ProvidenciaID, ParroquiaID, Cedula, Nombre, Apellido, FechaNacimiento, Carnet, FechaAfiliacion, NombreArchivo")] Jugadores jugadores)
+        public async Task<IActionResult> Crear([Bind("EquipoID, EstadoCivilID, InstruccionID, ProfesionID, ProvinciaID, ParroquiaID, Cedula, Nombre, Apellido, FechaNacimiento, Carnet, FechaAfiliacion, NombreArchivo")] Jugadores jugadores)
         {
             if (!ModelState.IsValid)
             {
@@ -92,7 +93,10 @@ namespace TorneosAdmin.Web.Controllers
                     FechaNacimiento = jugadores.FechaNacimiento,
                     Carnet = jugadores.Carnet,
                     FechaAfiliacion = jugadores.FechaAfiliacion,
-                    Foto = string.IsNullOrWhiteSpace(jugadores.NombreArchivo) == false ? FormateadorImagen.CambiarTamanio(path + "\\" + jugadores.NombreArchivo, 400, 420) : null
+                    Foto = string.IsNullOrWhiteSpace(jugadores.NombreArchivo) == false ? FormateadorImagen.CambiarTamanio(path + "\\" + jugadores.NombreArchivo, 275, 350) : null,
+
+                    //Valores fijos
+                    Estado = true
                 };
 
                 _context.Jugadores.Add(entidad);
@@ -118,7 +122,7 @@ namespace TorneosAdmin.Web.Controllers
 
         [HttpPut]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Editar(int id, [Bind("EquipoID, EstadoCivilID, InstruccionID, ProfesionID, ProvidenciaID, ParroquiaID, Cedula, Nombre, Apellido, FechaNacimiento, Carnet, FechaAfiliacion, NombreArchivo")] Jugadores jugadores)
+        public async Task<IActionResult> Editar(int id, [Bind("EquipoID, EstadoCivilID, InstruccionID, ProfesionID, ProvinciaID, ParroquiaID, Cedula, Nombre, Apellido, FechaNacimiento, Carnet, FechaAfiliacion, NombreArchivo")] Jugadores jugadores)
         {
             if (!ModelState.IsValid)
             {
@@ -147,7 +151,7 @@ namespace TorneosAdmin.Web.Controllers
                 {
                     if (System.IO.File.Exists(path + "\\" + jugadores.NombreArchivo))
                     {
-                        entidad.Foto = FormateadorImagen.CambiarTamanio(path + "\\" + jugadores.NombreArchivo, 600, 400);
+                        entidad.Foto = FormateadorImagen.CambiarTamanio(path + "\\" + jugadores.NombreArchivo, 275, 350);
                     }
                 }
 
@@ -180,7 +184,9 @@ namespace TorneosAdmin.Web.Controllers
             {
                 Jugadores entidad = _context.Jugadores.Find(id);
 
-                _context.Jugadores.Remove(entidad);
+                entidad.Estado = !entidad.Estado;
+
+                _context.Jugadores.Update(entidad);
                 await _context.SaveChangesAsync();
             }
             catch (DbUpdateConcurrencyException ex)

@@ -1,9 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using System;
 using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using TorneosAdmin.Web.Extensiones;
 using TorneosAdmin.Web.Models;
 
@@ -24,28 +23,29 @@ namespace TorneosAdmin.Web.Controllers
             int pageIndex = Convert.ToInt32(page) - 1;
             int pageSize = rows;
 
-            var profesinesLista = _context.Profesiones.Select(x => new {
+            var profesionesLista = _context.Profesiones.Select(x => new
+            {
                 x.ID,
                 x.Descripcion
             });
-            int totalRecords = profesinesLista.Count();
+            int totalRecords = profesionesLista.Count();
             var totalPages = (int)Math.Ceiling((float)totalRecords / (float)rows);
             if (sort.ToUpper() == "DESC")
             {
-                profesinesLista = profesinesLista.OrderByDescending(t => t.Descripcion);
-                profesinesLista = profesinesLista.Skip(pageIndex * pageSize).Take(pageSize);
+                profesionesLista = profesionesLista.OrderByDescending(t => t.Descripcion);
+                profesionesLista = profesionesLista.Skip(pageIndex * pageSize).Take(pageSize);
             }
             else
             {
-                profesinesLista = profesinesLista.OrderBy(t => t.Descripcion);
-                profesinesLista = profesinesLista.Skip(pageIndex * pageSize).Take(pageSize);
+                profesionesLista = profesionesLista.OrderBy(t => t.Descripcion);
+                profesionesLista = profesionesLista.Skip(pageIndex * pageSize).Take(pageSize);
             }
             var jsonData = new
             {
                 total = totalPages,
                 page,
                 records = totalRecords,
-                rows = profesinesLista
+                rows = profesionesLista
             };
             return Json(jsonData);
         }
@@ -107,10 +107,10 @@ namespace TorneosAdmin.Web.Controllers
                 return BadRequest(errMsg);
             }
 
-            return Ok(profesiones);
+            return Ok("Registro Actualizado");
         }
 
-        [HttpPut]
+        [HttpDelete]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Eliminar(int id)
         {
@@ -137,7 +137,7 @@ namespace TorneosAdmin.Web.Controllers
                 return BadRequest(errMsg);
             }
 
-            return Ok("Registro Actualizado");
+            return Ok();
         }
     }
 }

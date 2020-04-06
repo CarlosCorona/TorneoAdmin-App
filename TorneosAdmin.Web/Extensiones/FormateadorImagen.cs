@@ -1,9 +1,6 @@
 ﻿using SkiaSharp;
 using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace TorneosAdmin.Web.Extensiones
 {
@@ -23,6 +20,6 @@ namespace TorneosAdmin.Web.Extensiones
 
             return data.ToArray();
         }
-        
+
     }
 }

@@ -1,8 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
+﻿using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
-using System.Text;
 
 namespace TorneosAdmin.Web.Models
 {
@@ -10,7 +7,7 @@ namespace TorneosAdmin.Web.Models
     {
         [Column("MenuID")]
         public int ID { get; set; }
-        
+
         public int MenusPadre { get; set; }
 
         public string Titulo { get; set; }

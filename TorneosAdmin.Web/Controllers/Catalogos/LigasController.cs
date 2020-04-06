@@ -1,9 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using System;
 using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using TorneosAdmin.Web.Extensiones;
 using TorneosAdmin.Web.Models;
 
@@ -25,7 +24,8 @@ namespace TorneosAdmin.Web.Controllers
             int pageIndex = Convert.ToInt32(page) - 1;
             int pageSize = rows;
 
-            var ligasLista = _context.Ligas.Select(x => new {
+            var ligasLista = _context.Ligas.Select(x => new
+            {
                 x.ID,
                 x.Nombre
             });
@@ -63,6 +63,7 @@ namespace TorneosAdmin.Web.Controllers
             {
                 ligas.Nombre = ligas.Nombre.Trim();
                 _context.Ligas.Add(ligas);
+
                 await _context.SaveChangesAsync();
             }
             catch (DbUpdateConcurrencyException ex)
@@ -76,7 +77,7 @@ namespace TorneosAdmin.Web.Controllers
                 return BadRequest(errMsg);
             }
 
-            return Ok(ligas);
+            return Ok("Registro Actualizado");
         }
 
         [HttpPut]
@@ -111,7 +112,7 @@ namespace TorneosAdmin.Web.Controllers
             return Ok(ligas);
         }
 
-        [HttpPut]
+        [HttpDelete]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Eliminar(int id)
         {
@@ -138,7 +139,7 @@ namespace TorneosAdmin.Web.Controllers
                 return BadRequest(errMsg);
             }
 
-            return Ok("Registro Actualizado");
+            return Ok();
         }
     }
 }

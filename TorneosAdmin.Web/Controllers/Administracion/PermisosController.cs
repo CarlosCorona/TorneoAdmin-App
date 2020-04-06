@@ -1,9 +1,9 @@
-﻿using System;
+﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using TorneosAdmin.Web.Extensiones;
 using TorneosAdmin.Web.Models;
 
@@ -21,7 +21,8 @@ namespace TorneosAdmin.Web.Controllers
         [HttpGet]
         public JsonResult ObtenerPermisos(int rolID)
         {
-            List<PermisosViewModel> listaPantallas = _context.Menus.Select(x => new PermisosViewModel() {
+            List<PermisosViewModel> listaPantallas = _context.Menus.Select(x => new PermisosViewModel()
+            {
                 MenuID = x.ID,
                 MenuNombre = x.Titulo,
                 MenuDescripcion = x.Descripcion
@@ -53,7 +54,8 @@ namespace TorneosAdmin.Web.Controllers
             {
                 if (permisos.Aplicado)
                 {
-                    Permisos entidad = new Permisos() {
+                    Permisos entidad = new Permisos()
+                    {
                         MenuID = permisos.MenuID,
                         RolID = id
                     };

@@ -1,9 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace TorneosAdmin.Web.Models
 {
@@ -21,10 +18,6 @@ namespace TorneosAdmin.Web.Models
         [Required(ErrorMessage = "Ingrese la fecha fin de campeonato.")]
         public DateTime FechaFin { get; set; }
 
-        [Required(ErrorMessage = "Ingrese el estado del campeonato.")]
-        public string Estado { get; set; }
-
-        public bool Eliminado { get; set; }
-
+        public bool Estado { get; set; }
     }
 }

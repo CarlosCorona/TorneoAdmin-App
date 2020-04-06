@@ -107,7 +107,7 @@ namespace TorneosAdmin.Web.Identidad
             if (cancellationToken != null)
                 cancellationToken.ThrowIfCancellationRequested();
 
-            var userEntity = _db.Usuarios.First(x=> x.Usuario.ToUpper() == normalizedUserName);
+            var userEntity = _db.Usuarios.First(x => x.Usuario.ToUpper() == normalizedUserName);
 
             return Task.FromResult(GetApplicationUser(userEntity));
         }
@@ -221,7 +221,7 @@ namespace TorneosAdmin.Web.Identidad
 
             if (user == null)
                 throw new ArgumentNullException(nameof(user));
-            
+
             //Solo se retorna la contraseña de manera normal
             return Task.FromResult(user.Password);
         }
@@ -426,7 +426,8 @@ namespace TorneosAdmin.Web.Identidad
                 throw new ArgumentNullException(nameof(roleName));
 
             var rol = _db.Roles.First(x => x.Descripcion == roleName);
-            var usuarioRol = new UsuariosRoles {
+            var usuarioRol = new UsuariosRoles
+            {
                 RolID = rol.ID,
                 UsuarioID = user.Id
             };
@@ -448,7 +449,7 @@ namespace TorneosAdmin.Web.Identidad
             if (string.IsNullOrWhiteSpace(roleName))
                 throw new ArgumentNullException(nameof(roleName));
             var rol = _db.Roles.First(x => x.Descripcion == roleName);
-            var usuarioRol = _db.UsuariosRoles.First(x => x.UsuarioID == Convert.ToInt32(user.Id) && x.RolID == rol.ID );
+            var usuarioRol = _db.UsuariosRoles.First(x => x.UsuarioID == Convert.ToInt32(user.Id) && x.RolID == rol.ID);
             _db.UsuariosRoles.Remove(usuarioRol);
 
             _db.SaveChanges();
@@ -485,7 +486,7 @@ namespace TorneosAdmin.Web.Identidad
                 throw new ArgumentNullException(nameof(roleName));
             var rol = _db.Roles.First(x => x.Descripcion == roleName);
             var result = _db.UsuariosRoles.Where(x => x.UsuarioID == Convert.ToInt32(user.Id))
-                                          .Any(x=> x.RolID == rol.ID); ;
+                                          .Any(x => x.RolID == rol.ID); ;
 
             return Task.FromResult(result);
         }
@@ -891,7 +892,7 @@ namespace TorneosAdmin.Web.Identidad
                     Contrasena = applicationUser.Password,
                     CorreoElectronico = applicationUser.CorreoElectronico,
                     Telefono = applicationUser.Telefono,
-                    Eliminado = applicationUser.Eliminado,
+                    Estado = applicationUser.Estado,
                     PrimerInicio = applicationUser.PrimerInicio,
                     Bloqueo = applicationUser.Bloqueo,
                     Intentos = applicationUser.Intentos
@@ -911,7 +912,7 @@ namespace TorneosAdmin.Web.Identidad
                     Password = entity.Contrasena,
                     CorreoElectronico = entity.CorreoElectronico,
                     Telefono = entity.Telefono,
-                    Eliminado = entity.Eliminado,
+                    Estado = entity.Estado,
                     PrimerInicio = entity.PrimerInicio,
                     Bloqueo = entity.Bloqueo,
                     Intentos = entity.Intentos

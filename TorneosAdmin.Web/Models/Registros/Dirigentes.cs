@@ -23,6 +23,8 @@ namespace TorneosAdmin.Web.Models
         [Required(ErrorMessage = "Ingrese el telefono.")]
         public string Telefono { get; set; }
 
+        public bool Estado { get; set; }
+
         public byte[] Foto { get; set; }
 
         [NotMapped]

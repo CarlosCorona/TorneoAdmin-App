@@ -1,8 +1,8 @@
-﻿using System;
+﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using System;
 using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using TorneosAdmin.Web.Extensiones;
 using TorneosAdmin.Web.Models;
 
@@ -25,7 +25,8 @@ namespace TorneosAdmin.Web.Controllers
             int pageSize = rows;
 
             // Nunca sera mostrado el usuario administrador para su edición
-            var usuariosLista = _context.Usuarios.Where(x => x.ID != 1).Select(x => new {
+            var usuariosLista = _context.Usuarios.Where(x => x.ID != 1).Select(x => new
+            {
                 x.ID,
                 x.Usuario,
                 x.Nombre,
@@ -33,7 +34,7 @@ namespace TorneosAdmin.Web.Controllers
                 x.ApellidoMaterno,
                 x.CorreoElectronico,
                 x.Telefono,
-                x.Eliminado
+                x.Estado
             });
             int totalRecords = usuariosLista.Count();
             var totalPages = (int)Math.Ceiling((float)totalRecords / (float)rows);
@@ -60,7 +61,7 @@ namespace TorneosAdmin.Web.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Crear([Bind("Usuario, Nombre, ApellidoPaterno, ApellidoMaterno, CorreoElectronico, Telefono, Eliminado")] Usuarios usuarios)
+        public async Task<IActionResult> Crear([Bind("Usuario, Nombre, ApellidoPaterno, ApellidoMaterno, CorreoElectronico, Telefono")] Usuarios usuarios)
         {
             if (!ModelState.IsValid)
             {
@@ -79,10 +80,12 @@ namespace TorneosAdmin.Web.Controllers
                     ApellidoMaterno = usuarios.ApellidoMaterno,
                     CorreoElectronico = usuarios.CorreoElectronico,
                     Telefono = usuarios.Telefono,
+
+                    //Valores fijos
                     Bloqueo = false,
-                    Eliminado = false,
-                    Intentos = 0,
                     PrimerInicio = true,
+                    Intentos = 0,
+                    Estado = true,
                 };
 
                 _context.Usuarios.Add(entidad);
@@ -104,7 +107,7 @@ namespace TorneosAdmin.Web.Controllers
 
         [HttpPut]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Editar(int id, [Bind("Usuario, Nombre, ApellidoPaterno, ApellidoMaterno, CorreoElectronico, Telefono, Eliminado")] Usuarios usuarios)
+        public async Task<IActionResult> Editar(int id, [Bind("Usuario, Nombre, ApellidoPaterno, ApellidoMaterno, CorreoElectronico, Telefono")] Usuarios usuarios)
         {
             if (!ModelState.IsValid)
             {
@@ -124,7 +127,8 @@ namespace TorneosAdmin.Web.Controllers
 
                     _context.Usuarios.Update(entidad);
                     await _context.SaveChangesAsync();
-                }else
+                }
+                else
                     return BadRequest("No existe el usuario a modificar.");
             }
             catch (DbUpdateConcurrencyException ex)
@@ -151,7 +155,7 @@ namespace TorneosAdmin.Web.Controllers
                 {
                     Usuarios entidad = _context.Usuarios.Find(id);
 
-                    entidad.Eliminado = true;
+                    entidad.Estado = !entidad.Estado;
 
                     _context.Usuarios.Update(entidad);
                     await _context.SaveChangesAsync();

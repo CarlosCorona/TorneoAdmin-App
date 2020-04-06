@@ -1,5 +1,3 @@
-using System;
-
 namespace TorneosAdmin.Web.Models
 {
     public class ErrorViewModel

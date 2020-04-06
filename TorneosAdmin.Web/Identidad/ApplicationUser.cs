@@ -1,13 +1,11 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using System;
-using System.Security.Claims;
-using System.Threading.Tasks;
 
 namespace TorneosAdmin.Web.Identidad
 {
     public class ApplicationUser : IdentityUser<int>
     {
-        public ApplicationUser()  { }
+        public ApplicationUser() { }
 
         public ApplicationUser(string userName) { UserName = userName; }
 
@@ -19,7 +17,7 @@ namespace TorneosAdmin.Web.Identidad
         public string Password { get; set; }
         public string CorreoElectronico { get; set; }
         public string Telefono { get; set; }
-        public bool Eliminado { get; set; }
+        public bool Estado { get; set; }
         public bool PrimerInicio { get; set; }
         public bool Bloqueo { get; set; }
         public DateTimeOffset FechaBloqueo { get; set; }

@@ -1,9 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using System;
 using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using TorneosAdmin.Web.Extensiones;
 using TorneosAdmin.Web.Models;
 
@@ -25,7 +24,8 @@ namespace TorneosAdmin.Web.Controllers
             int pageIndex = Convert.ToInt32(page) - 1;
             int pageSize = rows;
 
-            var rolesLista = _context.UsuariosRoles.Select(x => new {
+            var rolesLista = _context.UsuariosRoles.Select(x => new
+            {
                 x.ID,
                 x.UsuarioID,
                 x.RolID
@@ -119,7 +119,7 @@ namespace TorneosAdmin.Web.Controllers
                 return BadRequest(errMsg);
             }
 
-            return Ok(usuariosRoles);
+            return Ok("Registro Actualizado");
         }
 
         [HttpDelete]
@@ -149,7 +149,7 @@ namespace TorneosAdmin.Web.Controllers
                 return BadRequest(errMsg);
             }
 
-            return Ok("Registro Actualizado");
+            return Ok();
         }
 
         [NonAction]

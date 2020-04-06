@@ -38,7 +38,7 @@ namespace TorneosAdmin.Web
                     .AddRoles<AplicationRole>()
                     .AddRoleStore<CustomRoleStore>()
                     .AddSignInManager();
-            
+
             services.AddAuthentication(o =>
             {
                 o.DefaultScheme = IdentityConstants.ApplicationScheme;
@@ -59,7 +59,7 @@ namespace TorneosAdmin.Web
             // Authorization handlers.
             services.AddScoped<IAuthorizationHandler, UsuariosAuthorizationHandler>();
 
-            
+
             services.ConfigureApplicationCookie(options =>
             {
                 // Cookie settings

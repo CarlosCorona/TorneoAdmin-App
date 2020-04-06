@@ -1,15 +1,14 @@
-﻿using System.Threading.Tasks;
-using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Authorization.Infrastructure;
-using Microsoft.AspNetCore.Identity;
+using System.Threading.Tasks;
 using TorneosAdmin.Web.Models;
 
 namespace TorneosAdmin.Web.Autorizacion
 {
     public class UsuariosAuthorizationHandler : AuthorizationHandler<OperationAuthorizationRequirement, Usuarios>
     {
-        protected override Task HandleRequirementAsync(AuthorizationHandlerContext context, 
-                                                       OperationAuthorizationRequirement requirement, 
+        protected override Task HandleRequirementAsync(AuthorizationHandlerContext context,
+                                                       OperationAuthorizationRequirement requirement,
                                                        Usuarios resource)
         {
             if (context.User == null || resource == null)

@@ -1,10 +1,10 @@
-﻿using System;
+﻿using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using System;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using TorneosAdmin.Web.Extensiones;
 using TorneosAdmin.Web.Models;
 
@@ -26,13 +26,15 @@ namespace TorneosAdmin.Web.Controllers
             int pageIndex = Convert.ToInt32(page) - 1;
             int pageSize = rows;
 
-            var dirigentesLista = _context.Dirigentes.Select(x => new {
+            var dirigentesLista = _context.Dirigentes.Select(x => new
+            {
                 x.ID,
                 x.Cedula,
                 x.Nombre,
                 x.Apellido,
                 x.Direccion,
                 x.Telefono,
+                x.Estado,
                 x.Foto
             });
             int totalRecords = dirigentesLista.Count();
@@ -77,7 +79,10 @@ namespace TorneosAdmin.Web.Controllers
                     Apellido = dirigentes.Apellido,
                     Direccion = dirigentes.Direccion,
                     Telefono = dirigentes.Telefono,
-                    Foto = string.IsNullOrWhiteSpace(dirigentes.NombreArchivo) == false ? FormateadorImagen.CambiarTamanio(path + "\\" + dirigentes.NombreArchivo, 402,420) : null
+                    Foto = string.IsNullOrWhiteSpace(dirigentes.NombreArchivo) == false ? FormateadorImagen.CambiarTamanio(path + "\\" + dirigentes.NombreArchivo, 275, 350) : null,
+
+                    //Valores fijos
+                    Estado = true
                 };
 
                 _context.Dirigentes.Add(entidad);
@@ -123,7 +128,7 @@ namespace TorneosAdmin.Web.Controllers
                 {
                     if (System.IO.File.Exists(path + "\\" + dirigentes.NombreArchivo))
                     {
-                        entidad.Foto = FormateadorImagen.CambiarTamanio(path + "\\" + dirigentes.NombreArchivo, 402, 420);
+                        entidad.Foto = FormateadorImagen.CambiarTamanio(path + "\\" + dirigentes.NombreArchivo, 275, 350);
                     }
                 }
                 _context.Dirigentes.Update(entidad);
@@ -155,7 +160,9 @@ namespace TorneosAdmin.Web.Controllers
             {
                 Dirigentes entidad = _context.Dirigentes.Find(id);
 
-                _context.Dirigentes.Remove(entidad);
+                entidad.Estado = !entidad.Estado;
+
+                _context.Dirigentes.Update(entidad);
                 await _context.SaveChangesAsync();
             }
             catch (DbUpdateConcurrencyException ex)
@@ -193,7 +200,7 @@ namespace TorneosAdmin.Web.Controllers
         public IActionResult ElimintarFoto(string archivo)
         {
             string path = $"{Directory.GetCurrentDirectory()}{@"\wwwroot\images\TempFotos"}";
-            if(System.IO.File.Exists(path + "\\" + archivo))
+            if (System.IO.File.Exists(path + "\\" + archivo))
             {
                 System.IO.File.Delete(path + "\\" + archivo);
             }

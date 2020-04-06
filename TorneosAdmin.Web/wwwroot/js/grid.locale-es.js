@@ -26,8 +26,8 @@ $.extend($.jgrid,{
 		rulesText: " reglas"
 	},
 	edit : {
-	    addCaption: "Agregar registro",
-	    editCaption: "Modificar registro",
+	    addCaption: "Agregar",
+	    editCaption: "Modificar",
 	    bSubmit: "Guardar",
 	    bCancel: "Cancelar",
 		bClose: "Cerrar",
@@ -56,8 +56,8 @@ $.extend($.jgrid,{
 	},
 	del : {
 	    caption: "Eliminar",
-	    msg: "¿Desea eliminar los registros seleccionados?",
-	    bSubmit: "Eliminar",
+		msg: "¿Desea Activar / Inactivar los registros seleccionados?",
+		bSubmit: "Activar/Inactivar",
 	    bCancel: "Cancelar"
 	},
 	nav : {
@@ -68,7 +68,7 @@ $.extend($.jgrid,{
 		canceltext: " ",
 		canceltitle: "Cancelar operación",
 	    deltext: " ",
-		deltitle: "Eliminar fila seleccionada",
+		deltitle: "Eiminar fila seleccionada",
 		savetext: " ",
 		savetitle: "Guardar Registro",
 	    searchtext: " ",

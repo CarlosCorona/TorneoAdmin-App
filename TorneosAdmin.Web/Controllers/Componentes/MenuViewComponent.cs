@@ -3,7 +3,6 @@ using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 using TorneosAdmin.Web.Models;
 
 namespace TorneosAdmin.Web.Controllers
@@ -36,10 +35,10 @@ namespace TorneosAdmin.Web.Controllers
             return View(result);
         }
 
-        private List<MenuViewModel> CrearMenus(List<Menus> menus) 
+        private List<MenuViewModel> CrearMenus(List<Menus> menus)
         {
             var menu = new List<MenuViewModel>();
-            foreach (var item in menus.Where(x=> x.MenusPadre == 0))
+            foreach (var item in menus.Where(x => x.MenusPadre == 0))
             {
                 var menuElemento = new MenuViewModel()
                 {

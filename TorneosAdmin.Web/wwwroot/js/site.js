@@ -37,12 +37,15 @@ Date.prototype.ddmmyyyy = function () {
 
 //format element checkbox in table
 function checkTable(cellvalue, options, cell) {
-    return (cellvalue) ? 'Si' : 'No';
+    if (cellvalue)
+        return '<label> <input class="ace ace-switch ace-switch-4" checked type="checkbox" disabled /> <span class="lbl" data-lbl="SI&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;NO"></span></label>'
+    else
+        return '<label> <input class="ace ace-switch ace-switch-4" type="checkbox" disabled /> <span class="lbl" data-lbl="SI&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;NO"></span></label>'
 }
 
 //format element date in table
 function dateTable(cellvalue, options, cell) {
-    return cellvalue.substring(0, 10);
+    return cellvalue.substr(8, 2) + '/' + cellvalue.substr(5, 2) + '/' + cellvalue.substr(0, 4);
 }
 
 //format element imagen in table
@@ -66,7 +69,7 @@ function aceSwitch(cellvalue, options, cell) {
 function pickDate(cellvalue, options, cell) {
     setTimeout(function () {
         $(cell).find('input[type=text]')
-            .datepicker({ format: 'yyyy-MM-dd', autoclose: true });
+            .datepicker({ format: 'dd/mm/yyyy', autoclose: true});
     }, 0);
 }
 
@@ -80,13 +83,16 @@ function telefonoCell(cellvalue, options, cell) {
 
 function style_edit_form(form) {
     //enable datepicker on "sdate" field and switches for "stock" field
-    form.find('input[name*="fecha"]').datepicker({ autoclose: true, forceParse: true })
+    form.find('input[name*="fecha"]').datepicker({ format: 'dd/mm/yyyy', autoclose: true })
 
     //Enable switch element when editing
-    form.find('input[name=eliminado]').addClass('ace ace-switch ace-switch-5').wrap('<label class="inline" />').after('<span class="lbl"></span>');
+    //form.find('input[name=estado]').addClass('ace ace-switch ace-switch-5').wrap('<label class="inline" />').after('<span class="lbl"></span>');
 
     //Mask Telefon element when editing
     form.find('input[name=telefono]').mask('(999) 999-9999');
+
+    //Spinner element when editing
+    form.find('input[name=carnet]').ace_spinner({ value: 0, min: 0, max: 200, step: 1, btn_up_class: 'btn-info', btn_down_class: 'btn-info' })
 
     // Agregamos al campo para carga de archivos
     if (form.find('input[name=foto]').length > 0) {
@@ -94,6 +100,7 @@ function style_edit_form(form) {
         form.find('.ace-file-container').css('width', '180px').css('height', '120px');
         form.find('.ace-file-input').css('width', '180px')
     }
+
     //update buttons classes
     var buttons = form.next().find('.EditButton .fm-button');
     buttons.addClass('btn btn-sm').find('[class*="-icon"]').hide();//ui-icon, s-icon

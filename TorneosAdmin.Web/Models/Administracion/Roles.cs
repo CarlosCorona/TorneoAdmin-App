@@ -11,6 +11,6 @@ namespace TorneosAdmin.Web.Models
         [Required(ErrorMessage = "Debe ingresar descripción")]
         public string Descripcion { get; set; }
 
-        public bool Eliminado { get; set; }
+        public bool Estado { get; set; }
     }
 }

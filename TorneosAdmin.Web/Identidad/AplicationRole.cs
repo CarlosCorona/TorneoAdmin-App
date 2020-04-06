@@ -1,8 +1,4 @@
 ﻿using Microsoft.AspNetCore.Identity;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace TorneosAdmin.Web.Identidad
 {
@@ -12,11 +8,13 @@ namespace TorneosAdmin.Web.Identidad
         public override string Name { get; set; }
         public bool IsDelete { get; set; }
 
-        public AplicationRole() { 
+        public AplicationRole()
+        {
         }
 
-        public AplicationRole(string name) { 
-            Name = name; 
+        public AplicationRole(string name)
+        {
+            Name = name;
         }
     }
 }

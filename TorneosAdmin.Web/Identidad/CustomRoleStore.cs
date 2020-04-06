@@ -1,6 +1,5 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -10,7 +9,7 @@ namespace TorneosAdmin.Web.Identidad
 {
     public class CustomRoleStore :
         IRoleStore<AplicationRole>
-        //IRoleClaimStore<AplicationRole> //No Implementado
+    //IRoleClaimStore<AplicationRole> //No Implementado
     {
         private readonly ModelEntities _db;
 
@@ -52,7 +51,7 @@ namespace TorneosAdmin.Web.Identidad
 
                 if (role == null)
                     throw new ArgumentNullException(nameof(role));
-                
+
                 var roleEntity = GetRoleEntity(role);
 
                 _db.Roles.Remove(roleEntity);
@@ -87,7 +86,7 @@ namespace TorneosAdmin.Web.Identidad
             if (string.IsNullOrWhiteSpace(normalizedRoleName))
                 throw new ArgumentNullException(nameof(normalizedRoleName));
 
-            var roleEntity = _db.Roles.First(x=> x.Descripcion.ToUpper() == normalizedRoleName);
+            var roleEntity = _db.Roles.First(x => x.Descripcion.ToUpper() == normalizedRoleName);
 
             return Task.FromResult(GetIdentityRole(roleEntity));
         }
@@ -251,7 +250,7 @@ namespace TorneosAdmin.Web.Identidad
                 {
                     ID = AplicationRole.Id,
                     Descripcion = AplicationRole.Name,
-                    Eliminado = AplicationRole.IsDelete
+                    Estado = AplicationRole.IsDelete
                 };
         }
 
@@ -263,7 +262,7 @@ namespace TorneosAdmin.Web.Identidad
                 {
                     Id = roles.ID,
                     Name = roles.Descripcion,
-                    IsDelete = roles.Eliminado
+                    IsDelete = roles.Estado
                 };
         }
         #endregion

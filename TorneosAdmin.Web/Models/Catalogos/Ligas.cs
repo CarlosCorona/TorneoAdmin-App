@@ -10,6 +10,5 @@ namespace TorneosAdmin.Web.Models
 
         [Required(ErrorMessage = "Debe ingresar un Nombre")]
         public string Nombre { get; set; }
-
     }
 }

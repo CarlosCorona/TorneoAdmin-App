@@ -32,279 +32,328 @@
             <table id="grid-table" class="col-md-12"></table>
             <div id="grid-pager"></div>
         </div>
-            <!-- PAGE CONTENT ENDS -->
-        </div><!-- /.col -->
-    </div><!-- /.row -->
-<!-- inline scripts related to this page -->
+        <!-- PAGE CONTENT ENDS -->
+    </div><!-- /.col -->
+</div><!-- /.row -->
 
-<script type="text/javascript">
-    // Variable Globales
-    var NombreArchivoFoto = '';
-    var listaEquipos = JSON.parse('@ViewBag.EquiposLista'.replace(/&quot;/g, '"'));
-    var listaEstadosCiviles = JSON.parse('@ViewBag.EstadosCivilesLista'.replace(/&quot;/g, '"'));
-    var listaInstrucciones = JSON.parse('@ViewBag.InstruccionesLista'.replace(/&quot;/g, '"'));
-    var listaProfesiones = JSON.parse('@ViewBag.ProfesionesLista'.replace(/&quot;/g, '"'));
-    var listaProvincias = JSON.parse('@ViewBag.ProvinciasLista'.replace(/&quot;/g, '"'));
-    var listaParroquias = JSON.parse('@ViewBag.ParroquiasLista'.replace(/&quot;/g, '"'));
-    jQuery(function ($) {
+@section Scripts {
+    <!-- inline scripts related to this page -->
+    <script type="text/javascript">
+        // Variable Globales
+        var NombreArchivoFoto = '';
+        var listaEquipos = JSON.parse('@ViewBag.EquiposLista'.replace(/&quot;/g, '"'));
+        var listaEstadosCiviles = JSON.parse('@ViewBag.EstadosCivilesLista'.replace(/&quot;/g, '"'));
+        var listaInstrucciones = JSON.parse('@ViewBag.InstruccionesLista'.replace(/&quot;/g, '"'));
+        var listaProfesiones = JSON.parse('@ViewBag.ProfesionesLista'.replace(/&quot;/g, '"'));
+        var listaProvincias = JSON.parse('@ViewBag.ProvinciasLista'.replace(/&quot;/g, '"'));
+        var listaParroquias = JSON.parse('@ViewBag.ParroquiasLista'.replace(/&quot;/g, '"'));
+        var listaRelacionPro = JSON.parse('@ViewBag.RelacionProParLista'.replace(/&quot;/g, '"'));
 
-        var grid_selector = "#grid-table";
-        var pager_selector = "#grid-pager";
-        var parent_column = $(grid_selector).closest('[class*="col-"]');
+        jQuery(function ($) {
 
-        //resize to fit page size
-        $(window).on('resize.jqGrid', function () {
-            $(grid_selector).jqGrid('setGridWidth', parent_column.width());
-        });
+            var grid_selector = "#grid-table";
+            var pager_selector = "#grid-pager";
+            var parent_column = $(grid_selector).closest('[class*="col-"]');
 
-        //resize on sidebar collapse/expand
-        $(document).on('settings.ace.jqGrid', function (ev, event_name, collapsed) {
-            if (event_name === 'sidebar_collapsed' || event_name === 'main_container_fixed') {
-                //setTimeout is for webkit only to give time for DOM changes and then redraw!!!
+            var cambioProvincia = function (provinciaID, provinciaElem) {
+
+                // build "state" options based on the selected "provincias" value
+                var $select, selectedValues,selectVal,
+                    $provinciaElem = $(provinciaElem);
+
+                // populate the subset of countries
+                if ($provinciaElem.is(".FormElement")) {
+                    // form editing
+                    $select = $provinciaElem.closest("form.FormGrid")
+                        .find("select#parroquiaID.FormElement");
+                } else {
+                    // inline editing
+                    $select = $("select#" + $.jgrid.jqID($provinciaElem.closest("tr.jqgrow").attr("id")) + "parroquiaID");
+                }
+
+                selectVal = $select.val();
+
+                // Limpiamos la lista parroquias
+                $select.find('option').remove();
+
+                var giveValue = function (myKey) {
+                    return listaParroquias[myKey];
+                };
+                // Agregamos los elementos de la selección
+                jQuery.each(listaRelacionPro, function (index) {
+                    if (this.Provincia === provinciaID) {
+                        var text = giveValue(this.Parroquia) ;
+                        $select.append($("<option />").val(this.Parroquia).text(text));
+                    }
+                });
+                return true;
+            };
+
+            var dataInitProvincia = function (elem) {
                 setTimeout(function () {
-                    $(grid_selector).jqGrid('setGridWidth', parent_column.width());
-                }, 20);
-            }
-        })
-
-        function getEquipos() {
-            return listaEquipos;
-        }
-
-        function getEstadosCiviles() {
-            return listaEstadosCiviles;
-        }
-
-        function getInstrucciones() {
-            return listaInstrucciones;
-        }
-
-        function getProfesiones() {
-            return listaProfesiones;
-        }
-
-        function getProfesiones() {
-            return listaProfesiones;
-        }
-
-        function getProvincias() {
-            return listaProvincias;
-        }
-
-        function getParroquias() {
-            return listaParroquias;
-        }
-
-        jQuery(grid_selector).jqGrid({
-            url: "/Jugadores/ObtenerJugadores",
-            datatype: 'json',
-            mtype: 'GET',
-            height: 400,
-            width: 2000,
-            colNames: ['ID', 'Equipo', 'Estado Civil', 'Instrucción', 'Profesión', 'Provincia', 'Parroquia', 'Cedula', 'Nombre', 'Apellido', 'Fecha de Nacimiento', 'Carnet', 'Fecha de Afiliacion', 'Foto'],
-            colModel: [
-                { key: true, hidden: true, name: 'id', index: 'id', editable: true },
-                { name: 'equipoID', index: 'equipoID', width: 150, editable: true, edittype: 'select', formatter: 'select', editoptions: { value: getEquipos() } },
-                { name: 'estadoCivilID', index: 'estadoCivilID', width: 100, editable: true, edittype: 'select', formatter: 'select', editoptions: { value: getEstadosCiviles() } },
-                { name: 'instruccionID', index: 'instruccionID', width: 100, editable: true, edittype: 'select', formatter: 'select', editoptions: { value: getInstrucciones() } },
-                { name: 'profesionID', index: '´profesionID', width: 100, editable: true, edittype: 'select', formatter: 'select', editoptions: { value: getProfesiones() } },
-                { name: 'provinciaID', index: '´provinciaID', width: 400, editable: true, edittype: 'select', formatter: 'select', editoptions: { value: getProvincias() } },
-                { name: 'parroquiaID', index: '´parroquiaID', width: 200, editable: true, edittype: 'select', formatter: 'select', editoptions: { value: getParroquias() } },
-                { name: 'cedula', index: 'cedula', width: 150, editable: true, editoptions: { size: "20", maxlength: "10" } },
-                { name: 'nombre', index: 'nombre', width: 150, editable: true, editoptions: { size: "20", maxlength: "100" } },
-                { name: 'apellido', index: 'apellido', width: 150, editable: true, editoptions: { size: "20", maxlength: "100" } },
-                { name: 'fechaNacimiento', index: 'fechaNacimiento', align: 'center', width: 180, editable: true, sorttype: "date", unformat: pickDate, formatter: dateTable },
-                { name: 'carnet', index: 'carnet', align: 'center', width: 80, editable: true, editoptions: { size: "20"} },
-                { name: 'fechaAfiliacion', index: 'fechaAfiliacion', align: 'center', width: 180, editable: true, sorttype: "date", unformat: pickDate, formatter: dateTable },
-                { name: 'foto', index: 'foto', width: 150, align:'center', editable: true, edittype: "file", editoptions: { enctype: 'multipart/form-data' }, formatter: imageFormat }
-            ],
-
-            viewrecords: true,
-            rowNum: 10,
-            rowList: [10, 20, 30],
-            pager: pager_selector,
-            autowidth: true,
-            shrinkToFit: false,
-            forceFit: true,
-            altRows: true,
-            //toppager: true,
-
-            multiselect: false,
-            //multikey: "ctrlKey",
-            //multiboxonly: true,
-
-            loadComplete: function () {
-                var table = this;
-                setTimeout(function () {
-                    updatePagerIcons(table);
-                    enableTooltips(table);
+                    $(elem).change();
                 }, 0);
-            },
-            caption: "Jugadores",
+            };
 
-        });
+            var dataEventsProvincia = [
+                { type: "change", fn: function (e) { cambioProvincia($(e.target).val(), e.target); } },
+                { type: "keyup", fn: function (e) { $(e.target).trigger("change"); } }
+            ];
 
-        $(window).triggerHandler('resize.jqGrid');//trigger window resize to make the grid get the correct size
-
-        //navButtons
-        jQuery(grid_selector).jqGrid('navGrid', pager_selector,
-            { 	//navbar options
-                edit: true,
-                editicon: 'ace-icon fas fa-pencil-alt blue',
-                add: true,
-                addicon: 'ace-icon fas fa-plus-circle purple',
-                del: true,
-                delicon: 'ace-icon fas fa-trash-alt red',
-                search: true,
-                searchicon: 'ace-icon fas fa-search orange',
-                refresh: true,
-                refreshicon: 'ace-icon fas fa-sync-alt green',
-                view: true,
-                viewicon: 'ace-icon fas fa-search-plus grey',
-            },
-            {
-                //edit record form
-                //closeAfterEdit: true,
-                //width: 700,
-                url: "/Jugadores/Editar",
-                mtype: 'PUT',
-                closeAfterEdit: true,
-                recreateForm: true,
-                beforeShowForm: function (e) {
-                    var form = $(e[0]);
-                    form.closest('.ui-jqdialog').find('.ui-jqdialog-titlebar').wrapInner('<div class="widget-header" />')
-                    style_edit_form(form);
-                },
-                editData: {
-                    NombreArchivo: function () { return NombreArchivoFoto; },
-                    fechaNacimiento: function () { return $('#fechaNacimiento').datepicker('getDate').ddmmyyyy(); },
-                    fechaAfiliacion: function () { return $('#fechaAfiliacion').datepicker('getDate').ddmmyyyy(); }
-                },
-                errorTextFormat : FormatedorMensajesError,
-            },
-            {
-                //new record form
-                //width: 700,
-                url: "/Jugadores/Crear",
-                mtype: 'POST',
-                closeAfterAdd: true,
-                recreateForm: true,
-                viewPagerButtons: false,
-                beforeShowForm: function (e) {
-                    var form = $(e[0]);
-                    form.closest('.ui-jqdialog').find('.ui-jqdialog-titlebar')
-                        .wrapInner('<div class="widget-header" />')
-                    style_edit_form(form);
-                },
-                editData: {
-                    NombreArchivo: function () { return NombreArchivoFoto; },
-                    fechaNacimiento: function () { return $('#fechaNacimiento').datepicker('getDate').ddmmyyyy(); },
-                    fechaAfiliacion: function () { return $('#fechaAfiliacion').datepicker('getDate').ddmmyyyy(); }
-                },
-                errorTextFormat: FormatedorMensajesError,
-            },
-            {
-                //delete record form
-                url: "/Jugadores/Eliminar",
-                mtype: 'PUT',
-                recreateForm: true,
-                beforeShowForm: function (e) {
-                    var form = $(e[0]);
-                    if (form.data('styled')) return false;
-
-                    form.closest('.ui-jqdialog').find('.ui-jqdialog-titlebar').wrapInner('<div class="widget-header" />')
-                    style_delete_form(form);
-
-                    form.data('styled', true);
-                },
-                errorTextFormat: FormatedorMensajesError,
-                onClick: function (e) {
-                    //alert(1);
-                }
-            },
-            {
-                //search form
-                recreateForm: true,
-                afterShowSearch: function (e) {
-                    var form = $(e[0]);
-                    form.closest('.ui-jqdialog').find('.ui-jqdialog-title').wrap('<div class="widget-header" />')
-                    style_search_form(form);
-                },
-                afterRedraw: function () {
-                    style_search_filters($(this));
-                }
-                ,
-                multipleSearch: true,
-                /**
-                multipleGroup:true,
-                showQuery: true
-                */
-            },
-            {
-                //view record form
-                recreateForm: true,
-                beforeShowForm: function (e) {
-                    var form = $(e[0]);
-                    form.closest('.ui-jqdialog').find('.ui-jqdialog-title').wrap('<div class="widget-header" />')
-                }
-            }
-        )
-
-        $(document).one('ajaxloadstart.page', function (e) {
-            $.jgrid.gridDestroy(grid_selector);
-            $('.ui-jqdialog').remove();
-        });
-    });
-
-    function CargarFoto(files, dropped) {
-
-        var archivo = files[0];
-
-        if (typeof archivo === 'string') {
-            //older browsers that don't support FileReader API, such as IE
-            alert("Versión antigua de explorador y se soporta la funcionalidad, favor de actulizar versión");
-            return false;
-        } else if ('File' in window && archivo instanceof window.File) {
-            //file is a "File" object with following properties
-            var fd = new FormData();//empty FormData object
-            fd.append('archivo', archivo);
-
-            var deferred = $.ajax({
-                url: '@Url.Action("SubirFoto", "Jugadores")',
-                type: 'POST',
-                processData: false,//important
-                contentType: false,//important
-                dataType: 'json',//depending on your server side response
-                data: fd
+            //resize to fit page size
+            $(window).on('resize.jqGrid', function () {
+                $(grid_selector).jqGrid('setGridWidth', parent_column.width());
             });
 
-            deferred.done(function (result) {
-                if (NombreArchivoFoto !== '') {
-                    $.post('@Url.Action("ElimintarFoto", "Jugadores")', { archivo: NombreArchivoFoto }).done(function (response) {
-                        console.log('El archivo: ' + NombreArchivoFoto + ' es reemplazado por ' + result.foto + 'en el servidor');
-                        NombreArchivoFoto = result.foto;
-                    }).fail(function (error) {
-                        console.log('El no se elimno el archivo: ' + NombreArchivoFoto + ' en el servidor');
-                        NombreArchivoFoto = result.foto;
-                    });
+            //resize on sidebar collapse/expand
+            $(document).on('settings.ace.jqGrid', function (ev, event_name, collapsed) {
+                if (event_name === 'sidebar_collapsed' || event_name === 'main_container_fixed') {
+                    //setTimeout is for webkit only to give time for DOM changes and then redraw!!!
+                    setTimeout(function () {
+                        $(grid_selector).jqGrid('setGridWidth', parent_column.width());
+                    }, 20);
                 }
-                else {
-                    console.log('Se cargo el archivo: ' + result.foto + ' en del servidor');
-                    NombreArchivoFoto = result.foto;
+            })
+
+            function getEquipos() {
+                return listaEquipos;
+            }
+
+            function getEstadosCiviles() {
+                return listaEstadosCiviles;
+            }
+
+            function getInstrucciones() {
+                return listaInstrucciones;
+            }
+
+            function getProfesiones() {
+                return listaProfesiones;
+            }
+
+            function getProfesiones() {
+                return listaProfesiones;
+            }
+
+            function getProvincias() {
+                return listaProvincias;
+            }
+
+            function getParroquias() {
+                return listaParroquias;
+            }
+
+            jQuery(grid_selector).jqGrid({
+                url: "/Jugadores/ObtenerJugadores",
+                datatype: 'json',
+                mtype: 'GET',
+                height: 400,
+                width: 2000,
+                colNames: ['ID', 'Equipo', 'Estado Civil', 'Instrucción', 'Profesión', 'Provincia', 'Parroquia', 'Cédula de identidad', 'Nombre', 'Apellido', 'Fecha de Nacimiento', 'Carnet', 'Fecha de Afiliacion', 'Activo','Foto'],
+                colModel: [
+                    { key: true, hidden: true, name: 'id', index: 'id', editable: true },
+                    { name: 'equipoID', index: 'equipoID', width: 150, editable: true, edittype: 'select', formatter: 'select', editoptions: { value: getEquipos() } },
+                    { name: 'estadoCivilID', index: 'estadoCivilID', width: 100, editable: true, edittype: 'select', formatter: 'select', editoptions: { value: getEstadosCiviles() } },
+                    { name: 'instruccionID', index: 'instruccionID', width: 100, editable: true, edittype: 'select', formatter: 'select', editoptions: { value: getInstrucciones() } },
+                    { name: 'profesionID', index: '´profesionID', width: 100, editable: true, edittype: 'select', formatter: 'select', editoptions: { value: getProfesiones() } },
+                    { name: 'provinciaID', index: '´provinciaID', width: 400, editable: true, edittype: 'select', formatter: 'select', editoptions: { value: getProvincias(), dataInit: dataInitProvincia, dataEvents: dataEventsProvincia } },
+                    { name: 'parroquiaID', index: '´parroquiaID', width: 200, editable: true, edittype: 'select', formatter: 'select', editoptions: { value: getParroquias() } },
+                    { name: 'cedula', index: 'cedula', width: 150, editable: true, editoptions: { size: "20", maxlength: "10" } },
+                    { name: 'nombre', index: 'nombre', width: 150, editable: true, editoptions: { size: "20", maxlength: "100" } },
+                    { name: 'apellido', index: 'apellido', width: 150, editable: true, editoptions: { size: "20", maxlength: "100" } },
+                    { name: 'fechaNacimiento', index: 'fechaNacimiento', align: 'center', width: 180, editable: true, sorttype: "date", unformat: pickDate, formatter: dateTable },
+                    { name: 'carnet', index: 'carnet', align: 'center', width: 80, editable: true, editoptions: { size: "20"} },
+                    { name: 'fechaAfiliacion', index: 'fechaAfiliacion', align: 'center', width: 180, editable: true, sorttype: "date", unformat: pickDate, formatter: dateTable },
+                    { name: 'estado', index: 'estado', width: 70, editable: false, edittype: "checkbox", align: 'center', formatter: checkTable },
+                    { name: 'foto', index: 'foto', width: 150, align:'center', editable: true, edittype: "file", editoptions: { enctype: 'multipart/form-data' }, formatter: imageFormat }
+                ],
+
+                viewrecords: true,
+                rowNum: 10,
+                rowList: [10, 20, 30],
+                pager: pager_selector,
+                autowidth: true,
+                shrinkToFit: false,
+                forceFit: true,
+                altRows: true,
+                //toppager: true,
+
+                multiselect: false,
+                //multikey: "ctrlKey",
+                //multiboxonly: true,
+
+                loadComplete: function () {
+                    var table = this;
+                    setTimeout(function () {
+                        updatePagerIcons(table);
+                        enableTooltips(table);
+                    }, 0);
+                },
+                caption: "Jugadores",
+
+            });
+
+            $(window).triggerHandler('resize.jqGrid');//trigger window resize to make the grid get the correct size
+
+            //navButtons
+            jQuery(grid_selector).jqGrid('navGrid', pager_selector,
+                { 	//navbar options
+                    edit: true,
+                    editicon: 'ace-icon fas fa-pencil-alt blue',
+                    add: true,
+                    addicon: 'ace-icon fas fa-plus-circle purple',
+                    del: true,
+                    delicon: 'ace-icon fas fa-trash-alt red',
+                    search: true,
+                    searchicon: 'ace-icon fas fa-search orange',
+                    refresh: true,
+                    refreshicon: 'ace-icon fas fa-sync-alt green',
+                    view: true,
+                    viewicon: 'ace-icon fas fa-search-plus grey',
+                },
+                {
+                    //edit record form
+                    //closeAfterEdit: true,
+                    //width: 700,
+                    url: "/Jugadores/Editar",
+                    mtype: 'PUT',
+                    closeAfterEdit: true,
+                    recreateForm: true,
+                    beforeShowForm: function (e) {
+                        var form = $(e[0]);
+                        form.closest('.ui-jqdialog').find('.ui-jqdialog-titlebar').wrapInner('<div class="widget-header" />')
+                        style_edit_form(form);
+                        NombreArchivoFoto = '';
+                    },
+                    editData: {
+                        NombreArchivo: function () { return NombreArchivoFoto; }
+                    },
+                    errorTextFormat : FormatedorMensajesError,
+                },
+                {
+                    //new record form
+                    //width: 700,
+                    url: "/Jugadores/Crear",
+                    mtype: 'POST',
+                    closeAfterAdd: true,
+                    recreateForm: true,
+                    viewPagerButtons: false,
+                    beforeShowForm: function (e) {
+                        var form = $(e[0]);
+                        form.closest('.ui-jqdialog').find('.ui-jqdialog-titlebar')
+                            .wrapInner('<div class="widget-header" />')
+                        style_edit_form(form);
+                        NombreArchivoFoto = '';
+                    },
+                    editData: {
+                        NombreArchivo: function () { return NombreArchivoFoto; }
+                    },
+                    errorTextFormat: FormatedorMensajesError,
+                },
+                {
+                    //delete record form
+                    url: "/Jugadores/Eliminar",
+                    mtype: 'PUT',
+                    recreateForm: true,
+                    width: 400,
+                    beforeShowForm: function (e) {
+                        var form = $(e[0]);
+                        if (form.data('styled')) return false;
+
+                        form.closest('.ui-jqdialog').find('.ui-jqdialog-titlebar').wrapInner('<div class="widget-header" />')
+                        style_delete_form(form);
+
+                        form.data('styled', true);
+                    },
+                    errorTextFormat: FormatedorMensajesError,
+                    onClick: function (e) {
+                        //alert(1);
+                    }
+                },
+                {
+                    //search form
+                    recreateForm: true,
+                    afterShowSearch: function (e) {
+                        var form = $(e[0]);
+                        form.closest('.ui-jqdialog').find('.ui-jqdialog-title').wrap('<div class="widget-header" />')
+                        style_search_form(form);
+                    },
+                    afterRedraw: function () {
+                        style_search_filters($(this));
+                    }
+                    ,
+                    multipleSearch: true,
+                    /**
+                    multipleGroup:true,
+                    showQuery: true
+                    */
+                },
+                {
+                    //view record form
+                    recreateForm: true,
+                    beforeShowForm: function (e) {
+                        var form = $(e[0]);
+                        form.closest('.ui-jqdialog').find('.ui-jqdialog-title').wrap('<div class="widget-header" />')
+                    }
                 }
-            }).fail(function (jqXHR, textStatus, errorThrown) {
-                alert('error al cargar el archivo')
+            )
+
+            $(document).one('ajaxloadstart.page', function (e) {
+                $.jgrid.gridDestroy(grid_selector);
+                $('.ui-jqdialog').remove();
+            });
+        });
+
+        function CargarFoto(files, dropped) {
+
+            var archivo = files[0];
+
+            if (typeof archivo === 'string') {
+                //older browsers that don't support FileReader API, such as IE
+                alert("Versión antigua de explorador y se soporta la funcionalidad, favor de actulizar versión");
+                return false;
+            } else if ('File' in window && archivo instanceof window.File) {
+                //file is a "File" object with following properties
+                var fd = new FormData();//empty FormData object
+                fd.append('archivo', archivo);
+
+                var deferred = $.ajax({
+                    url: '@Url.Action("SubirFoto", "Jugadores")',
+                    type: 'POST',
+                    processData: false,//important
+                    contentType: false,//important
+                    dataType: 'json',//depending on your server side response
+                    data: fd
+                });
+
+                deferred.done(function (result) {
+                    if (NombreArchivoFoto !== '') {
+                        $.post('@Url.Action("ElimintarFoto", "Jugadores")', { archivo: NombreArchivoFoto }).done(function (response) {
+                            console.log('El archivo: ' + NombreArchivoFoto + ' es reemplazado por ' + result.foto + 'en el servidor');
+                            NombreArchivoFoto = result.foto;
+                        }).fail(function (error) {
+                            console.log('El no se elimno el archivo: ' + NombreArchivoFoto + ' en el servidor');
+                            NombreArchivoFoto = result.foto;
+                        });
+                    }
+                    else {
+                        console.log('Se cargo el archivo: ' + result.foto + ' en del servidor');
+                        NombreArchivoFoto = result.foto;
+                    }
+                }).fail(function (jqXHR, textStatus, errorThrown) {
+                    alert('error al cargar el archivo')
+                });
+                return true;
+            }
+        }
+
+        function ElimarFoto() {
+            $.post('@Url.Action("ElimintarFoto", "Jugadores")', { archivo: NombreArchivoFoto }).done(function (response) {
+                console.log('Se elimino el archivo: ' + NombreArchivoFoto + ' del servidor');
+                NombreArchivoFoto = '';
             });
             return true;
         }
-    }
-
-    function ElimarFoto() {
-        $.post('@Url.Action("ElimintarFoto", "Jugadores")', { archivo: NombreArchivoFoto }).done(function (response) {
-            console.log('Se elimino el archivo: ' + NombreArchivoFoto + ' del servidor');
-            NombreArchivoFoto = '';
-        });
-        return true;
-    }
-</script>
+    </script>
+}
 

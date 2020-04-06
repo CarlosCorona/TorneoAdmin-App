@@ -8,7 +8,7 @@
 
 <div class="page-header">
     <h1>
-        Usuarios del Sistema
+        Campeonatos del Sistema
         <small>
             <i class="ace-icon fa fa-angle-double-right"></i>
             Esta sección es para alta baja y actulización de un Campeonato.
@@ -34,179 +34,170 @@
         <!-- PAGE CONTENT ENDS -->
     </div><!-- /.col -->
 </div><!-- /.row -->
-<!-- inline scripts related to this page -->
-<script type="text/javascript">
 
-    jQuery(function ($) {
-        
+@section Scripts {
+    <!-- inline scripts related to this page -->
+    <script type="text/javascript">
 
-        var grid_selector = "#grid-table";
-        var pager_selector = "#grid-pager";
-        var parent_column = $(grid_selector).closest('[class*="col-"]');
+        jQuery(function ($) {
 
-        //resize to fit page size
-        $(window).on('resize.jqGrid', function () {
-            $(grid_selector).jqGrid('setGridWidth', parent_column.width());
-        });
+            var grid_selector = "#grid-table";
+            var pager_selector = "#grid-pager";
+            var parent_column = $(grid_selector).closest('[class*="col-"]');
 
-        //resize on sidebar collapse/expand
-        $(document).on('settings.ace.jqGrid', function (ev, event_name, collapsed) {
-            if (event_name === 'sidebar_collapsed' || event_name === 'main_container_fixed') {
-                //setTimeout is for webkit only to give time for DOM changes and then redraw!!!
-                setTimeout(function () {
-                    $(grid_selector).jqGrid('setGridWidth', parent_column.width());
-                }, 20);
-            }
-        })
+            //resize to fit page size
+            $(window).on('resize.jqGrid', function () {
+                $(grid_selector).jqGrid('setGridWidth', parent_column.width());
+            });
 
-        jQuery(grid_selector).jqGrid({
-            url: "/Campeonatos/ObtenerCampeonatos",
-            datatype: 'json',
-            mtype: 'GET',
-            height: 250,
-            colNames: ['ID', 'Nombre', 'Fecha Inicio', 'Fecha Fin', 'Estado', 'Eliminado'],
-            colModel: [
-                { key: true, hidden: true, name: 'id', index: 'id', editable: true },
-                { name: 'nombre', index: 'uombre', width: 100, editable: true, editoptions: { size: "20", maxlength: "30" } },
-                { name: 'fechaInicio', index: 'fechaInicio', width: 90, editable: true, sorttype: "date", unformat: pickDate, formatter: dateTable },
-                { name: 'fechaFin', index: 'fechaFin', width: 90, editable: true, sorttype: "date", unformat: pickDate, formatter: dateTable},
-                { name: 'estado', index: 'estado', width: 200, editable: true, editoptions: { size: "20", maxlength: "30" } },
-                { name: 'eliminado', index: 'eliminado', width: 70, editable: false, edittype: "checkbox", align: 'center', formatter: checkTable, unformat: aceSwitch }
-            ],
-
-            viewrecords: true,
-            rowNum: 10,
-            rowList: [10, 20, 30],
-            pager: pager_selector,
-            altRows: true,
-            //toppager: true,
-
-            multiselect: false,
-            //multikey: "ctrlKey",
-            //multiboxonly: true,
-
-            loadComplete: function () {
-                var table = this;
-                setTimeout(function () {
-                    updatePagerIcons(table);
-                    enableTooltips(table);
-                }, 0);
-            },
-            caption: "Usuarios",
-
-        });
-
-        $(window).triggerHandler('resize.jqGrid');//trigger window resize to make the grid get the correct size
-
-
-        //navButtons
-        jQuery(grid_selector).jqGrid('navGrid', pager_selector,
-            { 	//navbar options
-                edit: true,
-                editicon: 'ace-icon fas fa-pencil-alt blue',
-                add: true,
-                addicon: 'ace-icon fas fa-plus-circle purple',
-                del: true,
-                delicon: 'ace-icon fas fa-trash-alt red',
-                search: true,
-                searchicon: 'ace-icon fas fa-search orange',
-                refresh: true,
-                refreshicon: 'ace-icon fas fa-sync-alt green',
-                view: true,
-                viewicon: 'ace-icon fas fa-search-plus grey',
-            },
-            {
-                //edit record form
-                //closeAfterEdit: true,
-                //width: 700,
-                url: "/Campeonatos/Editar",
-                mtype: 'PUT',
-                closeAfterEdit: true,
-                recreateForm: true,
-                beforeShowForm: function (e) {
-                    var form = $(e[0]);
-                    form.closest('.ui-jqdialog').find('.ui-jqdialog-titlebar').wrapInner('<div class="widget-header" />')
-                    style_edit_form(form);
-                },
-                editData: {
-                    fechaInicio: function () { return $('#fechaInicio').datepicker('getDate').ddmmyyyy(); },
-                    fechaFin: function () { return $('#fechaFin').datepicker('getDate').ddmmyyyy(); },
-                    eliminado: function () { return ($("#eliminado").val() == 'on') ? true : false; },
-                },
-                errorTextFormat: FormatedorMensajesError,
-            },
-            {
-                //new record form
-                //width: 700,
-                url: "/Campeonatos/Crear",
-                mtype: 'POST',
-                closeAfterAdd: true,
-                recreateForm: true,
-                viewPagerButtons: false,
-                beforeShowForm: function (e) {
-                    var form = $(e[0]);
-                    form.closest('.ui-jqdialog').find('.ui-jqdialog-titlebar')
-                        .wrapInner('<div class="widget-header" />')
-                    style_edit_form(form);
-                },
-                editData: {
-                    fechaInicio: function () { return $('#fechaInicio').datepicker('getDate').ddmmyyyy(); },
-                    fechaFin: function () { return $('#fechaFin').datepicker('getDate').ddmmyyyy(); },
-                    eliminado: function () { return ($("#eliminado").val() == 'on') ? true : false; },
-                },
-                errorTextFormat: FormatedorMensajesError,
-            },
-            {
-                //delete record form
-                url: "/Campeonatos/Eliminar",
-                mtype: 'PUT',
-                recreateForm: true,
-                beforeShowForm: function (e) {
-                    var form = $(e[0]);
-                    if (form.data('styled')) return false;
-
-                    form.closest('.ui-jqdialog').find('.ui-jqdialog-titlebar').wrapInner('<div class="widget-header" />')
-                    style_delete_form(form);
-
-                    form.data('styled', true);
-                },
-                errorTextFormat: FormatedorMensajesError,
-                onClick: function (e) {
-                    //alert(1);
+            //resize on sidebar collapse/expand
+            $(document).on('settings.ace.jqGrid', function (ev, event_name, collapsed) {
+                if (event_name === 'sidebar_collapsed' || event_name === 'main_container_fixed') {
+                    //setTimeout is for webkit only to give time for DOM changes and then redraw!!!
+                    setTimeout(function () {
+                        $(grid_selector).jqGrid('setGridWidth', parent_column.width());
+                    }, 20);
                 }
-            },
-            {
-                //search form
-                recreateForm: true,
-                afterShowSearch: function (e) {
-                    var form = $(e[0]);
-                    form.closest('.ui-jqdialog').find('.ui-jqdialog-title').wrap('<div class="widget-header" />')
-                    style_search_form(form);
+            })
+
+            jQuery(grid_selector).jqGrid({
+                url: "/Campeonatos/ObtenerCampeonatos",
+                datatype: 'json',
+                mtype: 'GET',
+                height: 250,
+                colNames: ['ID', 'Nombre', 'Fecha Inicio', 'Fecha Fin', 'Activo'],
+                colModel: [
+                    { key: true, hidden: true, name: 'id', index: 'id', editable: true },
+                    { name: 'nombre', index: 'uombre', width: 100, editable: true, editoptions: { size: "20", maxlength: "30" } },
+                    { name: 'fechaInicio', index: 'fechaInicio', width: 90, editable: true, sorttype: "date", unformat: pickDate, formatter: dateTable },
+                    { name: 'fechaFin', index: 'fechaFin', width: 90, editable: true, sorttype: "date", unformat: pickDate, formatter: dateTable },
+                    { name: 'estado', index: 'estado', width: 70, editable: false, edittype: "checkbox", align: 'center', formatter: checkTable}
+                ],
+
+                viewrecords: true,
+                rowNum: 10,
+                rowList: [10, 20, 30],
+                pager: pager_selector,
+                altRows: true,
+                //toppager: true,
+
+                multiselect: false,
+                //multikey: "ctrlKey",
+                //multiboxonly: true,
+
+                loadComplete: function () {
+                    var table = this;
+                    setTimeout(function () {
+                        updatePagerIcons(table);
+                        enableTooltips(table);
+                    }, 0);
                 },
-                afterRedraw: function () {
-                    style_search_filters($(this));
-                }
-                ,
-                multipleSearch: true,
-                /**
-                multipleGroup:true,
-                showQuery: true
-                */
-            },
-            {
-                //view record form
-                recreateForm: true,
-                beforeShowForm: function (e) {
-                    var form = $(e[0]);
-                    form.closest('.ui-jqdialog').find('.ui-jqdialog-title').wrap('<div class="widget-header" />')
-                }
-            }
-        )
+                caption: "Campeonatos",
 
-        $(document).one('ajaxloadstart.page', function (e) {
-            $.jgrid.gridDestroy(grid_selector);
-            $('.ui-jqdialog').remove();
+            });
+
+            $(window).triggerHandler('resize.jqGrid');//trigger window resize to make the grid get the correct size
+
+
+            //navButtons
+            jQuery(grid_selector).jqGrid('navGrid', pager_selector,
+                { 	//navbar options
+                    edit: true,
+                    editicon: 'ace-icon fas fa-pencil-alt blue',
+                    add: true,
+                    addicon: 'ace-icon fas fa-plus-circle purple',
+                    del: true,
+                    delicon: 'ace-icon fas fa-trash-alt red',
+                    search: true,
+                    searchicon: 'ace-icon fas fa-search orange',
+                    refresh: true,
+                    refreshicon: 'ace-icon fas fa-sync-alt green',
+                    view: true,
+                    viewicon: 'ace-icon fas fa-search-plus grey',
+                },
+                {
+                    //edit record form
+                    //closeAfterEdit: true,
+                    //width: 700,
+                    url: "/Campeonatos/Editar",
+                    mtype: 'PUT',
+                    closeAfterEdit: true,
+                    recreateForm: true,
+                    beforeShowForm: function (e) {
+                        var form = $(e[0]);
+                        form.closest('.ui-jqdialog').find('.ui-jqdialog-titlebar').wrapInner('<div class="widget-header" />')
+                        style_edit_form(form);
+                    },
+                    errorTextFormat: FormatedorMensajesError,
+                },
+                {
+                    //new record form
+                    //width: 700,
+                    url: "/Campeonatos/Crear",
+                    mtype: 'POST',
+                    closeAfterAdd: true,
+                    recreateForm: true,
+                    viewPagerButtons: false,
+                    beforeShowForm: function (e) {
+                        var form = $(e[0]);
+                        form.closest('.ui-jqdialog').find('.ui-jqdialog-titlebar')
+                            .wrapInner('<div class="widget-header" />')
+                        style_edit_form(form);
+                    },
+                    errorTextFormat: FormatedorMensajesError,
+                },
+                {
+                    //delete record form
+                    url: "/Campeonatos/Eliminar",
+                    mtype: 'PUT',
+                    recreateForm: true,
+                    width: 400,
+                    beforeShowForm: function (e) {
+                        var form = $(e[0]);
+                        if (form.data('styled')) return false;
+
+                        form.closest('.ui-jqdialog').find('.ui-jqdialog-titlebar').wrapInner('<div class="widget-header" />')
+                        style_delete_form(form);
+
+                        form.data('styled', true);
+                    },
+                    errorTextFormat: FormatedorMensajesError,
+                    onClick: function (e) {
+                        //alert(1);
+                    }
+                },
+                {
+                    //search form
+                    recreateForm: true,
+                    afterShowSearch: function (e) {
+                        var form = $(e[0]);
+                        form.closest('.ui-jqdialog').find('.ui-jqdialog-title').wrap('<div class="widget-header" />')
+                        style_search_form(form);
+                    },
+                    afterRedraw: function () {
+                        style_search_filters($(this));
+                    }
+                    ,
+                    multipleSearch: true,
+                    /**
+                    multipleGroup:true,
+                    showQuery: true
+                    */
+                },
+                {
+                    //view record form
+                    recreateForm: true,
+                    beforeShowForm: function (e) {
+                        var form = $(e[0]);
+                        form.closest('.ui-jqdialog').find('.ui-jqdialog-title').wrap('<div class="widget-header" />')
+                    }
+                }
+            )
+
+            $(document).one('ajaxloadstart.page', function (e) {
+                $.jgrid.gridDestroy(grid_selector);
+                $('.ui-jqdialog').remove();
+            });
         });
-    });
-</script>
-
+    </script>
+}

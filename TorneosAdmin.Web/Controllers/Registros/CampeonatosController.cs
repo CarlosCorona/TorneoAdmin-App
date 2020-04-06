@@ -1,9 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using System;
 using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using TorneosAdmin.Web.Extensiones;
 using TorneosAdmin.Web.Models;
 
@@ -25,13 +24,13 @@ namespace TorneosAdmin.Web.Controllers
             int pageIndex = Convert.ToInt32(page) - 1;
             int pageSize = rows;
 
-            var rolesLista = _context.Campeonatos.Select(x => new {
+            var rolesLista = _context.Campeonatos.Select(x => new
+            {
                 x.ID,
                 x.Nombre,
                 x.FechaInicio,
                 x.FechaFin,
-                x.Estado,
-                x.Eliminado
+                x.Estado
             });
             int totalRecords = rolesLista.Count();
             var totalPages = (int)Math.Ceiling((float)totalRecords / (float)rows);
@@ -58,7 +57,7 @@ namespace TorneosAdmin.Web.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Crear([Bind("Nombre, FechaInicio, FechaFin, Estado, Eliminado")] Campeonatos campeonatos)
+        public async Task<IActionResult> Crear([Bind("Nombre, FechaInicio, FechaFin")] Campeonatos campeonatos)
         {
             if (!ModelState.IsValid)
             {
@@ -70,6 +69,9 @@ namespace TorneosAdmin.Web.Controllers
                 {
                     if (campeonatos.FechaInicio < campeonatos.FechaFin)
                     {
+                        //Valores fijos
+                        campeonatos.Estado = true;
+
                         _context.Campeonatos.Add(campeonatos);
                         await _context.SaveChangesAsync();
                     }
@@ -95,7 +97,7 @@ namespace TorneosAdmin.Web.Controllers
 
         [HttpPut]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Editar(int id, [Bind("Nombre, FechaInicio, FechaFin, Estado, Eliminado")] Campeonatos campeonatos)
+        public async Task<IActionResult> Editar(int id, [Bind("Nombre, FechaInicio, FechaFin")] Campeonatos campeonatos)
         {
             if (!ModelState.IsValid)
             {
@@ -103,25 +105,28 @@ namespace TorneosAdmin.Web.Controllers
             }
             try
             {
-                if (!CampeonatoExiste(campeonatos.Nombre.Trim()))
+                Campeonatos entidad = _context.Campeonatos.Find(id);
+                if (entidad.Nombre != campeonatos.Nombre.Trim())
                 {
-                    if (campeonatos.FechaInicio < campeonatos.FechaFin)
+                    if (CampeonatoExiste(campeonatos.Nombre.Trim()))
                     {
-                        Campeonatos entidad = _context.Campeonatos.Find(id);
-
-                        entidad.Nombre = campeonatos.Nombre.Trim();
-                        entidad.FechaInicio = campeonatos.FechaInicio;
-                        entidad.FechaFin = campeonatos.FechaFin;
-                        entidad.Estado = campeonatos.Estado.Trim();
-
-                        _context.Campeonatos.Update(entidad);
-                        await _context.SaveChangesAsync();
+                        return BadRequest("El nombre del campeonato ya se encuentra registrado, ingrese otro nombre.");
                     }
-                    else
-                        return BadRequest("La fecha de inicio no debe ser mayor a la fecha fin del campeonato, ingrese la fecha correcta.");
+                }
+
+                if (campeonatos.FechaInicio < campeonatos.FechaFin)
+                {
+                    entidad.Nombre = campeonatos.Nombre.Trim();
+                    entidad.FechaInicio = campeonatos.FechaInicio;
+                    entidad.FechaFin = campeonatos.FechaFin;
+                    entidad.Estado = campeonatos.Estado;
+
+                    _context.Campeonatos.Update(entidad);
+                    await _context.SaveChangesAsync();
                 }
                 else
-                    return BadRequest("El nombre del campeonato ya se encuentra registrado, ingrese otro nombre.");
+                    return BadRequest("La fecha de inicio no debe ser mayor a la fecha fin del campeonato, ingrese la fecha correcta.");
+
             }
             catch (DbUpdateConcurrencyException ex)
             {
@@ -145,7 +150,7 @@ namespace TorneosAdmin.Web.Controllers
             {
                 Campeonatos entidad = _context.Campeonatos.Find(id);
 
-                entidad.Eliminado = true;
+                entidad.Estado = !entidad.Estado;
 
                 _context.Campeonatos.Update(entidad);
                 await _context.SaveChangesAsync();

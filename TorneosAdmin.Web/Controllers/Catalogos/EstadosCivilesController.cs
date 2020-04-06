@@ -1,9 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using System;
 using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using TorneosAdmin.Web.Extensiones;
 using TorneosAdmin.Web.Models;
 
@@ -25,7 +24,8 @@ namespace TorneosAdmin.Web.Controllers.Catalogos
             int pageIndex = Convert.ToInt32(page) - 1;
             int pageSize = rows;
 
-            var estadosCivilesLista = _context.EstadosCiviles.Select(x => new {
+            var estadosCivilesLista = _context.EstadosCiviles.Select(x => new
+            {
                 x.ID,
                 x.Descripcion
             });
@@ -108,10 +108,10 @@ namespace TorneosAdmin.Web.Controllers.Catalogos
                 return BadRequest(errMsg);
             }
 
-            return Ok(estadosCiviles);
+            return Ok("Registro Actualizado");
         }
 
-        [HttpPut]
+        [HttpDelete]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Eliminar(int id)
         {
@@ -138,7 +138,7 @@ namespace TorneosAdmin.Web.Controllers.Catalogos
                 return BadRequest(errMsg);
             }
 
-            return Ok("Registro Actualizado");
+            return Ok();
         }
     }
 }

@@ -1,11 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using System;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using TorneosAdmin.Web.Extensiones;
 using TorneosAdmin.Web.Models;
 
@@ -27,14 +26,16 @@ namespace TorneosAdmin.Web.Controllers
             int pageIndex = Convert.ToInt32(page) - 1;
             int pageSize = rows;
 
-            var equiposdirigentesLista = _context.Equipos.Select(x => new {
+            var equiposdirigentesLista = _context.Equipos.Select(x => new
+            {
                 x.ID,
                 x.LigaID,
+                x.SerieID,
+                x.CategoriaID,
                 x.DirigenteID,
                 x.Nombre,
                 x.Color,
                 x.FechaFundacion,
-                x.Serie,
                 x.Estado,
                 x.Foto
             });
@@ -63,7 +64,7 @@ namespace TorneosAdmin.Web.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Crear([Bind("LigaID, DirigenteID, Nombre, Color, FechaFundacion, Serie, Estado, NombreArchivo")] Equipos equipos)
+        public async Task<IActionResult> Crear([Bind("LigaID, SerieID, CategoriaID, DirigenteID, Nombre, Color, FechaFundacion, NombreArchivo")] Equipos equipos)
         {
             if (!ModelState.IsValid)
             {
@@ -76,13 +77,16 @@ namespace TorneosAdmin.Web.Controllers
                 Equipos entidad = new Equipos
                 {
                     LigaID = equipos.LigaID == 0 ? null : equipos.LigaID,
+                    SerieID = equipos.SerieID == 0 ? null : equipos.SerieID,
+                    CategoriaID = equipos.CategoriaID == 0 ? null : equipos.CategoriaID,
                     DirigenteID = equipos.DirigenteID == 0 ? null : equipos.DirigenteID,
                     Nombre = equipos.Nombre,
                     Color = equipos.Color,
                     FechaFundacion = equipos.FechaFundacion,
-                    Serie = equipos.Serie,
-                    Estado = equipos.Estado,
-                    Foto = string.IsNullOrWhiteSpace(equipos.NombreArchivo) == false ? FormateadorImagen.CambiarTamanio(path + "\\" + equipos.NombreArchivo, 600, 400) : null
+                    Foto = string.IsNullOrWhiteSpace(equipos.NombreArchivo) == false ? FormateadorImagen.CambiarTamanio(path + "\\" + equipos.NombreArchivo, 600, 400) : null,
+
+                    //Valores fijos
+                    Estado = true
                 };
 
                 _context.Equipos.Add(entidad);
@@ -108,7 +112,7 @@ namespace TorneosAdmin.Web.Controllers
 
         [HttpPut]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Editar(int id, [Bind("LigaID, DirigenteID, Nombre, Color, FechaFundacion, Serie, Estado, NombreArchivo")] Equipos equipos)
+        public async Task<IActionResult> Editar(int id, [Bind("LigaID, SerieID, CategoriaID, DirigenteID, Nombre, Color, FechaFundacion, NombreArchivo")] Equipos equipos)
         {
             if (!ModelState.IsValid)
             {
@@ -121,12 +125,12 @@ namespace TorneosAdmin.Web.Controllers
                 Equipos entidad = _context.Equipos.Find(id);
 
                 entidad.LigaID = equipos.LigaID == 0 ? null : equipos.LigaID;
+                entidad.SerieID = equipos.SerieID == 0 ? null : equipos.SerieID;
+                entidad.CategoriaID = equipos.CategoriaID == 0 ? null : equipos.CategoriaID;
                 entidad.DirigenteID = equipos.DirigenteID == 0 ? null : equipos.DirigenteID;
                 entidad.Nombre = equipos.Nombre;
                 entidad.Color = equipos.Color;
                 entidad.FechaFundacion = equipos.FechaFundacion;
-                entidad.Serie = equipos.Serie;
-                entidad.Estado = equipos.Estado;
 
                 if (!string.IsNullOrWhiteSpace(equipos.NombreArchivo))
                 {
@@ -165,7 +169,9 @@ namespace TorneosAdmin.Web.Controllers
             {
                 Equipos entidad = _context.Equipos.Find(id);
 
-                _context.Equipos.Remove(entidad);
+                entidad.Estado = !entidad.Estado;
+
+                _context.Equipos.Update(entidad);
                 await _context.SaveChangesAsync();
             }
             catch (DbUpdateConcurrencyException ex)

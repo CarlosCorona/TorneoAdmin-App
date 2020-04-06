@@ -34,241 +34,255 @@
         <!-- PAGE CONTENT ENDS -->
     </div><!-- /.col -->
 </div><!-- /.row -->
-<!-- inline scripts related to this page -->
 
-<script type="text/javascript">
-    // Variable Globales
-    var NombreArchivoFoto = '';
-    var listaLigas = JSON.parse('@ViewBag.LigasLista'.replace(/&quot;/g, '"'));
-    var listaDirigentes = JSON.parse('@ViewBag.DirigentesLista'.replace(/&quot;/g, '"'));
+@section Scripts {
+    <!-- inline scripts related to this page -->
+    <script type="text/javascript">
+        // Variable Globales
+        var NombreArchivoFoto = '';
+        var listaLigas = JSON.parse('@ViewBag.LigasLista'.replace(/&quot;/g, '"'));
+        var listaSeries = JSON.parse('@ViewBag.SeriesLista'.replace(/&quot;/g, '"'));
+        var listaCategorias = JSON.parse('@ViewBag.CategoriasLista'.replace(/&quot;/g, '"'));
+        var listaDirigentes = JSON.parse('@ViewBag.DirigentesLista'.replace(/&quot;/g, '"'));
 
-    jQuery(function ($) {
+        jQuery(function ($) {
 
-        var grid_selector = "#grid-table";
-        var pager_selector = "#grid-pager";
-        var parent_column = $(grid_selector).closest('[class*="col-"]');
+            var grid_selector = "#grid-table";
+            var pager_selector = "#grid-pager";
+            var parent_column = $(grid_selector).closest('[class*="col-"]');
 
-        //resize to fit page size
-        $(window).on('resize.jqGrid', function () {
-            $(grid_selector).jqGrid('setGridWidth', parent_column.width());
-        });
-
-        //resize on sidebar collapse/expand
-        $(document).on('settings.ace.jqGrid', function (ev, event_name, collapsed) {
-            if (event_name === 'sidebar_collapsed' || event_name === 'main_container_fixed') {
-                //setTimeout is for webkit only to give time for DOM changes and then redraw!!!
-                setTimeout(function () {
-                    $(grid_selector).jqGrid('setGridWidth', parent_column.width());
-                }, 20);
-            }
-        })
-
-        function getLigas() {
-            return listaLigas;
-        }
-
-        function getDirigentes() {
-            return listaDirigentes;
-        }
-
-        jQuery(grid_selector).jqGrid({
-            url: "/Equipos/ObtenerEquipos",
-            datatype: 'json',
-            mtype: 'GET',
-            height: 400,
-            colNames: ['ID', 'Liga', 'Dirigente', 'Nombre', 'Color', 'Fecha de Fundación', 'Serie', 'Estado','Foto'],
-            colModel: [
-                { key: true, hidden: true, name: 'id', index: 'id', editable: true },
-                { name: 'ligaID', index: 'ligaID', width: 200, editable: true, edittype: 'select', formatter: 'select', editoptions: { value: getLigas() } },
-                { name: 'dirigenteID', index: 'dirigenteID', width: 200, editable: true, edittype: 'select', formatter: 'select', editoptions: { value: getDirigentes() } },
-                { name: 'nombre', index: 'nombre', width: 150, editable: true, editoptions: { size: "20", maxlength: "50" } },
-                { name: 'color', index: 'color', width: 150, editable: true, editoptions: { size: "20", maxlength: "100" } },
-                { name: 'fechaFundacion', index: 'fechaFundacion', width: 90, editable: true, sorttype: "date", unformat: pickDate, formatter: dateTable },
-                { name: 'serie', index: 'serie', width: 150, editable: true, editoptions: { size: "20", maxlength: "10" } },
-                { name: 'estado', index: 'estado', width: 150, editable: true, editoptions: { size: "20", maxlength: "50" } },
-                { name: 'foto', index: 'foto', width: 150, align:'center', editable: true, edittype: "file", editoptions: { enctype: 'multipart/form-data' }, formatter: imageFormat }
-            ],
-
-            viewrecords: true,
-            rowNum: 10,
-            rowList: [10, 20, 30],
-            pager: pager_selector,
-            altRows: true,
-            //toppager: true,
-
-            multiselect: false,
-            //multikey: "ctrlKey",
-            //multiboxonly: true,
-
-            loadComplete: function () {
-                var table = this;
-                setTimeout(function () {
-                    updatePagerIcons(table);
-                    enableTooltips(table);
-                }, 0);
-            },
-            caption: "Equipos",
-
-        });
-
-        $(window).triggerHandler('resize.jqGrid');//trigger window resize to make the grid get the correct size
-
-        //navButtons
-        jQuery(grid_selector).jqGrid('navGrid', pager_selector,
-            { 	//navbar options
-                edit: true,
-                editicon: 'ace-icon fas fa-pencil-alt blue',
-                add: true,
-                addicon: 'ace-icon fas fa-plus-circle purple',
-                del: true,
-                delicon: 'ace-icon fas fa-trash-alt red',
-                search: true,
-                searchicon: 'ace-icon fas fa-search orange',
-                refresh: true,
-                refreshicon: 'ace-icon fas fa-sync-alt green',
-                view: true,
-                viewicon: 'ace-icon fas fa-search-plus grey',
-            },
-            {
-                //edit record form
-                //closeAfterEdit: true,
-                //width: 700,
-                url: "/Equipos/Editar",
-                mtype: 'PUT',
-                closeAfterEdit: true,
-                recreateForm: true,
-                beforeShowForm: function (e) {
-                    var form = $(e[0]);
-                    form.closest('.ui-jqdialog').find('.ui-jqdialog-titlebar').wrapInner('<div class="widget-header" />')
-                    style_edit_form(form);
-                },
-                editData: {
-                    NombreArchivo: function () { return NombreArchivoFoto; },
-                    fechaFundacion: function () { return $('#fechaFundacion').datepicker('getDate').ddmmyyyy(); }
-                },
-                errorTextFormat : FormatedorMensajesError,
-            },
-            {
-                //new record form
-                //width: 700,
-                url: "/Equipos/Crear",
-                mtype: 'POST',
-                closeAfterAdd: true,
-                recreateForm: true,
-                viewPagerButtons: false,
-                beforeShowForm: function (e) {
-                    var form = $(e[0]);
-                    form.closest('.ui-jqdialog').find('.ui-jqdialog-titlebar')
-                        .wrapInner('<div class="widget-header" />')
-                    style_edit_form(form);
-                },
-                editData: {
-                    NombreArchivo: function () { return NombreArchivoFoto; },
-                    fechaFundacion: function () { return $('#fechaFundacion').datepicker('getDate').ddmmyyyy(); }
-                },
-                errorTextFormat: FormatedorMensajesError,
-            },
-            {
-                //delete record form
-                url: "/Equipos/Eliminar",
-                mtype: 'PUT',
-                recreateForm: true,
-                beforeShowForm: function (e) {
-                    var form = $(e[0]);
-                    if (form.data('styled')) return false;
-
-                    form.closest('.ui-jqdialog').find('.ui-jqdialog-titlebar').wrapInner('<div class="widget-header" />')
-                    style_delete_form(form);
-
-                    form.data('styled', true);
-                },
-                errorTextFormat: FormatedorMensajesError,
-                onClick: function (e) {
-                    //alert(1);
-                }
-            },
-            {
-                //search form
-                recreateForm: true,
-                afterShowSearch: function (e) {
-                    var form = $(e[0]);
-                    form.closest('.ui-jqdialog').find('.ui-jqdialog-title').wrap('<div class="widget-header" />')
-                    style_search_form(form);
-                },
-                afterRedraw: function () {
-                    style_search_filters($(this));
-                }
-                ,
-                multipleSearch: true,
-                /**
-                multipleGroup:true,
-                showQuery: true
-                */
-            },
-            {
-                //view record form
-                recreateForm: true,
-                beforeShowForm: function (e) {
-                    var form = $(e[0]);
-                    form.closest('.ui-jqdialog').find('.ui-jqdialog-title').wrap('<div class="widget-header" />')
-                }
-            }
-        )
-
-        $(document).one('ajaxloadstart.page', function (e) {
-            $.jgrid.gridDestroy(grid_selector);
-            $('.ui-jqdialog').remove();
-        });
-    });
-
-    function CargarFoto(files, dropped) {
-
-        var archivo = files[0];
-
-        if (typeof archivo === 'string') {
-            //older browsers that don't support FileReader API, such as IE
-            alert("Versión antigua de explorador y se soporta la funcionalidad, favor de actulizar versión");
-            return false;
-        } else if ('File' in window && archivo instanceof window.File) {
-            //file is a "File" object with following properties
-            var fd = new FormData();//empty FormData object
-            fd.append('archivo', archivo);
-
-            var deferred = $.ajax({
-                url: '@Url.Action("SubirFoto", "Equipos")',
-                type: 'POST',
-                processData: false,//important
-                contentType: false,//important
-                dataType: 'json',//depending on your server side response
-                data: fd
+            //resize to fit page size
+            $(window).on('resize.jqGrid', function () {
+                $(grid_selector).jqGrid('setGridWidth', parent_column.width());
             });
 
-            deferred.done(function (result) {
-                if (NombreArchivoFoto !== '') {
-                    $.post('@Url.Action("ElimintarFoto", "Equipos")', { archivo: NombreArchivoFoto }).done(function (response) {
-                        console.log('El archivo: ' + NombreArchivoFoto + ' es reemplazado por ' + result.foto + 'en el servidor');
-                        NombreArchivoFoto = result.foto;
-                    }).fail(function (error) {
-                        console.log('El no se elimno el archivo: ' + NombreArchivoFoto + ' en el servidor');
-                        NombreArchivoFoto = result.foto;
-                    });
+            //resize on sidebar collapse/expand
+            $(document).on('settings.ace.jqGrid', function (ev, event_name, collapsed) {
+                if (event_name === 'sidebar_collapsed' || event_name === 'main_container_fixed') {
+                    //setTimeout is for webkit only to give time for DOM changes and then redraw!!!
+                    setTimeout(function () {
+                        $(grid_selector).jqGrid('setGridWidth', parent_column.width());
+                    }, 20);
                 }
-                else {
-                    console.log('Se cargo el archivo: ' + result.foto + ' en del servidor');
-                    NombreArchivoFoto = result.foto;
+            })
+
+            function getLigas() {
+                return listaLigas;
+            }
+
+            function getSeries() {
+                return listaSeries;
+            }
+
+            function getCategorias() {
+                return listaCategorias;
+            }
+
+            function getDirigentes() {
+                return listaDirigentes;
+            }
+
+            jQuery(grid_selector).jqGrid({
+                url: "/Equipos/ObtenerEquipos",
+                datatype: 'json',
+                mtype: 'GET',
+                height: 400,
+                colNames: ['ID', 'Liga', 'Serie', 'Categoría', 'Dirigente', 'Nombre', 'Color', 'Fecha de Fundación', 'Estado','Foto'],
+                colModel: [
+                    { key: true, hidden: true, name: 'id', index: 'id', editable: true },
+                    { name: 'ligaID', index: 'ligaID', width: 100, editable: true, edittype: 'select', formatter: 'select', editoptions: { value: getLigas() } },
+                    { name: 'serieID', index: 'serieID', width: 100, editable: true, edittype: 'select', formatter: 'select', editoptions: { value: getSeries() } },
+                    { name: 'categoriaID', index: 'categoriaID', width: 100, editable: true, edittype: 'select', formatter: 'select', editoptions: { value: getCategorias() } },
+                    { name: 'dirigenteID', index: 'dirigenteID', width: 200, editable: true, edittype: 'select', formatter: 'select', editoptions: { value: getDirigentes() } },
+                    { name: 'nombre', index: 'nombre', width: 200, editable: true, editoptions: { size: "20", maxlength: "50" } },
+                    { name: 'color', index: 'color', width: 100, editable: true, editoptions: { size: "20", maxlength: "100" } },
+                    { name: 'fechaFundacion', index: 'fechaFundacion', width: 120, editable: true, sorttype: "date", unformat: pickDate, formatter: dateTable },
+                    { name: 'estado', index: 'estado', width: 70, editable: false, edittype: "checkbox", align: 'center', formatter: checkTable },
+                    { name: 'foto', index: 'foto', width: 150, align:'center', editable: true, edittype: "file", editoptions: { enctype: 'multipart/form-data' }, formatter: imageFormat }
+                ],
+
+                viewrecords: true,
+                rowNum: 10,
+                rowList: [10, 20, 30],
+                pager: pager_selector,
+                altRows: true,
+                //toppager: true,
+
+                multiselect: false,
+                //multikey: "ctrlKey",
+                //multiboxonly: true,
+
+                loadComplete: function () {
+                    var table = this;
+                    setTimeout(function () {
+                        updatePagerIcons(table);
+                        enableTooltips(table);
+                    }, 0);
+                },
+                caption: "Equipos",
+
+            });
+
+            $(window).triggerHandler('resize.jqGrid');//trigger window resize to make the grid get the correct size
+
+            //navButtons
+            jQuery(grid_selector).jqGrid('navGrid', pager_selector,
+                { 	//navbar options
+                    edit: true,
+                    editicon: 'ace-icon fas fa-pencil-alt blue',
+                    add: true,
+                    addicon: 'ace-icon fas fa-plus-circle purple',
+                    del: true,
+                    delicon: 'ace-icon fas fa-trash-alt red',
+                    search: true,
+                    searchicon: 'ace-icon fas fa-search orange',
+                    refresh: true,
+                    refreshicon: 'ace-icon fas fa-sync-alt green',
+                    view: true,
+                    viewicon: 'ace-icon fas fa-search-plus grey',
+                },
+                {
+                    //edit record form
+                    //closeAfterEdit: true,
+                    //width: 700,
+                    url: "/Equipos/Editar",
+                    mtype: 'PUT',
+                    closeAfterEdit: true,
+                    recreateForm: true,
+                    beforeShowForm: function (e) {
+                        var form = $(e[0]);
+                        form.closest('.ui-jqdialog').find('.ui-jqdialog-titlebar').wrapInner('<div class="widget-header" />')
+                        style_edit_form(form);
+                        NombreArchivoFoto = '';
+                    },
+                    editData: {
+                        NombreArchivo: function () { return NombreArchivoFoto; }
+                    },
+                    errorTextFormat : FormatedorMensajesError,
+                },
+                {
+                    //new record form
+                    //width: 700,
+                    url: "/Equipos/Crear",
+                    mtype: 'POST',
+                    closeAfterAdd: true,
+                    recreateForm: true,
+                    viewPagerButtons: false,
+                    beforeShowForm: function (e) {
+                        var form = $(e[0]);
+                        form.closest('.ui-jqdialog').find('.ui-jqdialog-titlebar')
+                            .wrapInner('<div class="widget-header" />')
+                        style_edit_form(form);
+                        NombreArchivoFoto = '';
+                    },
+                    editData: {
+                        NombreArchivo: function () { return NombreArchivoFoto; }
+                    },
+                    errorTextFormat: FormatedorMensajesError,
+                },
+                {
+                    //delete record form
+                    url: "/Equipos/Eliminar",
+                    mtype: 'PUT',
+                    recreateForm: true,
+                    width: 400,
+                    beforeShowForm: function (e) {
+                        var form = $(e[0]);
+                        if (form.data('styled')) return false;
+
+                        form.closest('.ui-jqdialog').find('.ui-jqdialog-titlebar').wrapInner('<div class="widget-header" />')
+                        style_delete_form(form);
+
+                        form.data('styled', true);
+                    },
+                    errorTextFormat: FormatedorMensajesError,
+                    onClick: function (e) {
+                        //alert(1);
+                    }
+                },
+                {
+                    //search form
+                    recreateForm: true,
+                    afterShowSearch: function (e) {
+                        var form = $(e[0]);
+                        form.closest('.ui-jqdialog').find('.ui-jqdialog-title').wrap('<div class="widget-header" />')
+                        style_search_form(form);
+                    },
+                    afterRedraw: function () {
+                        style_search_filters($(this));
+                    }
+                    ,
+                    multipleSearch: true,
+                    /**
+                    multipleGroup:true,
+                    showQuery: true
+                    */
+                },
+                {
+                    //view record form
+                    recreateForm: true,
+                    beforeShowForm: function (e) {
+                        var form = $(e[0]);
+                        form.closest('.ui-jqdialog').find('.ui-jqdialog-title').wrap('<div class="widget-header" />')
+                    }
                 }
-            }).fail(function (jqXHR, textStatus, errorThrown) {
-                alert('error al cargar el archivo')
+            )
+
+            $(document).one('ajaxloadstart.page', function (e) {
+                $.jgrid.gridDestroy(grid_selector);
+                $('.ui-jqdialog').remove();
+            });
+        });
+
+        function CargarFoto(files, dropped) {
+
+            var archivo = files[0];
+
+            if (typeof archivo === 'string') {
+                //older browsers that don't support FileReader API, such as IE
+                alert("Versión antigua de explorador y se soporta la funcionalidad, favor de actulizar versión");
+                return false;
+            } else if ('File' in window && archivo instanceof window.File) {
+                //file is a "File" object with following properties
+                var fd = new FormData();//empty FormData object
+                fd.append('archivo', archivo);
+
+                var deferred = $.ajax({
+                    url: '@Url.Action("SubirFoto", "Equipos")',
+                    type: 'POST',
+                    processData: false,//important
+                    contentType: false,//important
+                    dataType: 'json',//depending on your server side response
+                    data: fd
+                });
+
+                deferred.done(function (result) {
+                    if (NombreArchivoFoto !== '') {
+                        $.post('@Url.Action("ElimintarFoto", "Equipos")', { archivo: NombreArchivoFoto }).done(function (response) {
+                            console.log('El archivo: ' + NombreArchivoFoto + ' es reemplazado por ' + result.foto + 'en el servidor');
+                            NombreArchivoFoto = result.foto;
+                        }).fail(function (error) {
+                            console.log('El no se elimno el archivo: ' + NombreArchivoFoto + ' en el servidor');
+                            NombreArchivoFoto = result.foto;
+                        });
+                    }
+                    else {
+                        console.log('Se cargo el archivo: ' + result.foto + ' en del servidor');
+                        NombreArchivoFoto = result.foto;
+                    }
+                }).fail(function (jqXHR, textStatus, errorThrown) {
+                    alert('error al cargar el archivo')
+                });
+                return true;
+            }
+        }
+
+        function ElimarFoto() {
+            $.post('@Url.Action("ElimintarFoto", "Equipos")', { archivo: NombreArchivoFoto }).done(function (response) {
+                console.log('Se elimino el archivo: ' + NombreArchivoFoto + ' del servidor');
+                NombreArchivoFoto = '';
             });
             return true;
         }
-    }
-
-    function ElimarFoto() {
-        $.post('@Url.Action("ElimintarFoto", "Equipos")', { archivo: NombreArchivoFoto }).done(function (response) {
-            console.log('Se elimino el archivo: ' + NombreArchivoFoto + ' del servidor');
-            NombreArchivoFoto = '';
-        });
-        return true;
-    }
-</script>
+    </script>
+}

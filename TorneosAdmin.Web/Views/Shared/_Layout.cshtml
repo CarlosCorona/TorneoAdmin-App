@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <title>Inicio</title>
 
-    <meta name="description" content="" />
+    <meta name="description" content="Administrador de Torneos" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
 
     <!-- bootstrap & fontawesome -->
@@ -16,17 +16,22 @@
     <link rel="stylesheet" href="~/font-awesome/5.13.0/css/all.min.css" />
 
     <!-- page specific plugin styles -->
-    <link rel="stylesheet" href="~/css/jquery-ui.min.css" />
-    @*<link rel="stylesheet" href="~/css/bootstrap-datepicker.min.css" />*@
-    <link rel="stylesheet" href="~/css/datepicker.css" />
     <link rel="stylesheet" href="~/css/ui.jqgrid.min.css" />
+
+    <link rel="stylesheet" href="~/css/jquery-ui.custom.min.css" />
+    <link rel="stylesheet" href="~/css/chosen.min.css" />
+    <link rel="stylesheet" href="~/css/bootstrap-datepicker3.min.css" />
+    <link rel="stylesheet" href="~/css/bootstrap-timepicker.min.css" />
+    <link rel="stylesheet" href="~/css/daterangepicker.min.css" />
+    <link rel="stylesheet" href="~/css/bootstrap-datetimepicker.min.css" />
+    <link rel="stylesheet" href="~/css/bootstrap-colorpicker.min.css" />
+    <link rel="stylesheet" href="~/css/datepicker.css" />
 
     <!-- text fonts -->
     <link rel="stylesheet" href="~/css/fonts.googleapis.com.css" />
 
     <!-- ace styles -->
-    <link rel="stylesheet" href="~/css/ace.min.css" class="ace-main-stylesheet" id="main-ace-style" />
-    <link rel="stylesheet" href="~/css/jquery-ui.min.css" />
+    <link rel="stylesheet" href="~/css/ace.min.css" class="ace-main-stylesheet" id="main-ace-style" />>
 
     <!--[if lte IE 9]>
         <link rel="stylesheet" href="~/css/ace-part2.min.css" class="ace-main-stylesheet" />
@@ -37,7 +42,9 @@
     <!--[if lte IE 9]>
       <link rel="stylesheet" href="~/css/ace-ie.min.css" />
     <![endif]-->
+
     <!-- inline styles related to this page -->
+    
     <!-- ace settings handler -->
     <script src="~/js/ace-extra.min.js"></script>
 
@@ -46,38 +53,6 @@
     <script src="~/js/html5shiv.min.js"></script>
     <script src="~/js/respond.min.js"></script>
     <![endif]-->
-    <!-- basic scripts -->
-    <!--[if !IE]> -->
-    <script src="~/js/jquery-2.1.4.min.js"></script>
-
-    <!-- <![endif]-->
-    <!--[if IE]>
-    <script src="~/js/jquery-1.11.3.min.js"></script>
-    <![endif]-->
-    <script type="text/javascript">
-        if ('ontouchstart' in document.documentElement) document.write("<script src='~/js/jquery.mobile.custom.min.js'>" + "<" + "/script>");
-    </script>
-    <script src="~/js/bootstrap.min.js"></script>
-
-    <!-- page specific plugin scripts -->
-    @*<script src="~/js/locales/bootstrap-datepicker.es.js"></script>*@
-    <script src="~/js/bootstrap-datepicker.js" charset="UTF-8"></script>
-    <script src="~/js/moment.min.js"></script>
-    <script src="~/js/jquery.jqGrid.min.js"></script>
-    <script src="~/js/grid.locale-es.js"></script>
-    <script src="~/js/site.js"></script>
-    <script src="~/js/Errors.js"></script>
-
-    <!-- ace scripts -->
-    <script src="~/js/ace-extra.min.js"></script>
-    <script src="~/js/spinbox.min.js"></script>
-    <script src="~/js/jquery.maskedinput.min.js"></script>
-    <script src="~/js/ace-elements.min.js"></script>
-    <script src="~/js/ace.min.js"></script>
-    <script src="~/js/jquery-ui.min.js"></script>
-    <script src="~/js/jquery.ui.touch-punch.min.js"></script>
-
-    <!-- inline scripts related to this page -->
 </head>
 <body class="no-skin">
     <div id="navbar" class="navbar navbar-default          ace-save-state">
@@ -258,5 +233,49 @@
             <i class="ace-icon fa fa-angle-double-up icon-only bigger-110"></i>
         </a>
     </div><!-- /.main-container -->
+    <!-- basic scripts -->
+    <!--[if !IE]> -->
+    <script src="~/js/jquery-2.1.4.min.js"></script>
+
+    <!-- <![endif]-->
+    <!--[if IE]>
+    <script src="~/js/jquery-1.11.3.min.js"></script>
+    <![endif]-->
+    <script type="text/javascript">
+        if ('ontouchstart' in document.documentElement) document.write("<script src='~/js/jquery.mobile.custom.min.js'>" + "<" + "/script>");
+    </script>
+    <script src="~/js/bootstrap.min.js"></script>
+
+    <script src="~/js/jquery.jqGrid.min.js"></script>
+    <script src="~/js/grid.locale-es.js"></script>
+    <script src="~/js/site.js"></script>
+    <script src="~/js/Errors.js"></script>
+
+    <!-- page specific plugin scripts -->
+    <!--[if lte IE 8]>
+      <script src="assets/js/excanvas.min.js"></script>
+    <![endif]-->
+    <script src="~/js/jquery-ui.custom.min.js"></script>
+    <script src="~/js/jquery.ui.touch-punch.min.js"></script>
+    <script src="~/js/chosen.jquery.min.js"></script>
+    <script src="~/js/spinbox.min.js"></script>
+    <script src="~/js/bootstrap-datepicker.js"></script>
+    <script src="~/js/bootstrap-timepicker.min.js"></script>
+    <script src="~/js/moment.min.js"></script>
+    <script src="~/js/daterangepicker.min.js"></script>
+    <script src="~/js/bootstrap-datetimepicker.min.js"></script>
+    <script src="~/js/bootstrap-colorpicker.min.js"></script>
+    <script src="~/js/jquery.knob.min.js"></script>
+    <script src="~/js/autosize.min.js"></script>
+    <script src="~/js/jquery.inputlimiter.min.js"></script>
+    <script src="~/js/jquery.maskedinput.min.js"></script>
+    <script src="~/js/bootstrap-tag.min.js"></script>
+
+    <!-- ace scripts -->
+    <script src="~/js/ace-elements.min.js"></script>
+    <script src="~/js/ace.min.js"></script>
+
+    @RenderSection("scripts", required: false)
+    
 </body>
 </html>

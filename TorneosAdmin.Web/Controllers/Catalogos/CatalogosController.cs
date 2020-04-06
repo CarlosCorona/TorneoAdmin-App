@@ -1,9 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using Microsoft.AspNetCore.Mvc;
+using System;
 using System.Linq;
 using System.Text.Json;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
 using TorneosAdmin.Web.Models;
 
 namespace TorneosAdmin.Web.Controllers
@@ -15,6 +13,11 @@ namespace TorneosAdmin.Web.Controllers
         public CatalogosController(ModelEntities context)
         {
             _context = context;
+        }
+
+        public IActionResult Categorias()
+        {
+            return View();
         }
 
         public IActionResult EstadosCiviles()
@@ -39,12 +42,27 @@ namespace TorneosAdmin.Web.Controllers
             return View();
         }
 
+        public IActionResult PartidosEstados()
+        {
+            return View();
+        }
+
         public IActionResult Profesiones()
         {
             return View();
         }
 
         public IActionResult Provincias()
+        {
+            return View();
+        }
+
+        public IActionResult Series()
+        {
+            return View();
+        }
+
+        public IActionResult TiposPagos()
         {
             return View();
         }

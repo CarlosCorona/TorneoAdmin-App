@@ -1,0 +1,219 @@
+﻿
+@{
+    ViewData["Title"] = "PagosInscripciones";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@Html.AntiForgeryToken()
+
+<div class="page-header">
+    <h1>
+        Pagos de Inscripciones
+        <small>
+            <i class="ace-icon fa fa-angle-double-right"></i>
+            Esta sección es para alta, baja y actulización de pagos de inscripciones.
+        </small>
+    </h1>
+</div><!-- /.page-header -->
+
+<div class="row">
+    <div class="col-xs-12">
+        <!-- PAGE CONTENT BEGINS -->
+        @*<div class="alert alert-warning">
+            <button class="close" data-dismiss="alert">
+                <i class="ace-icon fa fa-times"></i>
+            </button>
+
+            <i class="ace-icon fa fa-hand-o-right"></i>
+            Todas las fotos
+        </div>*@
+
+        <table id="grid-table"></table>
+        <div id="grid-pager"></div>
+
+        <!-- PAGE CONTENT ENDS -->
+    </div><!-- /.col -->
+</div><!-- /.row -->
+
+@section Scripts {
+    <!-- inline scripts related to this page -->
+    <script type="text/javascript">
+        // Variable Globales
+        var listaCampeonatos = JSON.parse('@ViewBag.CampeonatosLista'.replace(/&quot;/g, '"'));
+        var listaEquipos = JSON.parse('@ViewBag.EquiposLista'.replace(/&quot;/g, '"'));
+
+        jQuery(function ($) {
+
+            var grid_selector = "#grid-table";
+            var pager_selector = "#grid-pager";
+            var parent_column = $(grid_selector).closest('[class*="col-"]');
+
+            //resize to fit page size
+            $(window).on('resize.jqGrid', function () {
+                $(grid_selector).jqGrid('setGridWidth', parent_column.width());
+            });
+
+            //resize on sidebar collapse/expand
+            $(document).on('settings.ace.jqGrid', function (ev, event_name, collapsed) {
+                if (event_name === 'sidebar_collapsed' || event_name === 'main_container_fixed') {
+                    //setTimeout is for webkit only to give time for DOM changes and then redraw!!!
+                    setTimeout(function () {
+                        $(grid_selector).jqGrid('setGridWidth', parent_column.width());
+                    }, 20);
+                }
+            })
+
+            function getCampeonatos() {
+                return listaCampeonatos;
+            }
+
+            function getEquipos() {
+                return listaEquipos;
+            }
+
+            jQuery(grid_selector).jqGrid({
+                url: "/PagosInscripciones/ObtenerPagosIncripciones",
+                datatype: 'json',
+                mtype: 'GET',
+                height: 400,
+                colNames: ['ID', 'Campeonato', 'Equipo', 'Monto de Inscripción', 'Monto de Garantía', 'Observacion'],
+                colModel: [
+                    { key: true, hidden: true, name: 'id', index: 'id', editable: true },
+                    { name: 'campeonatoID', index: 'campeonatoID', width: 100, editable: true, edittype: 'select', formatter: 'select', editoptions: { value: getCampeonatos() } },
+                    { name: 'equipoID', index: 'equipoID', width: 100, editable: true, edittype: 'select', formatter: 'select', editoptions: { value: getEquipos() } },
+                    { name: 'montoInscripcion', index: 'montoInscripcion', width: 200, editable: true, editoptions: { size: "20", maxlength: "50" } },
+                    { name: 'montoGarantia', index: 'montoGarantia', width: 100, editable: true, editoptions: { size: "20", maxlength: "50" } },
+                    { name: 'observacion', index: 'observacion', width: 100, editable: true, editoptions: { size: "20", maxlength: "300" } },
+                ],
+
+                viewrecords: true,
+                rowNum: 10,
+                rowList: [10, 20, 30],
+                pager: pager_selector,
+                altRows: true,
+                //toppager: true,
+
+                multiselect: false,
+                //multikey: "ctrlKey",
+                //multiboxonly: true,
+
+                loadComplete: function () {
+                    var table = this;
+                    setTimeout(function () {
+                        updatePagerIcons(table);
+                        enableTooltips(table);
+                    }, 0);
+                },
+                caption: "Pagos Inscripciones",
+
+            });
+
+            $(window).triggerHandler('resize.jqGrid');//trigger window resize to make the grid get the correct size
+
+            //navButtons
+            jQuery(grid_selector).jqGrid('navGrid', pager_selector,
+                { 	//navbar options
+                    edit: true,
+                    editicon: 'ace-icon fas fa-pencil-alt blue',
+                    add: true,
+                    addicon: 'ace-icon fas fa-plus-circle purple',
+                    del: true,
+                    delicon: 'ace-icon fas fa-trash-alt red',
+                    search: true,
+                    searchicon: 'ace-icon fas fa-search orange',
+                    refresh: true,
+                    refreshicon: 'ace-icon fas fa-sync-alt green',
+                    view: true,
+                    viewicon: 'ace-icon fas fa-search-plus grey',
+                },
+                {
+                    //edit record form
+                    //closeAfterEdit: true,
+                    //width: 700,
+                    url: "/PagosInscripciones/Editar",
+                    mtype: 'PUT',
+                    closeAfterEdit: true,
+                    recreateForm: true,
+                    beforeShowForm: function (e) {
+                        var form = $(e[0]);
+                        form.closest('.ui-jqdialog').find('.ui-jqdialog-titlebar').wrapInner('<div class="widget-header" />')
+                        style_edit_form(form);
+                        NombreArchivoFoto = '';
+                    },
+                    errorTextFormat : FormatedorMensajesError,
+                },
+                {
+                    //new record form
+                    //width: 700,
+                    url: "/PagosInscripciones/Crear",
+                    mtype: 'POST',
+                    closeAfterAdd: true,
+                    recreateForm: true,
+                    viewPagerButtons: false,
+                    beforeShowForm: function (e) {
+                        var form = $(e[0]);
+                        form.closest('.ui-jqdialog').find('.ui-jqdialog-titlebar')
+                            .wrapInner('<div class="widget-header" />')
+                        style_edit_form(form);
+                        NombreArchivoFoto = '';
+                    },
+                    errorTextFormat: FormatedorMensajesError,
+                },
+                {
+                    //delete record form
+                    url: "/PagosInscripciones/Eliminar",
+                    mtype: 'DELETE',
+                    recreateForm: true,
+                    width: 400,
+                    beforeShowForm: function (e) {
+                        var form = $(e[0]);
+                        if (form.data('styled')) return false;
+
+                        form.closest('.ui-jqdialog').find('.ui-jqdialog-titlebar').wrapInner('<div class="widget-header" />')
+                        style_delete_form(form);
+
+                        form.data('styled', true);
+
+                        form.find(".delmsg").text("¿Desea eliminar el pago de la inscripción?");
+                        form.closest('.ui-jqdialog').find("#dData").text('Eliminar');
+                    },
+                    errorTextFormat: FormatedorMensajesError,
+                    onClick: function (e) {
+                        //alert(1);
+                    }
+                },
+                {
+                    //search form
+                    recreateForm: true,
+                    afterShowSearch: function (e) {
+                        var form = $(e[0]);
+                        form.closest('.ui-jqdialog').find('.ui-jqdialog-title').wrap('<div class="widget-header" />')
+                        style_search_form(form);
+                    },
+                    afterRedraw: function () {
+                        style_search_filters($(this));
+                    }
+                    ,
+                    multipleSearch: true,
+                    /**
+                    multipleGroup:true,
+                    showQuery: true
+                    */
+                },
+                {
+                    //view record form
+                    recreateForm: true,
+                    beforeShowForm: function (e) {
+                        var form = $(e[0]);
+                        form.closest('.ui-jqdialog').find('.ui-jqdialog-title').wrap('<div class="widget-header" />')
+                    }
+                }
+            )
+
+            $(document).one('ajaxloadstart.page', function (e) {
+                $.jgrid.gridDestroy(grid_selector);
+                $('.ui-jqdialog').remove();
+            });
+        });
+    </script>
+}

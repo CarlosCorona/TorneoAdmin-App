@@ -1,10 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using System;
 using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
-using Microsoft.EntityFrameworkCore;
 using TorneosAdmin.Web.Extensiones;
 using TorneosAdmin.Web.Models;
 
@@ -27,10 +25,11 @@ namespace TorneosAdmin.Web.Controllers
             int pageSize = rows;
 
             // Nunca sera mostrado el rol administrador para su edición
-            var rolesLista = _context.Roles.Where(x => x.ID != 1).Select(x => new { 
-                 x.ID,
-                 x.Descripcion,
-                 x.Eliminado
+            var rolesLista = _context.Roles.Where(x => x.ID != 1).Select(x => new
+            {
+                x.ID,
+                x.Descripcion,
+                x.Estado
             });
             int totalRecords = rolesLista.Count();
             var totalPages = (int)Math.Ceiling((float)totalRecords / (float)rows);
@@ -56,7 +55,7 @@ namespace TorneosAdmin.Web.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Crear([Bind("Descripcion,Eliminado")] Roles roles)
+        public async Task<IActionResult> Crear([Bind("Descripcion")] Roles roles)
         {
             if (!ModelState.IsValid)
             {
@@ -67,6 +66,10 @@ namespace TorneosAdmin.Web.Controllers
                 if (!RolExists(roles.Descripcion.Trim()))
                 {
                     roles.Descripcion = roles.Descripcion.Trim();
+
+                    //Valores fijos
+                    roles.Estado = true;
+
                     _context.Roles.Add(roles);
                     await _context.SaveChangesAsync();
                 }
@@ -89,7 +92,7 @@ namespace TorneosAdmin.Web.Controllers
 
         [HttpPut]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Editar(int id, [Bind("Descripcion,Eliminado")] Roles roles)
+        public async Task<IActionResult> Editar(int id, [Bind("Descripcion")] Roles roles)
         {
             if (!ModelState.IsValid)
             {
@@ -98,17 +101,19 @@ namespace TorneosAdmin.Web.Controllers
 
             try
             {
-                if (!RolExists(roles.Descripcion.Trim()))
-                {
-                    Roles entidad = _context.Roles.Find(id);
+                Roles entidad = _context.Roles.Find(id);
 
+                if (entidad.Descripcion != roles.Descripcion.Trim())
+                {
+                    if (RolExists(roles.Descripcion.Trim()))
+                    {
+                        return BadRequest("El rol ya se encuentra registrado, ingrese otra descripción.");
+                    }
                     entidad.Descripcion = roles.Descripcion.Trim();
 
                     _context.Roles.Update(entidad);
                     await _context.SaveChangesAsync();
                 }
-                else
-                    return BadRequest("El rol ya se encuentra registrado, ingrese otra descripción.");
             }
             catch (DbUpdateConcurrencyException ex)
             {
@@ -121,14 +126,14 @@ namespace TorneosAdmin.Web.Controllers
                 return BadRequest(errMsg);
             }
 
-            return Ok(roles);
+            return Ok("Registro Actualizado");
         }
 
         [HttpPut]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Eliminar(int id)
         {
-            
+
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
@@ -137,7 +142,7 @@ namespace TorneosAdmin.Web.Controllers
             {
                 Roles entidad = _context.Roles.Find(id);
 
-                entidad.Eliminado = true;
+                entidad.Estado = !entidad.Estado;
 
                 _context.Roles.Update(entidad);
                 await _context.SaveChangesAsync();
@@ -153,7 +158,7 @@ namespace TorneosAdmin.Web.Controllers
                 return BadRequest(errMsg);
             }
 
-            return Ok("Registro Actualizado");
+            return Ok();
         }
 
         [NonAction]
