@@ -60,7 +60,7 @@ h1, h2, h3, h4, h5, h6 {
 
 .main-content {
     margin-left: 0;
-    padding: 0
+    padding: 0;
 }
 
     .main-content:after, .main-content:before {
@@ -19875,7 +19875,7 @@ input.typeahead.scrollable ~ .tt-menu {
 }
 
 .no-skin .navbar .navbar-toggle {
-    background-color: #75B3D7
+    background-color: #75B3D7;
 }
 
     .no-skin .navbar .navbar-toggle:focus {

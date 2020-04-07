@@ -25,6 +25,11 @@ namespace TorneosAdmin.Web.Controllers
             return View();
         }
 
+        public IActionResult ComisionTecnica()
+        {
+            return View();
+        }
+
         public IActionResult Dirigentes()
         {
             return View();

@@ -26,7 +26,7 @@ namespace TorneosAdmin.Web.Controllers
             int pageIndex = Convert.ToInt32(page) - 1;
             int pageSize = rows;
 
-            var equiposdirigentesLista = _context.Equipos.Select(x => new
+            var equiposLista = _context.Equipos.Select(x => new
             {
                 x.ID,
                 x.LigaID,
@@ -39,27 +39,52 @@ namespace TorneosAdmin.Web.Controllers
                 x.Estado,
                 x.Foto
             });
-            int totalRecords = equiposdirigentesLista.Count();
+            int totalRecords = equiposLista.Count();
             var totalPages = (int)Math.Ceiling((float)totalRecords / (float)rows);
 
             if (sort.ToUpper() == "DESC")
             {
-                equiposdirigentesLista = equiposdirigentesLista.OrderByDescending(t => t.Nombre);
-                equiposdirigentesLista = equiposdirigentesLista.Skip(pageIndex * pageSize).Take(pageSize);
+                equiposLista = equiposLista.OrderByDescending(t => t.Nombre);
+                equiposLista = equiposLista.Skip(pageIndex * pageSize).Take(pageSize);
             }
             else
             {
-                equiposdirigentesLista = equiposdirigentesLista.OrderBy(t => t.Nombre);
-                equiposdirigentesLista = equiposdirigentesLista.Skip(pageIndex * pageSize).Take(pageSize);
+                equiposLista = equiposLista.OrderBy(t => t.Nombre);
+                equiposLista = equiposLista.Skip(pageIndex * pageSize).Take(pageSize);
             }
             var jsonData = new
             {
                 total = totalPages,
                 page,
                 records = totalRecords,
-                rows = equiposdirigentesLista
+                rows = equiposLista
             };
             return Json(jsonData);
+        }
+
+        [HttpGet]
+        public JsonResult ObtenerEquiposVista()
+        {
+            var equiposLista = from e in _context.Equipos
+                               join l in _context.Ligas on e.LigaID equals l.ID
+                               join s in _context.Series on e.SerieID equals s.ID
+                               join c in _context.Categorias on e.CategoriaID equals c.ID
+                               join d in _context.Dirigentes on e.DirigenteID equals d.ID
+                               select new
+                               {
+                                   e.ID,
+                                   Liga = l.Nombre,
+                                   Categoria = c.Nombre,
+                                   Serie = s.Nombre,
+                                   Dirigente = d.Nombre,
+                                   NombreEquipo = e.Nombre,
+                                   e.Color,
+                                   Fundacion = e.FechaFundacion.ToString("dd/MM/yyyy"),
+                                   Estado = e.Estado ? "ACTIVO" : "INACTIVO",
+                                   e.Foto,
+                                   Jugadores = _context.Jugadores.Where(x => x.EquipoID == e.ID).Count()
+                               };
+            return Json(equiposLista);
         }
 
         [HttpPost]

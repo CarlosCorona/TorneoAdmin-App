@@ -5,7 +5,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace TorneosAdmin.Web.Models.Campeonato
+namespace TorneosAdmin.Web.Models
 {
     public class Jornadas
     {

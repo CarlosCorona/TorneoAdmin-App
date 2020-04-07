@@ -2,7 +2,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using TorneosAdmin.Web.Identidad;
 using TorneosAdmin.Web.Models;
 
 namespace TorneosAdmin.Web.Controllers
@@ -10,14 +12,54 @@ namespace TorneosAdmin.Web.Controllers
     public class JornadasController : Controller
     {
         private readonly ModelEntities _context;
-        //private readonly UserManager<ApplicationUser> _userManager;
+        private readonly UserManager<ApplicationUser> _userManager;
 
-        public JornadasController(ModelEntities context)//, UserManager<ApplicationUser> userManager)
+        public JornadasController(ModelEntities context, UserManager<ApplicationUser> userManager)
         {
             _context = context;
-            //_userManager = userManager;
+            _userManager = userManager;
         }
 
+        [HttpGet]
+        public JsonResult ObtenerJornadas(string si1dx, string sort, int page, int rows)
+        {
+            sort = (sort == null) ? "" : sort;
+            int pageIndex = Convert.ToInt32(page) - 1;
+            int pageSize = rows;
+
+            var jornadasLista = _context.Jornadas.Select(x => new
+            {
+                x.ID,
+                x.CampeonatoID,
+                x.CategoriaID,
+                x.SerieID,
+                x.PartidoID,
+                x.EquipoIDLocal,
+                x.EquipoIDVisita,
+                x.GrupoJornada
+            });
+            int totalRecords = jornadasLista.Count();
+            var totalPages = (int)Math.Ceiling((float)totalRecords / (float)rows);
+
+            if (sort.ToUpper() == "DESC")
+            {
+                jornadasLista = jornadasLista.OrderByDescending(t => t.ID);
+                jornadasLista = jornadasLista.Skip(pageIndex * pageSize).Take(pageSize);
+            }
+            else
+            {
+                jornadasLista = jornadasLista.OrderBy(t => t.ID);
+                jornadasLista = jornadasLista.Skip(pageIndex * pageSize).Take(pageSize);
+            }
+            var jsonData = new
+            {
+                total = totalPages,
+                page,
+                records = totalRecords,
+                rows = jornadasLista
+            };
+            return Json(jsonData);
+        }
 
         //[NonAction]
         //public void CargaInicial(string serieEquipo, int id_Campeonato, DateTime fechaInicial)

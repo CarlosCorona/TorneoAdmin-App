@@ -18,6 +18,7 @@ namespace TorneosAdmin.Web.Models
         public DbSet<EstadosCiviles> EstadosCiviles { get; set; }
         public DbSet<Inscripciones> Inscripciones { get; set; }
         public DbSet<Instrucciones> Instrucciones { get; set; }
+        public DbSet<Jornadas> Jornadas { get; set; }
         public DbSet<Jugadores> Jugadores { get; set; }
         public DbSet<Ligas> Ligas { get; set; }
         public DbSet<Menus> Menus { get; set; }

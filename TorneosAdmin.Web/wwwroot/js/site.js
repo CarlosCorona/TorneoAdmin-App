@@ -205,3 +205,52 @@ function enableTooltips(table) {
     $(table).find('.ui-pg-div').tooltip({ container: 'body' });
 }
 
+function insertaEquipos(item) {
+    // Test to see if the browser supports the HTML template element by checking
+    // for the presence of the template element's content attribute.
+    if ('content' in document.createElement('template')) {
+        var t = document.querySelector('#equipoRow'),
+            tr = t.content.querySelector("tr"),
+            td = t.content.querySelectorAll("td"),
+            pv = td[6].querySelectorAll(".profile-info-value");
+
+        $(tr[0]).attr("id", item.id);
+        // Instantiate the table with the existing HTML tbody    
+        td[1].textContent = item.liga;
+        td[2].textContent = item.categoria;
+        td[3].textContent = item.nombreEquipo;
+        td[4].querySelector('span').textContent = item.estado;
+        if (item.estado === 'INACTIVO') {
+            span = $(td[4].querySelector('span'));
+            span.removeClass("label-success arrowed-right arrowed-out");
+            span.addClass("label-danger arrowed-righ arrowed");
+        }
+        else {
+            span = $(td[4].querySelector('span'));
+            span.removeClass("label-danger arrowed-righ arrowed");
+            span.addClass("label-success arrowed-right arrowed-out");
+        }
+        var foto = td[6].querySelector('img');
+        if (item.foto == null)
+            $(foto).attr("src", "../images/avatars/noimagen.png");
+        else
+            $(foto).attr("src", "data: image / png; base64," + item.foto);
+        td[6].querySelector('.white').textContent = item.nombreEquipo;
+        pv[0].querySelector('span').textContent = item.nombreEquipo;
+        pv[1].querySelector('span').textContent = item.liga;
+        pv[2].querySelector('span').textContent = item.dirigente;
+        pv[3].querySelector('span').textContent = item.fundacion;
+        pv[4].querySelector('span').textContent = item.color;
+        pv[5].querySelector('span').textContent = item.jugadores;
+
+        // Clone the new row and insert it into the table
+        var tb = document.querySelector("#equipos-table tbody");
+        //debugger;
+        var clone = document.importNode(t.content, true);
+        tb.appendChild(clone);
+
+    } else {
+        // Find another way to add the rows to the table because 
+        // the HTML template element is not supported.
+    }
+}
