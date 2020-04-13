@@ -1,24 +1,23 @@
 {
   "format": 1,
   "restore": {
-    "D:\\AdminTorneos\\Web\\TorneosAdmin.Web\\TorneosAdmin.Web\\TorneosAdmin.Web.csproj": {}
+    "C:\\Users\\Fernando\\Source\\Repos\\CarlosCorona\\TorneoAdmin-App\\TorneosAdmin.Web\\TorneosAdmin.Web.csproj": {}
   },
   "projects": {
-    "D:\\AdminTorneos\\Web\\TorneosAdmin.Web\\TorneosAdmin.Web\\TorneosAdmin.Web.csproj": {
+    "C:\\Users\\Fernando\\Source\\Repos\\CarlosCorona\\TorneoAdmin-App\\TorneosAdmin.Web\\TorneosAdmin.Web.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "D:\\AdminTorneos\\Web\\TorneosAdmin.Web\\TorneosAdmin.Web\\TorneosAdmin.Web.csproj",
+        "projectUniqueName": "C:\\Users\\Fernando\\Source\\Repos\\CarlosCorona\\TorneoAdmin-App\\TorneosAdmin.Web\\TorneosAdmin.Web.csproj",
         "projectName": "TorneosAdmin.Web",
-        "projectPath": "D:\\AdminTorneos\\Web\\TorneosAdmin.Web\\TorneosAdmin.Web\\TorneosAdmin.Web.csproj",
-        "packagesPath": "C:\\Users\\carlo\\.nuget\\packages\\",
-        "outputPath": "D:\\AdminTorneos\\Web\\TorneosAdmin.Web\\TorneosAdmin.Web\\obj\\",
+        "projectPath": "C:\\Users\\Fernando\\Source\\Repos\\CarlosCorona\\TorneoAdmin-App\\TorneosAdmin.Web\\TorneosAdmin.Web.csproj",
+        "packagesPath": "C:\\Users\\Fernando\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\Fernando\\Source\\Repos\\CarlosCorona\\TorneoAdmin-App\\TorneosAdmin.Web\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
-          "C:\\Microsoft\\Xamarin\\NuGet\\",
-          "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder"
+          "C:\\Microsoft\\Xamarin\\NuGet\\"
         ],
         "configFilePaths": [
-          "C:\\Users\\carlo\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Users\\Fernando\\AppData\\Roaming\\NuGet\\NuGet.Config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Xamarin.Offline.config"
         ],
@@ -100,7 +99,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\3.1.200\\RuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\3.1.201\\RuntimeIdentifierGraph.json"
         }
       }
     }
