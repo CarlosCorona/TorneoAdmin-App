@@ -40,7 +40,7 @@ namespace TorneosAdmin.Web.Controllers
             var lista1 = _context.Ligas.ToDictionary(mc => mc.ID.ToString(), mc => mc.Nombre, StringComparer.OrdinalIgnoreCase);
             var lista2 = _context.Series.ToDictionary(mc => mc.ID.ToString(), mc => mc.Nombre, StringComparer.OrdinalIgnoreCase);
             var lista3 = _context.Categorias.ToDictionary(mc => mc.ID.ToString(), mc => mc.Nombre, StringComparer.OrdinalIgnoreCase);
-            var lista4 = _context.Dirigentes.ToDictionary(mc => mc.ID.ToString(), mc => mc.Nombre, StringComparer.OrdinalIgnoreCase);
+            var lista4 = _context.Dirigentes.ToDictionary(mc => mc.ID.ToString(), mc => mc.Nombre + " " + mc.Apellido, StringComparer.OrdinalIgnoreCase);
             lista1.Add("0", "Seleccione Liga");
             lista2.Add("0", "Seleccione Serie");
             lista3.Add("0", "Seleccione Categoría");
