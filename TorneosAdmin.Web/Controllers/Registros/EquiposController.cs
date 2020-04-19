@@ -76,7 +76,7 @@ namespace TorneosAdmin.Web.Controllers
                                    Liga = l.Nombre,
                                    Categoria = c.Nombre,
                                    Serie = s.Nombre,
-                                   Dirigente = d.Nombre,
+                                   Dirigente = d.Nombre + " " + d.Apellido,
                                    NombreEquipo = e.Nombre,
                                    e.Color,
                                    Fundacion = e.FechaFundacion.ToString("dd/MM/yyyy"),
@@ -120,6 +120,8 @@ namespace TorneosAdmin.Web.Controllers
                 // Al final de la modificación eliminamos el archivo
                 if (!string.IsNullOrWhiteSpace(equipos.NombreArchivo))
                     System.IO.File.Delete(path + "\\" + equipos.NombreArchivo);
+
+                return Ok(entidad);
             }
             catch (DbUpdateConcurrencyException ex)
             {
@@ -131,8 +133,6 @@ namespace TorneosAdmin.Web.Controllers
                 string errMsg = FormateadorCadenas.ObtenerMensajesErrores(ex);
                 return BadRequest(errMsg);
             }
-
-            return Ok(equipos);
         }
 
         [HttpPut]

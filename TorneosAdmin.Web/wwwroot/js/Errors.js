@@ -13,3 +13,12 @@
             'style="float:left; margin-right:.3em;"></span>' +
             response.responseText;
 }
+
+AgregarErrorDiv = function (response) {
+    $("#errorDiv").empty();
+    $("#errorDiv").append('<div class="alert alert-block alert-danger">' +
+        '<button type="button" class="close" data-dismiss="alert" >' +
+        '<i class="ace-icon fa fa-times red"></i></button> ' +
+        FormatedorMensajesError(response) + '</div>'
+    );
+}

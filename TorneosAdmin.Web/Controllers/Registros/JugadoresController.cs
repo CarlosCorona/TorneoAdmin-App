@@ -20,13 +20,14 @@ namespace TorneosAdmin.Web.Controllers
         }
 
         [HttpGet]
-        public JsonResult ObtenerJugadores(string si1dx, string sort, int page, int rows)
+        public JsonResult ObtenerJugadores(string si1dx, string sort, int page, int rows, int? equipoID)
         {
             sort = (sort == null) ? "" : sort;
+            equipoID = (equipoID == 0) ? null : equipoID;
             int pageIndex = Convert.ToInt32(page) - 1;
             int pageSize = rows;
 
-            var jugadoresLista = _context.Jugadores.Select(x => new
+            var jugadoresLista = _context.Jugadores.Where(x => x.EquipoID == equipoID).Select(x => new
             {
                 x.ID,
                 x.EquipoID,
@@ -176,18 +177,60 @@ namespace TorneosAdmin.Web.Controllers
             return Ok("Registro Actualizado");
         }
 
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> AsignarEquipo(int equipoID)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+            try
+            {
+                var entidades = _context.Jugadores.Where(x => x.EquipoID == null);
+                foreach (var item in entidades)
+                {
+                    item.EquipoID = equipoID;
+                }
+
+                _context.Jugadores.UpdateRange(entidades);
+                await _context.SaveChangesAsync();
+            }
+            catch (DbUpdateConcurrencyException ex)
+            {
+                string errMsg = FormateadorCadenas.ObtenerMensajesErrores(ex);
+                return BadRequest(errMsg);
+            }
+            catch (Exception ex)
+            {
+                string errMsg = FormateadorCadenas.ObtenerMensajesErrores(ex);
+                return BadRequest(errMsg);
+            }
+
+            return Ok("Registro Actualizado");
+        }
+
         [HttpPut]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Eliminar(int id)
+        public async Task<IActionResult> Eliminar(int id, bool nuevoEquipo)
         {
             try
             {
-                Jugadores entidad = _context.Jugadores.Find(id);
+                if (nuevoEquipo)
+                {
+                    Jugadores entidad = _context.Jugadores.Find(id);
+                    _context.Jugadores.Remove(entidad);
+                    await _context.SaveChangesAsync();
+                }
+                else
+                {
+                    Jugadores entidad = _context.Jugadores.Find(id);
 
-                entidad.Estado = !entidad.Estado;
+                    entidad.Estado = !entidad.Estado;
 
-                _context.Jugadores.Update(entidad);
-                await _context.SaveChangesAsync();
+                    _context.Jugadores.Update(entidad);
+                    await _context.SaveChangesAsync();
+                }
             }
             catch (DbUpdateConcurrencyException ex)
             {

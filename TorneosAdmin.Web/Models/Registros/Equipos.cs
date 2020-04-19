@@ -20,7 +20,7 @@ namespace TorneosAdmin.Web.Models
         [Required(ErrorMessage = "Ingrese el nombre.")]
         public string Nombre { get; set; }
 
-        [Required(ErrorMessage = "Ingrese el apellidp.")]
+        [Required(ErrorMessage = "Ingrese el color.")]
         public string Color { get; set; }
 
         [Required(ErrorMessage = "Ingrese la fecha inicio de fundación.")]

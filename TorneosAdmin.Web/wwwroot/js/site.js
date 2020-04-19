@@ -1,7 +1,6 @@
 ﻿// Please see documentation at https://docs.microsoft.com/aspnet/core/client-side/bundling-and-minification
 // for details on configuring this project to bundle and minify static web assets.
 
-// Write your JavaScript code.
 
 // Metodo para envíar siempre en las peticiones de ajas el ValidateAntiForgeryToken al servidor
 $(document).ajaxSend(function (event, jqXHR, options) {
@@ -68,8 +67,7 @@ function aceSwitch(cellvalue, options, cell) {
 //enable datepicker when editing inline
 function pickDate(cellvalue, options, cell) {
     setTimeout(function () {
-        $(cell).find('input[type=text]')
-            .datepicker({ format: 'dd/mm/yyyy', autoclose: true});
+        $(cell).find('input[type=text]').datepicker();
     }, 0);
 }
 
@@ -83,8 +81,8 @@ function telefonoCell(cellvalue, options, cell) {
 
 function style_edit_form(form) {
     //enable datepicker on "sdate" field and switches for "stock" field
-    form.find('input[name*="fecha"]').datepicker({ format: 'dd/mm/yyyy', autoclose: true })
-
+    form.find('input[name*="fecha"]').datepicker();
+    form.find('input[name*="fecha"]').datepicker('setDate', new Date());
     //Enable switch element when editing
     //form.find('input[name=estado]').addClass('ace ace-switch ace-switch-5').wrap('<label class="inline" />').after('<span class="lbl"></span>');
 
@@ -212,30 +210,30 @@ function insertaEquipos(item) {
         var t = document.querySelector('#equipoRow'),
             tr = t.content.querySelector("tr"),
             td = t.content.querySelectorAll("td"),
-            pv = td[6].querySelectorAll(".profile-info-value");
+            pv = td[7].querySelectorAll(".profile-info-value");
 
-        $(tr[0]).attr("id", item.id);
-        // Instantiate the table with the existing HTML tbody    
-        td[1].textContent = item.liga;
-        td[2].textContent = item.categoria;
-        td[3].textContent = item.nombreEquipo;
-        td[4].querySelector('span').textContent = item.estado;
+        // Instantiate the table with the existing HTML tbody 
+        td[1].textContent = item.id
+        td[2].textContent = item.liga;
+        td[3].textContent = item.categoria;
+        td[4].textContent = item.nombreEquipo;
+        td[5].querySelector('span').textContent = item.estado;
         if (item.estado === 'INACTIVO') {
-            span = $(td[4].querySelector('span'));
+            span = $(td[5].querySelector('span'));
             span.removeClass("label-success arrowed-right arrowed-out");
             span.addClass("label-danger arrowed-righ arrowed");
         }
         else {
-            span = $(td[4].querySelector('span'));
+            span = $(td[5].querySelector('span'));
             span.removeClass("label-danger arrowed-righ arrowed");
             span.addClass("label-success arrowed-right arrowed-out");
         }
         var foto = td[6].querySelector('img');
-        if (item.foto == null)
+        if (item.foto === null)
             $(foto).attr("src", "../images/avatars/noimagen.png");
         else
             $(foto).attr("src", "data: image / png; base64," + item.foto);
-        td[6].querySelector('.white').textContent = item.nombreEquipo;
+        td[7].querySelector('.white').textContent = item.nombreEquipo;
         pv[0].querySelector('span').textContent = item.nombreEquipo;
         pv[1].querySelector('span').textContent = item.liga;
         pv[2].querySelector('span').textContent = item.dirigente;
