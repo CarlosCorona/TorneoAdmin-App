@@ -54,6 +54,17 @@ function imageFormat(cellvalue, options, rowObject) {
     else
         return '<img src="data:image/png;base64,' + cellvalue + '" height="50" width="50"/>';
 }
+function imageUnFormat(cellvalue, options, cell) {
+    return $('img', cell).attr('src');
+}
+
+function imageFormatEdit(value, options) {
+    var el = document.createElement("img");
+    el.src = value;
+    el.width = 230;
+    el.height = 230;
+    return el;
+}
 
 //switch element when editing inline
 function aceSwitch(cellvalue, options, cell) {
@@ -90,7 +101,7 @@ function style_edit_form(form) {
     form.find('input[name=telefono]').mask('(999) 999-9999');
 
     //Spinner element when editing
-    form.find('input[name=carnet]').ace_spinner({ value: 0, min: 0, max: 200, step: 1, btn_up_class: 'btn-info', btn_down_class: 'btn-info' })
+    form.find('input[name=carnet]').ace_spinner({ value: 1, min: 0, max: 200, step: 1, btn_up_class: 'btn-info', btn_down_class: 'btn-info' })
 
     // Agregamos al campo para carga de archivos
     if (form.find('input[name=foto]').length > 0) {

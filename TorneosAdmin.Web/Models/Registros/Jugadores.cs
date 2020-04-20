@@ -39,8 +39,8 @@ namespace TorneosAdmin.Web.Models
         [Required(ErrorMessage = "Ingrese la fecha inicio de afiliaxción.")]
         public DateTime FechaAfiliacion { get; set; }
 
+        public bool Calificado { get; set; }
         public bool Estado { get; set; }
-
         public byte[] Foto { get; set; }
 
         [NotMapped]

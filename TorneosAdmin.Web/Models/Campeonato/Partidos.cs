@@ -5,7 +5,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace TorneosAdmin.Web.Models.Campeonato
+namespace TorneosAdmin.Web.Models
 {
     public class Partidos
     {
@@ -19,6 +19,10 @@ namespace TorneosAdmin.Web.Models.Campeonato
         public int ArbitroIDLateraDerecho { get; set; }
 
         public int ArbitroIDLateralIzquierdo { get; set; }
+
+        public string VocalEquipoLocal { get; set; }
+
+        public string VocalEquipoVisitante { get; set; }
 
         [Required(ErrorMessage = "Ingrese la fecha del partido.")]
         public DateTime FechaHora { get; set; }

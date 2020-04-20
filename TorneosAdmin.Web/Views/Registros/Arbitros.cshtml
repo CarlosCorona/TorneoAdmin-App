@@ -11,7 +11,7 @@
         Árbitros
         <small>
             <i class="ace-icon fa fa-angle-double-right"></i>
-            Esta sección es para alta, baja y actulización de un árbitro.
+            Esta sección es para alta, baja y actualización de un árbitro.
         </small>
     </h1>
 </div><!-- /.page-header -->
@@ -27,7 +27,11 @@
             <i class="ace-icon fa fa-hand-o-right"></i>
             Todas las fotos seran modificadas en la aplicación para tener una resolución de 400 x 420 pixeles.
         </div>
-
+        <h4>
+            <i class="ace-icon fas fa-hand-point-right icon-animated-hand-pointer blue"></i>
+            <a id="btnAgregaArbitro" class="blue"> Agregar Árbitro </a>
+        </h4>
+        <br />
         <table id="grid-table"></table>
         <div id="grid-pager"></div>
 
@@ -42,6 +46,11 @@
         var NombreArchivoFoto = '';
 
         jQuery(function ($) {
+
+            // boton para agrega un nuevo dirigente.
+            $("#btnAgregaArbitro").on("click", function () {
+                addRow();
+            });
 
             var grid_selector = "#grid-table";
             var pager_selector = "#grid-pager";
@@ -67,18 +76,64 @@
                 datatype: 'json',
                 mtype: 'GET',
                 height: 400,
-                colNames: ['ID', 'Cédula de identidad', 'Nombre', 'Apellido', 'Dirección', 'País', 'Teléfono', 'Correo Electrónico', 'Activo', 'Foto'],
+                colNames: ['ID', 'Cédula de identidad', 'Nombre', 'Apellido', 'Dirección', 'País', 'Teléfono', 'Correo Electrónico', 'Activo', 'Foto', ''],
                 colModel: [
                     { key: true, hidden: true, name: 'id', index: 'id', editable: true },
                     { name: 'cedula', index: 'cedula', width: 100, editable: true, editoptions: { size: "20", maxlength: "10" } },
                     { name: 'nombre', index: 'nombre', width: 150, editable: true, editoptions: { size: "20", maxlength: "100" } },
                     { name: 'apellido', index: 'apellido', width: 150, editable: true, editoptions: { size: "20", maxlength: "100" } },
-                    { name: 'direccion', index: 'direccion', width: 150, editable: true, editoptions: { size: "20", maxlength: "100" } },
+                    { name: 'direccion', index: 'direccion', width: 150, hidden: true, editable: true, editrules: { edithidden: true }, editoptions: { size: "20", maxlength: "100" } },
                     { name: 'pais', index: 'pais', width: 150, editable: true, editoptions: { size: "20", maxlength: "100" } },
-                    { name: 'telefono', index: 'telefono', width: 150, editable: true, editoptions: { size: "20", maxlength: "15" } },
-                    { name: 'correoElectronico', index: 'correoElectronico', width: 200, editable: true, editoptions: { size: "20", maxlength: "100" } },
+                    { name: 'telefono', index: 'telefono', width: 150, hidden: true, editable: true, editrules: { edithidden: true }, editoptions: { size: "20", maxlength: "15" } },
+                    { name: 'correoElectronico', index: 'correoElectronico', width: 200, hidden: true, editable: true, editrules: { edithidden: true }, editoptions: { size: "20", maxlength: "100" } },
                     { name: 'estado', index: 'estado', width: 70, editable: false, edittype: "checkbox", align: 'center', formatter: checkTable },
-                    { name: 'foto', index: 'foto', width: 150, align: 'center', editable: true, edittype: "file", editoptions: { enctype: 'multipart/form-data' }, formatter: imageFormat }
+                    { name: 'foto', index: 'foto', width: 150, align: 'center', editable: true, edittype: "file", editoptions: { enctype: 'multipart/form-data' }, formatter: imageFormat },
+                    {
+                        name: 'myac', width: 80, fixed: true, sortable: false, resize: false, formatter: 'actions',
+                        formatoptions: {
+                            key: true,
+                            editbutton: true,
+                            delbutton: true,
+                            editformbutton: true,
+                            editOptions: {
+                                url: "/Arbitros/Editar",
+                                mtype: 'PUT',
+                                modal: true,
+                                closeAfterEdit: true,
+                                recreateForm: true,
+                                beforeShowForm: function (e) {
+                                    var form = $(e[0]);
+                                    form.closest('.ui-jqdialog').find('.ui-jqdialog-titlebar').wrapInner('<div class="widget-header" />')
+                                    style_edit_form(form);
+                                },
+                                onClose: function (formId) {
+                                    if (NombreArchivoFoto !== '')
+                                        ElimarFoto();
+                                },
+                                editData: {
+                                    NombreArchivo: function () { return NombreArchivoFoto; }
+                                },
+                                errorTextFormat: FormatedorMensajesError
+                            },
+                            delOptions: {
+                                url: "/Arbitros/Eliminar",
+                                mtype: 'PUT',
+                                modal: true,
+                                recreateForm: true,
+                                width: 400,
+                                beforeShowForm: function (e) {
+                                    var form = $(e[0]);
+                                    if (form.data('styled')) return false;
+
+                                    form.closest('.ui-jqdialog').find('.ui-jqdialog-titlebar').wrapInner('<div class="widget-header" />')
+                                    style_delete_form(form);
+
+                                    form.data('styled', true);
+                                },
+                                errorTextFormat: FormatedorMensajesError
+                            }
+                        }
+                    }
                 ],
 
                 viewrecords: true,
@@ -105,46 +160,12 @@
 
             $(window).triggerHandler('resize.jqGrid');//trigger window resize to make the grid get the correct size
 
-            //navButtons
-            jQuery(grid_selector).jqGrid('navGrid', pager_selector,
-                { 	//navbar options
-                    edit: true,
-                    editicon: 'ace-icon fas fa-pencil-alt blue',
-                    add: true,
-                    addicon: 'ace-icon fas fa-plus-circle purple',
-                    del: true,
-                    delicon: 'ace-icon fas fa-trash-alt red',
-                    search: true,
-                    searchicon: 'ace-icon fas fa-search orange',
-                    refresh: true,
-                    refreshicon: 'ace-icon fas fa-sync-alt green',
-                    view: true,
-                    viewicon: 'ace-icon fas fa-search-plus grey',
-                },
-                {
-                    //edit record form
-                    //closeAfterEdit: true,
-                    //width: 700,
-                    url: "/Arbitros/Editar",
-                    mtype: 'PUT',
-                    closeAfterEdit: true,
-                    recreateForm: true,
-                    beforeShowForm: function (e) {
-                        var form = $(e[0]);
-                        form.closest('.ui-jqdialog').find('.ui-jqdialog-titlebar').wrapInner('<div class="widget-header" />')
-                        style_edit_form(form);
-                        NombreArchivoFoto = '';
-                    },
-                    editData: {
-                        NombreArchivo: function () { return NombreArchivoFoto; }
-                    },
-                    errorTextFormat: FormatedorMensajesError,
-                },
-                {
-                    //new record form
-                    //width: 700,
+            function addRow() {
+                // Get the currently selected row
+                $(grid_selector).jqGrid('editGridRow', 'new', {
                     url: "/Arbitros/Crear",
                     mtype: 'POST',
+                    modal: true,
                     closeAfterAdd: true,
                     recreateForm: true,
                     viewPagerButtons: false,
@@ -155,58 +176,16 @@
                         style_edit_form(form);
                         NombreArchivoFoto = '';
                     },
+                    onClose: function (formId) {
+                        if (NombreArchivoFoto !== '')
+                            ElimarFoto();
+                    },
                     editData: {
                         NombreArchivo: function () { return NombreArchivoFoto; }
                     },
-                    errorTextFormat: FormatedorMensajesError,
-                },
-                {
-                    //delete record form
-                    url: "/Arbitros/Eliminar",
-                    mtype: 'PUT',
-                    recreateForm: true,
-                    width: 400,
-                    beforeShowForm: function (e) {
-                        var form = $(e[0]);
-                        if (form.data('styled')) return false;
-
-                        form.closest('.ui-jqdialog').find('.ui-jqdialog-titlebar').wrapInner('<div class="widget-header" />')
-                        style_delete_form(form);
-
-                        form.data('styled', true);
-                    },
-                    errorTextFormat: FormatedorMensajesError,
-                    onClick: function (e) {
-                        //alert(1);
-                    }
-                },
-                {
-                    //search form
-                    recreateForm: true,
-                    afterShowSearch: function (e) {
-                        var form = $(e[0]);
-                        form.closest('.ui-jqdialog').find('.ui-jqdialog-title').wrap('<div class="widget-header" />')
-                        style_search_form(form);
-                    },
-                    afterRedraw: function () {
-                        style_search_filters($(this));
-                    }
-                    ,
-                    multipleSearch: true,
-                    /**
-                    multipleGroup:true,
-                    showQuery: true
-                    */
-                },
-                {
-                    //view record form
-                    recreateForm: true,
-                    beforeShowForm: function (e) {
-                        var form = $(e[0]);
-                        form.closest('.ui-jqdialog').find('.ui-jqdialog-title').wrap('<div class="widget-header" />')
-                    }
-                }
-            )
+                    errorTextFormat: FormatedorMensajesError
+                });
+            }
 
             $(document).one('ajaxloadstart.page', function (e) {
                 $.jgrid.gridDestroy(grid_selector);
@@ -266,4 +245,3 @@
         }
     </script>
 }
-

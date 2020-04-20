@@ -25,6 +25,7 @@ namespace TorneosAdmin.Web.Models
         public DbSet<Pagos> Pagos { get; set; }
         public DbSet<PagosInscripciones> PagosInscripciones { get; set; }
         public DbSet<Parroquias> Parroquias { get; set; }
+        public DbSet<Partidos> Partidos { get; set; }
         public DbSet<PartidosEstados> PartidosEstados { get; set; }
         public DbSet<Permisos> Permisos { get; set; }
         public DbSet<Profesiones> Profesiones { get; set; }

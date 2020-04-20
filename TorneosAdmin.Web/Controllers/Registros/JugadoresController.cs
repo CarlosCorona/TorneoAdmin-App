@@ -43,6 +43,7 @@ namespace TorneosAdmin.Web.Controllers
                 x.Carnet,
                 x.FechaAfiliacion,
                 x.Estado,
+                x.Calificado,
                 x.Foto
             });
             int totalRecords = jugadoresLista.Count();
@@ -97,6 +98,7 @@ namespace TorneosAdmin.Web.Controllers
                     Foto = string.IsNullOrWhiteSpace(jugadores.NombreArchivo) == false ? FormateadorImagen.CambiarTamanio(path + "\\" + jugadores.NombreArchivo, 275, 350) : null,
 
                     //Valores fijos
+                    Calificado = false,
                     Estado = true
                 };
 
@@ -162,6 +164,37 @@ namespace TorneosAdmin.Web.Controllers
                 // Al final de la modificación eliminamos el archivo
                 if (!string.IsNullOrWhiteSpace(jugadores.NombreArchivo))
                     System.IO.File.Delete(path + "\\" + jugadores.NombreArchivo);
+            }
+            catch (DbUpdateConcurrencyException ex)
+            {
+                string errMsg = FormateadorCadenas.ObtenerMensajesErrores(ex);
+                return BadRequest(errMsg);
+            }
+            catch (Exception ex)
+            {
+                string errMsg = FormateadorCadenas.ObtenerMensajesErrores(ex);
+                return BadRequest(errMsg);
+            }
+
+            return Ok("Registro Actualizado");
+        }
+
+        [HttpPut]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Calificar(int id)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+            try
+            {
+                Jugadores entidad = _context.Jugadores.Find(id);
+
+                entidad.Calificado = true;
+
+                _context.Jugadores.Update(entidad);
+                await _context.SaveChangesAsync();
             }
             catch (DbUpdateConcurrencyException ex)
             {

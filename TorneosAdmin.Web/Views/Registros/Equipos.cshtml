@@ -359,6 +359,7 @@
                     else title.text($title);
                 }
             }));
+            // Configuración para colocar para habilitar la edición en el dialogo del jugador
             $.widget("ui.dialog", $.ui.dialog, {
                 _allowInteraction: function (event) {
                     return !!$(event.target).closest(".ui-jqdialog").length || this._super(event);
@@ -873,8 +874,19 @@
                 });
 
                 deferred.done(function (result) {
-                    console.log('Se cargo el archivo: ' + result.foto + ' en del servidor');
-                    $("#FotoEquipo").val(result.foto);
+                    if ($("#FotoEquipo").val() !== '') {
+                        $.post('@Url.Action("ElimintarFoto", "Equipo")', { archivo: $("#FotoEquipo").val() }).done(function (response) {
+                            console.log('El archivo: ' + $("#FotoEquipo").val() + ' es reemplazado por ' + result.foto + 'en el servidor');
+                            $("#FotoEquipo").val(result.foto);
+                        }).fail(function (error) {
+                            console.log('El no se elimno el archivo: ' + NombreArchivoFoto + ' en el servidor');
+                            $("#FotoEquipo").val(result.foto);
+                        });
+                    }
+                    else {
+                        console.log('Se cargo el archivo: ' + result.foto + ' en del servidor');
+                        $("#FotoEquipo").val(result.foto);
+                    }
                 }).fail(function (jqXHR, textStatus, errorThrown) {
                     alert('error al cargar el archivo')
                 });
@@ -913,8 +925,19 @@
                 });
 
                 deferred.done(function (result) {
-                    console.log('Se cargo el archivo: ' + result.foto + ' en del servidor');
-                    NombreArchivoFoto = result.foto;
+                    if (NombreArchivoFoto !== '') {
+                        $.post('@Url.Action("ElimintarFoto", "Jugadores")', { archivo: NombreArchivoFoto }).done(function (response) {
+                            console.log('El archivo: ' + NombreArchivoFoto + ' es reemplazado por ' + result.foto + 'en el servidor');
+                            NombreArchivoFoto = result.foto;
+                        }).fail(function (error) {
+                            console.log('El no se elimno el archivo: ' + NombreArchivoFoto + ' en el servidor');
+                            NombreArchivoFoto = result.foto;
+                        });
+                    }
+                    else {
+                        console.log('Se cargo el archivo: ' + result.foto + ' en del servidor');
+                        NombreArchivoFoto = result.foto;
+                    }
                 }).fail(function (jqXHR, textStatus, errorThrown) {
                     alert('error al cargar el archivo')
                 });
