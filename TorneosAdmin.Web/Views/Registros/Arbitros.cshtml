@@ -101,8 +101,7 @@
                                 modal: true,
                                 closeAfterEdit: true,
                                 recreateForm: true,
-                                beforeShowForm: function (e) {
-                                    var form = $(e[0]);
+                                beforeShowForm: function (form) {
                                     form.closest('.ui-jqdialog').find('.ui-jqdialog-titlebar').wrapInner('<div class="widget-header" />')
                                     style_edit_form(form);
                                 },
@@ -121,8 +120,7 @@
                                 modal: true,
                                 recreateForm: true,
                                 width: 400,
-                                beforeShowForm: function (e) {
-                                    var form = $(e[0]);
+                                beforeShowForm: function (form) {
                                     if (form.data('styled')) return false;
 
                                     form.closest('.ui-jqdialog').find('.ui-jqdialog-titlebar').wrapInner('<div class="widget-header" />')
@@ -169,10 +167,8 @@
                     closeAfterAdd: true,
                     recreateForm: true,
                     viewPagerButtons: false,
-                    beforeShowForm: function (e) {
-                        var form = $(e[0]);
-                        form.closest('.ui-jqdialog').find('.ui-jqdialog-titlebar')
-                            .wrapInner('<div class="widget-header" />')
+                    beforeShowForm: function (form) {
+                        form.closest('.ui-jqdialog').find('.ui-jqdialog-titlebar').wrapInner('<div class="widget-header" />')
                         style_edit_form(form);
                         NombreArchivoFoto = '';
                     },

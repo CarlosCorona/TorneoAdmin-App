@@ -37,6 +37,13 @@ namespace TorneosAdmin.Web.Controllers
 
         public IActionResult Jornadas()
         {
+            var lista1 = _context.Campeonatos.ToDictionary(mc => mc.ID.ToString(), mc => mc.Nombre, StringComparer.OrdinalIgnoreCase);
+            var lista2 = _context.Categorias.ToDictionary(mc => mc.ID.ToString(), mc => mc.Nombre, StringComparer.OrdinalIgnoreCase);
+            var lista3 = _context.Series.ToDictionary(mc => mc.ID.ToString(), mc => mc.Nombre, StringComparer.OrdinalIgnoreCase);
+            ViewBag.CampeonatosLista = lista1;
+            ViewBag.CategoriasLista = lista2;
+            ViewBag.SeriesLista = lista3;
+
             return View();
         }
 

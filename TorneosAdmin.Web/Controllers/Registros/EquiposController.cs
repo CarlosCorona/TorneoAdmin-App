@@ -63,6 +63,12 @@ namespace TorneosAdmin.Web.Controllers
         }
 
         [HttpGet]
+        public JsonResult ObtenerFotoEquipo(int equipoID)
+        {
+            return Json(_context.Equipos.Find(equipoID).Foto);
+        }
+
+        [HttpGet]
         public JsonResult ObtenerEquiposVista()
         {
             var equiposLista = from e in _context.Equipos
@@ -108,7 +114,7 @@ namespace TorneosAdmin.Web.Controllers
                     Nombre = equipos.Nombre,
                     Color = equipos.Color,
                     FechaFundacion = equipos.FechaFundacion,
-                    Foto = string.IsNullOrWhiteSpace(equipos.NombreArchivo) == false ? FormateadorImagen.CambiarTamanio(path + "\\" + equipos.NombreArchivo, 600, 400) : null,
+                    Foto = string.IsNullOrWhiteSpace(equipos.NombreArchivo) == false ? FormateadorImagen.CambiarTamanio(path + "\\" + equipos.NombreArchivo, 200, 200) : null,
 
                     //Valores fijos
                     Estado = true
@@ -161,7 +167,7 @@ namespace TorneosAdmin.Web.Controllers
                 {
                     if (System.IO.File.Exists(path + "\\" + equipos.NombreArchivo))
                     {
-                        entidad.Foto = FormateadorImagen.CambiarTamanio(path + "\\" + equipos.NombreArchivo, 600, 400);
+                        entidad.Foto = FormateadorImagen.CambiarTamanio(path + "\\" + equipos.NombreArchivo, 200, 200);
                     }
                 }
 

@@ -38,7 +38,7 @@
             </h4>
             <div class="hr hr-18 dotted hr-double"></div>
             <div class="col-xs-12">
-                <table id="equipos-table" class="table  table-bordered table-hover">
+                <table id="equipos-table" width="100%" class="table  table-bordered table-hover">
                     <thead>
                         <tr>
                             <th class="hidden">Equipo</th>
@@ -221,12 +221,12 @@
                 <td id="ligaRow"></td>
                 <td id="CategoriaRow"></td>
                 <td id="Nombre"></td>
-                <td class="hidden-480">
+                <td>
                     <span id="estado" class="label"></span>
                 </td>
 
-                <td>
-                    <div class="hidden-sm hidden-xs btn-group">
+                <td style="min-width:170px">
+                    <div class="btn-group">
                         <button id="Editar" class="btn btn-xs btn-info">
                             <i class="ace-icon fas fa-pen-alt bigger-120"></i>
                         </button>
@@ -245,11 +245,11 @@
                 <td colspan="8">
                     <div class="table-detail">
                         <div class="row">
-                            <div class="col-xs-12 col-sm-2">
+                            <div class="col-xs-12 col-sm-4">
                                 <div class="text-center">
-                                    <img height="150" class="thumbnail inline no-margin-bottom" alt="Equipos" src="~/images/Portada/galeria3.jpeg" />
+                                    <img height="150" class="thumbnail inline no-margin-bottom" alt="Equipos" src="" />
                                     <br />
-                                    <div class="width-80 label label-info label-xlg arrowed-in arrowed-in-right">
+                                    <div class="width-100 label label-info label-xlg arrowed-in arrowed-in-right" style="max-width:200px">
                                         <div class="inline position-relative">
                                             <a class="user-title-label" href="#">
                                                 <span class="white"></span>
@@ -765,11 +765,11 @@
                         $("#errorDiv").empty();
                         $('#EquipoArchivo').ace_file_input('reset_input_ui');
                         ElimarFotoEquipo();
-                        $("#formLiga option:contains(" + datos.liga + ")").attr('selected', 'selected');
-                        $("#formCategoria option:contains(" + datos.categoria + ")").attr('selected', 'selected');
+                        $("#formLiga option").filter(function () { return this.text == datos.liga; }).prop('selected', true);
                         $("#formCategoria").removeAttr("disabled");
-                        $("#formSerie option:contains(" + datos.serie + ")").attr('selected', 'selected');
-                        $("#formDirigente option:contains(" + datos.dirigente + ")").attr('selected', 'selected');
+                        $("#formCategoria option").filter(function () { return this.text == datos.categoria; }).prop('selected', true);
+                        $("#formSerie option").filter(function () { return this.text == datos.serie; }).prop('selected', true);
+                        $("#formDirigente option").filter(function () { return this.text == datos.dirigente; }).prop('selected', true);
                         $("#NombreEquipo").val(datos.nombreEquipo);
                         $("#FundacionEquipo").val(datos.fundacion);
                         $("#ColorEquipo").val(datos.color);

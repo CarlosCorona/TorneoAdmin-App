@@ -95,7 +95,7 @@ namespace TorneosAdmin.Web.Controllers
                     FechaNacimiento = jugadores.FechaNacimiento,
                     Carnet = jugadores.Carnet,
                     FechaAfiliacion = jugadores.FechaAfiliacion,
-                    Foto = string.IsNullOrWhiteSpace(jugadores.NombreArchivo) == false ? FormateadorImagen.CambiarTamanio(path + "\\" + jugadores.NombreArchivo, 275, 350) : null,
+                    Foto = string.IsNullOrWhiteSpace(jugadores.NombreArchivo) == false ? FormateadorImagen.CambiarTamanio(path + "\\" + jugadores.NombreArchivo, 100, 200) : null,
 
                     //Valores fijos
                     Calificado = false,
@@ -154,7 +154,7 @@ namespace TorneosAdmin.Web.Controllers
                 {
                     if (System.IO.File.Exists(path + "\\" + jugadores.NombreArchivo))
                     {
-                        entidad.Foto = FormateadorImagen.CambiarTamanio(path + "\\" + jugadores.NombreArchivo, 275, 350);
+                        entidad.Foto = FormateadorImagen.CambiarTamanio(path + "\\" + jugadores.NombreArchivo, 100, 200);
                     }
                 }
 

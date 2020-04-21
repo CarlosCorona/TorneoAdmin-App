@@ -4,5 +4,87 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<h2>Jornadas</h2>
+@Html.AntiForgeryToken()
 
+<div class="page-header">
+    <h1>
+        Jornadas
+        <small>
+            <i class="ace-icon fa fa-angle-double-right"></i>
+            Esta sección es para alta, baja y actualización de inscripciones.
+        </small>
+    </h1>
+</div><!-- /.page-header -->
+
+<div class="row">
+    <div class="col-xs-12">
+        <!-- PAGE CONTENT BEGINS -->
+        @*<div class="alert alert-warning">
+            <button class="close" data-dismiss="alert">
+                <i class="ace-icon fa fa-times"></i>
+            </button>
+
+            <i class="ace-icon fa fa-hand-o-right"></i>
+            Todas las fotos seran modificadas en la aplicación para tener una resolución de 600 x 400 pixeles.
+        </div>*@
+        <h4>
+            <div class="form-inline">
+                <i class="ace-icon fas fa-hand-point-right icon-animated-hand-pointer blue"></i>
+                <select class="form-control" id="formCampeonatos">
+                    @foreach (var item in ViewBag.CampeonatosLista)
+                    {
+                        <option value="@item.Key">@item.Value</option>
+                    }
+                </select>
+                &nbsp;
+                <select class="form-control" id="formCategoria">
+                    @foreach (var item in ViewBag.CategoriasLista)
+                    {
+                        <option value="@item.Key">@item.Value</option>
+                    }
+                </select>
+                &nbsp;
+                <select class="form-control" id="formSerie">
+                    @foreach (var item in ViewBag.SeriesLista)
+                    {
+                        <option value="@item.Key">@item.Value</option>
+                    }
+                </select>
+            </div>
+        </h4>
+        <br />
+        <div class="tabbable">
+            <ul id="myTab" class="nav nav-tabs tab-color-blue background-blue">
+                <li class="active">
+                    <a href="#Ronda1" data-toggle="tab">Ronda 1</a>
+                </li>
+                <li>
+                    <a href="#Ronda2" data-toggle="tab">Ronda 2</a>
+                </li>
+                <li>
+                    <a href="#Ronda3" data-toggle="tab">Ronda 3</a>
+                </li>
+            </ul>
+
+            <div class="tab-content" style="height:500px;">
+                <div class="tab-pane in active" id="#Ronda1">
+                    <button type="submit" class="pull-right btn btn-sm btn-primary">
+                        <i class="ace-icon fas fa-pen-fancy"></i>
+                        <span class="bigger-110">Generar</span>
+                    </button>
+
+
+
+                </div>
+                <div class="tab-pane" id="#Ronda2">
+                    profile tab content
+                </div>
+                <div class="tab-pane" id="#Ronda3">
+                    profile tab content
+                </div>
+            </div>
+
+        </div>
+        <!-- PAGE CONTENT ENDS -->
+    </div><!-- /.col -->
+</div><!-- /.row -->

@@ -26,6 +26,18 @@ function isJson(item) {
     return false;
 }
 
+//configurar columna para ser editable solo en nuevo elemento.
+editableInAddForm = function (options) {
+    debugger;
+    if (options.mode === "addForm") {
+        return true;
+    }
+    if (options.mode === "editForm") {
+        return "disabled";
+    }
+    return false; // don't allows editing in other editing modes
+}
+
 //Formatear la fecha 
 Date.prototype.ddmmyyyy = function () {
     var mm = this.getMonth() + 1; // getMonth() is zero-based
@@ -54,6 +66,15 @@ function imageFormat(cellvalue, options, rowObject) {
     else
         return '<img src="data:image/png;base64,' + cellvalue + '" height="50" width="50"/>';
 }
+function imageFormatEquipo(cellvalue, options, rowObject) {
+    
+    $.get("../Equipos/ObtenerFotoEquipo", { equipoID: cellvalue} ,function (data) {
+        $("#fotoEquipo_" + cellvalue).attr("src", "data:image/png;base64," + data);
+    });
+    return '<img id="fotoEquipo_' + cellvalue + '" height="50" width="50"/>';
+}
+
+//Obtener el valor para su edición
 function imageUnFormat(cellvalue, options, cell) {
     return $('img', cell).attr('src');
 }
@@ -239,7 +260,7 @@ function insertaEquipos(item) {
             span.removeClass("label-danger arrowed-righ arrowed");
             span.addClass("label-success arrowed-right arrowed-out");
         }
-        var foto = td[6].querySelector('img');
+        var foto = td[7].querySelector('img');
         if (item.foto === null)
             $(foto).attr("src", "../images/avatars/noimagen.png");
         else
