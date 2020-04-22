@@ -1,9 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using TorneosAdmin.Web.Extensiones;
 using TorneosAdmin.Web.Identidad;
 using TorneosAdmin.Web.Models;
 
@@ -21,140 +24,200 @@ namespace TorneosAdmin.Web.Controllers
         }
 
         [HttpGet]
-        public JsonResult ObtenerJornadas(string si1dx, string sort, int page, int rows)
+        public JsonResult ObtenerJornadasVista(int campeonatoID, int categoriaId, int serieID )
         {
-            sort = (sort == null) ? "" : sort;
-            int pageIndex = Convert.ToInt32(page) - 1;
-            int pageSize = rows;
-
-            var jornadasLista = _context.Jornadas.Select(x => new
-            {
-                x.ID,
-                x.CampeonatoID,
-                x.CategoriaID,
-                x.SerieID,
-                x.PartidoID,
-                x.EquipoIDLocal,
-                x.EquipoIDVisita,
-                x.GrupoJornada
-            });
-            int totalRecords = jornadasLista.Count();
-            var totalPages = (int)Math.Ceiling((float)totalRecords / (float)rows);
-
-            if (sort.ToUpper() == "DESC")
-            {
-                jornadasLista = jornadasLista.OrderByDescending(t => t.ID);
-                jornadasLista = jornadasLista.Skip(pageIndex * pageSize).Take(pageSize);
-            }
-            else
-            {
-                jornadasLista = jornadasLista.OrderBy(t => t.ID);
-                jornadasLista = jornadasLista.Skip(pageIndex * pageSize).Take(pageSize);
-            }
-            var jsonData = new
-            {
-                total = totalPages,
-                page,
-                records = totalRecords,
-                rows = jornadasLista
-            };
-            return Json(jsonData);
+            var jornadasLista = from j in _context.Jornadas
+                               join p in _context.Partidos on j.PartidoID equals p.ID
+                               where j.CampeonatoID == campeonatoID && j.CategoriaID == categoriaId && j.SerieID == serieID
+                               select new
+                               {
+                                   j.ID,
+                                   j.EquipoIDLocal,
+                                   j.EquipoIDVisita,
+                                   j.GrupoJornada,
+                                   j.Ronda,
+                                   PartidoID = p.ID,
+                                   FechaPartido = p.FechaHora.ToString("ddd", new CultureInfo("es-EC")) + " " + p.FechaHora.ToString("dd/MM/yyyy"),
+                                   HoraPartido = p.FechaHora.ToString("HH:mm")
+                               };
+            return Json(jornadasLista);
         }
 
-        //[NonAction]
-        //public void CargaInicial(string serieEquipo, int id_Campeonato, DateTime fechaInicial)
-        //{
-        //    // Obtenemos los equipos
-        //    var equipos = _context.Equipo.Where(e => e.serie == serieEquipo).ToList();
+        [HttpPost]
+        public IActionResult CargaInicial(JornadasCargaInicial jornadasCargaInicial)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+            if (jornadasCargaInicial.Dias[0] == null)
+            {
+                return BadRequest("Deben seleccionar al menos un dia a configurar.");
+            }
 
-        //    // Colocamos todos los id de equipos en una matriz
-        //    int indice = 0;
-        //    int[] matriz = new int[equipos.Count()];
-        //    equipos.ForEach(delegate (Equipo equipo)
-        //    {
-        //        matriz[indice] = equipo.Id_Equipo;
-        //        indice++;
-        //    });
+            var juegos = _context.Jornadas.Where(x =>
+                                                 x.CampeonatoID == jornadasCargaInicial.CampeonatoID &&
+                                                 x.CategoriaID == jornadasCargaInicial.CategoriaID &&
+                                                 x.SerieID == jornadasCargaInicial.SerieID &&
+                                                 x.Ronda == jornadasCargaInicial.Ronda).ToList();
+            if(juegos.Count>0)
+                return BadRequest("Ya existe fechas configuradas.");
+
+            try
+            {
+                // Obtenemos los dias
+                int indice = 0;
+                int[] dias = new int[jornadasCargaInicial.Dias.Count()];
+                foreach (var item in jornadasCargaInicial.Dias)
+                {
+                    dias[indice] = Convert.ToInt32(item);
+                    indice++;
+                }
+
+                // Obtenemos los equipos que se han inscripto en el campeonato
+                var equipos = (from e in _context.Equipos
+                               join i in _context.Inscripciones on e.ID equals i.EquipoID
+                               where i.CampeonatoID == jornadasCargaInicial.CampeonatoID
+                               select e).OrderBy(x=> x.ID).ToList();
+
+                // Colocamos todos los id de equipos en una matriz
+                indice = 0;
+                int[] matriz = new int[equipos.Count()];
+                equipos.ForEach(delegate (Equipos equipo)
+                {
+                    matriz[indice] = equipo.ID;
+                    indice++;
+                });
 
 
-        //    // Se calcula el numero de fechas a realizarse
-        //    int fechas = equipos.Count();
-        //    if ((fechas) % 2 == 0)
-        //    {
-        //        //Si es numero impar el total de equipos se resta 1
-        //        fechas = fechas - 1;
-        //    }
+                // Se calcula el numero de fechas a realizarse
+                int fechas = equipos.Count();
+                if ((fechas) % 2 == 0)
+                {
+                    //Si es numero impar el total de equipos se resta 1
+                    fechas = fechas - 1;
+                }
 
-        //    // Obtenemos el primer sabado para serie A y domingo para la serie B con las 8 horas
-        //    if (serieEquipo == "A")
-        //        fechaInicial = fechaInicial.AddDays(6 - (int)fechaInicial.DayOfWeek).AddHours(8);
-        //    else
-        //        fechaInicial = fechaInicial.AddDays(7 - (int)fechaInicial.DayOfWeek).AddHours(8);
+                // Obtenemos primer dia de las jornadas.
+                DateTime fechaInicial; 
+                int dia = (int)jornadasCargaInicial.FechaInicial.DayOfWeek;
+                if (dias.Contains(dia))
+                {
+                    fechaInicial = jornadasCargaInicial.FechaInicial.AddHours(jornadasCargaInicial.Hora);
+                }
+                else {
+                    int i = dias.Max();
+                    if (dia > i)
+                        fechaInicial = jornadasCargaInicial.FechaInicial.AddDays(7 + (dias.Min() - dia)).AddHours(jornadasCargaInicial.Hora);
+                    else {
+                        i = 0;
+                        for (int x = 0; x < dias.Length; x++)
+                        {
+                            if (dias[x] > dia)
+                            {
+                                i = dias[x];
+                                break;
+                            }
+                        }
+                        fechaInicial = jornadasCargaInicial.FechaInicial.AddDays(i - dia).AddHours(jornadasCargaInicial.Hora);
+                    }
+                }
+                //Guardamos El dia que iniciamos
+                dia = (int)fechaInicial.DayOfWeek;
 
-        //    //Pasamos todas las jornadas
-        //    for (int x = 1; x <= fechas; x++)
-        //    {
-        //        int i = 0;
+                //Pasamos todas las jornadas
+                for (int x = 1; x <= fechas; x++)
+                {
+                    int i = 0;
 
-        //        // Insertamos en base de datos los registros de las jornadas
-        //        for (int j = equipos.Count() - 1; i < j; j--)
-        //        {
-        //            // Creamos el partido primero
-        //            Partido partido = new Partido();
-        //            partido.FechaHora = fechaInicial;
-        //            _context.Partido.Add(partido);
-        //            _context.SaveChanges();
+                    // Insertamos en base de datos los registros de las jornadas
+                    for (int j = equipos.Count() - 1; i < j; j--)
+                    {
+                        // Creamos el partido primero
+                        Partidos partido = new Partidos();
+                        partido.PartidoEstadoID = 1;
+                        partido.FechaHora = fechaInicial;
+                        _context.Partidos.Add(partido);
+                        _context.SaveChanges();
 
-        //            //Creamos la jornada y pasamos el id del partido
-        //            Jornadas jornadas = new Jornadas()
-        //            {
-        //                // Le asignamos valores a la jornada
-        //                idCampeonato = id_Campeonato,
-        //                idPartido = partido.id_partido,
-        //                equipoLocal = matriz[i],
-        //                equipoVisita = matriz[j],
-        //                serie = serieEquipo,
-        //                fecha = x
-        //            };
+                        //Creamos la jornada y pasamos el id del partido
+                        Jornadas jornadas = new Jornadas()
+                        {
+                            // Le asignamos valores a la jornada
+                            CampeonatoID = jornadasCargaInicial.CampeonatoID,
+                            PartidoID = partido.ID,
+                            EquipoIDLocal = matriz[i],
+                            EquipoIDVisita = matriz[j],
+                            CategoriaID = jornadasCargaInicial.CategoriaID,
+                            SerieID = jornadasCargaInicial.SerieID,
+                            GrupoJornada = x,
+                            Ronda = jornadasCargaInicial.Ronda
+                        };
 
-        //            _context.Jornadas.Add(jornadas);
-        //            _context.SaveChanges();
+                        _context.Jornadas.Add(jornadas);
+                        _context.SaveChanges();
 
-        //            // Por cada partido agregamos 2 horas.
-        //            fechaInicial = fechaInicial.AddHours(2);
-        //            i++;
-        //        }
+                        // Por cada partido agregamos 2 horas.
+                        fechaInicial = fechaInicial.AddHours(2);
+                        i++;
+                    }
 
-        //        // Se reacomoda la matriz para que el segundo pase a ser el ultimo
-        //        int ultimaPosicion = matriz[equipos.Count() - 1];
-        //        for (int y = equipos.Count() - 1; y > 1; y--)
-        //        {
-        //            matriz[y] = matriz[y - 1];
-        //        }
-        //        matriz[1] = ultimaPosicion;
+                    // Se reacomoda la matriz para que el segundo pase a ser el ultimo
+                    int ultimaPosicion = matriz[equipos.Count() - 1];
+                    for (int y = equipos.Count() - 1; y > 1; y--)
+                    {
+                        matriz[y] = matriz[y - 1];
+                    }
+                    matriz[1] = ultimaPosicion;
 
-        //        // Reiniciamos el contador de i para nuevamente tomar la primera posición en la tabla
-        //        i = 0;
+                    // Reiniciamos el contador de i para nuevamente tomar la primera posición en la tabla
+                    i = 0;
 
-        //        // Intercambiamos los sabados y domingos, y configurando que sean las 8 de la mañana
-        //        fechaInicial = new DateTime(fechaInicial.Year, fechaInicial.Month, fechaInicial.Day, 8, 0, 0);
-        //        fechaInicial = fechaInicial.AddDays(7);
-        //        if (x % 2 == 0)
-        //        {
-        //            if (serieEquipo == "A")
-        //                fechaInicial = fechaInicial.AddDays(7 - (int)fechaInicial.DayOfWeek);
-        //            else
-        //                fechaInicial = fechaInicial.AddDays(6 - (int)fechaInicial.DayOfWeek);
-        //        }
-        //        else
-        //        {
-        //            if (serieEquipo == "A")
-        //                fechaInicial = fechaInicial.AddDays(6 - (int)fechaInicial.DayOfWeek);
-        //            else
-        //                fechaInicial = fechaInicial.AddDays(7 - (int)fechaInicial.DayOfWeek);
-        //        }
-        //    }
-        //}
+                    // Intercambiamos los dias seleccionados, y configurando que sean las 8 de la mañana
+                    fechaInicial = fechaInicial.Date;
+
+                    // Tomamos el indice del dia en arreglo del dias y nos pasamos al siguiente
+                    int indexdias = Array.IndexOf(dias, dia) + 1;
+                    dia = (int)fechaInicial.DayOfWeek;
+
+                    // Si solo se tiene un dia en el arreglo hacemos el ciclo a la siguiente semana
+                    if (dias.Length == 1)
+                    {
+                        if (dias[0] == 6)
+                            fechaInicial = fechaInicial.AddDays(dias[0] - dia).AddHours(jornadasCargaInicial.Hora);
+                        else
+                            fechaInicial = fechaInicial.AddDays(7 + (dias[0] - dia)).AddHours(jornadasCargaInicial.Hora);
+                    }
+                    else
+                    {
+                        // Si se pasa del elementos del arreglo tomamos el primero
+                        if (indexdias > (dias.Length - 1))
+                            fechaInicial = fechaInicial.AddDays(7 + (dias[0] - dia)).AddHours(jornadasCargaInicial.Hora);
+                        else
+                        {
+                            if (dias[indexdias - 1] == 0)
+                                fechaInicial = fechaInicial.AddDays(dias[indexdias] - dia).AddHours(jornadasCargaInicial.Hora);
+                            else
+                                fechaInicial = fechaInicial.AddDays(7 + (dias[indexdias] - dia)).AddHours(jornadasCargaInicial.Hora);
+                        }
+                    }
+
+                    //Guardamos para el siguiente ciclo
+                    dia = (int)fechaInicial.DayOfWeek;
+                }
+            }
+            catch (DbUpdateConcurrencyException ex)
+            {
+                string errMsg = FormateadorCadenas.ObtenerMensajesErrores(ex);
+                return BadRequest(errMsg);
+            }
+            catch (Exception ex)
+            {
+                string errMsg = FormateadorCadenas.ObtenerMensajesErrores(ex);
+                return BadRequest(errMsg);
+            }
+            return Ok();
+        }
 
         //// GET: Jornadas
         //public ActionResult Index()

@@ -9,7 +9,7 @@ namespace TorneosAdmin.Web.Models
 {
     public class Jornadas
     {
-        [Column("ornadaID"), ScaffoldColumn(false)]
+        [Column("JornadaID"), ScaffoldColumn(false)]
         public int ID { get; set; }
 
         public int CampeonatoID { get; set; }
@@ -25,5 +25,7 @@ namespace TorneosAdmin.Web.Models
         public int EquipoIDVisita { get; set; }
 
         public int GrupoJornada { get; set; }
+
+        public int Ronda { get; set; }
     }
 }

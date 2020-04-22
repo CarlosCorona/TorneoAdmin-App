@@ -63,6 +63,12 @@ namespace TorneosAdmin.Web.Controllers
         }
 
         [HttpGet]
+        public JsonResult ObtenerFotos()
+        {
+            return Json(_context.Equipos.Select(x => new { x.ID, x.Nombre, x.Foto}));
+        }
+
+        [HttpGet]
         public JsonResult ObtenerFotoEquipo(int equipoID)
         {
             return Json(_context.Equipos.Find(equipoID).Foto);

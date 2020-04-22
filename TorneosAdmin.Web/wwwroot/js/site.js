@@ -78,7 +78,6 @@ function imageFormatEquipo(cellvalue, options, rowObject) {
 function imageUnFormat(cellvalue, options, cell) {
     return $('img', cell).attr('src');
 }
-
 function imageFormatEdit(value, options) {
     var el = document.createElement("img");
     el.src = value;
@@ -264,7 +263,7 @@ function insertaEquipos(item) {
         if (item.foto === null)
             $(foto).attr("src", "../images/avatars/noimagen.png");
         else
-            $(foto).attr("src", "data: image / png; base64," + item.foto);
+            $(foto).attr("src", "data:image/png;base64," + item.foto);
         td[7].querySelector('.white').textContent = item.nombreEquipo;
         pv[0].querySelector('span').textContent = item.nombreEquipo;
         pv[1].querySelector('span').textContent = item.liga;
@@ -278,6 +277,57 @@ function insertaEquipos(item) {
         //debugger;
         var clone = document.importNode(t.content, true);
         tb.appendChild(clone);
+
+    } else {
+        // Find another way to add the rows to the table because 
+        // the HTML template element is not supported.
+    }
+}
+
+function insertaJornadas(item, ronda, partidos) {
+    // Test to see if the browser supports the HTML template element by checking
+    // for the presence of the template element's content attribute.
+    if ('content' in document.createElement('template')) {
+        var j = document.querySelector('#JornadaTemplate');
+        var cloneJ = document.importNode(j.content, true),
+            div = cloneJ.querySelector("#Fecha_"),
+            titulo = div.querySelector("#titulo"),
+            contenedor = div.querySelector("#Fecha_Partidos_");
+
+        // Configuramos el clon 
+        $(div).prop("id", "Fecha_" + item);
+        $(titulo).text("Fecha " + item + " - " + partidos[0].fechaPartido);
+        $(contenedor).prop("id", "Fecha_Partidos_" + item);
+
+        $.each(partidos, function (index, partido) {
+            var p = document.querySelector('#PartidoTemplate');
+            var cloneP = document.importNode(p.content, true),
+                divPartido = cloneP.querySelector("#Partido_"),
+                span = divPartido.querySelectorAll("span"),
+                imgs = divPartido.querySelectorAll("img"),
+                btnInsertar = divPartido.querySelector("#Editar_Jornada_"),
+                btnEliminar = divPartido.querySelector("#Eliminar_Jornada_"),
+                horario = divPartido.querySelector("#horario");
+
+            var equipoLocal = equiposFotos.filter(x => x.id === partido.equipoIDLocal);
+            $(span[0]).text(equipoLocal[0].nombre);
+            $(imgs[0]).attr("src", "data:image/png;base64," + equipoLocal[0].foto);
+
+            var equipoVisitante = equiposFotos.filter(x => x.id === partido.equipoIDVisita);
+            $(span[1]).text(equipoVisitante[0].nombre);
+            $(imgs[1]).attr("src", "data:image/png;base64," + equipoVisitante[0].foto);
+
+            $(btnInsertar).prop("id", "Editar_Jornada_" + partido.id);
+            $(btnEliminar).prop("id", "Eliminar_Jornada_" + partido.id);
+
+            $(horario).text(partido.horaPartido + " HRS"); 
+
+            contenedor.appendChild(cloneP);
+        });
+        
+        // Clone the new row and insert it into the tab
+        var tab = document.querySelector("#ContenedorJornadasRonda" + ronda);
+        tab.appendChild(cloneJ);
 
     } else {
         // Find another way to add the rows to the table because 
