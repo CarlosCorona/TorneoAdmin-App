@@ -77,8 +77,13 @@ namespace TorneosAdmin.Web.Controllers
                 // Obtenemos los equipos que se han inscripto en el campeonato
                 var equipos = (from e in _context.Equipos
                                join i in _context.Inscripciones on e.ID equals i.EquipoID
-                               where i.CampeonatoID == jornadasCargaInicial.CampeonatoID
+                               where i.CampeonatoID == jornadasCargaInicial.CampeonatoID &&
+                                     e.CategoriaID == jornadasCargaInicial.CategoriaID &&
+                                     e.SerieID == jornadasCargaInicial.SerieID
                                select e).OrderBy(x=> x.ID).ToList();
+
+                if (equipos.Count <= 1)
+                    return BadRequest("No existen equipos registrados.");
 
                 // Colocamos todos los id de equipos en una matriz
                 indice = 0;

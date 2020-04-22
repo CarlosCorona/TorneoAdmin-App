@@ -602,3 +602,4 @@ D:\AdminTorneos\Web\TorneoAdmin-App\TorneosAdmin.Web\obj\Debug\netcoreapp3.1\sta
 D:\AdminTorneos\Web\TorneoAdmin-App\TorneosAdmin.Web\obj\Debug\netcoreapp3.1\TorneosAdmin.Web.dll
 D:\AdminTorneos\Web\TorneoAdmin-App\TorneosAdmin.Web\obj\Debug\netcoreapp3.1\TorneosAdmin.Web.pdb
 D:\AdminTorneos\Web\TorneoAdmin-App\TorneosAdmin.Web\obj\Debug\netcoreapp3.1\TorneosAdmin.Web.genruntimeconfig.cache
+D:\AdminTorneos\Web\TorneoAdmin-App\TorneosAdmin.Web\obj\Debug\netcoreapp3.1\TorneosAdmin.Web.csprojAssemblyReference.cache
