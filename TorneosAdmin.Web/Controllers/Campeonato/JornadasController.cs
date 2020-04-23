@@ -24,11 +24,11 @@ namespace TorneosAdmin.Web.Controllers
         }
 
         [HttpGet]
-        public JsonResult ObtenerJornadasVista(int campeonatoID, int categoriaId, int serieID )
+        public JsonResult ObtenerJornadasVista(int campeonatoID, int categoriaID, int serieID )
         {
             var jornadasLista = from j in _context.Jornadas
                                join p in _context.Partidos on j.PartidoID equals p.ID
-                               where j.CampeonatoID == campeonatoID && j.CategoriaID == categoriaId && j.SerieID == serieID
+                               where j.CampeonatoID == campeonatoID && j.CategoriaID == categoriaID && j.SerieID == serieID
                                select new
                                {
                                    j.ID,
@@ -44,22 +44,23 @@ namespace TorneosAdmin.Web.Controllers
         }
 
         [HttpPost]
-        public IActionResult CargaInicial(JornadasCargaInicial jornadasCargaInicial)
+        [ValidateAntiForgeryToken]
+        public IActionResult CargaInicial([Bind("CampeonatoID, CategoriaID, SerieID, Ronda, Dias, FechaInicial, Hora")]JornadasCarga jornadasCarga)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
-            if (jornadasCargaInicial.Dias[0] == null)
+            if (jornadasCarga.Dias[0] == null)
             {
                 return BadRequest("Deben seleccionar al menos un dia a configurar.");
             }
 
             var juegos = _context.Jornadas.Where(x =>
-                                                 x.CampeonatoID == jornadasCargaInicial.CampeonatoID &&
-                                                 x.CategoriaID == jornadasCargaInicial.CategoriaID &&
-                                                 x.SerieID == jornadasCargaInicial.SerieID &&
-                                                 x.Ronda == jornadasCargaInicial.Ronda).ToList();
+                                                 x.CampeonatoID == jornadasCarga.CampeonatoID &&
+                                                 x.CategoriaID == jornadasCarga.CategoriaID &&
+                                                 x.SerieID == jornadasCarga.SerieID &&
+                                                 x.Ronda == jornadasCarga.Ronda).ToList();
             if(juegos.Count>0)
                 return BadRequest("Ya existe fechas configuradas.");
 
@@ -67,8 +68,8 @@ namespace TorneosAdmin.Web.Controllers
             {
                 // Obtenemos los dias
                 int indice = 0;
-                int[] dias = new int[jornadasCargaInicial.Dias.Count()];
-                foreach (var item in jornadasCargaInicial.Dias)
+                int[] dias = new int[jornadasCarga.Dias.Count()];
+                foreach (var item in jornadasCarga.Dias)
                 {
                     dias[indice] = Convert.ToInt32(item);
                     indice++;
@@ -77,9 +78,9 @@ namespace TorneosAdmin.Web.Controllers
                 // Obtenemos los equipos que se han inscripto en el campeonato
                 var equipos = (from e in _context.Equipos
                                join i in _context.Inscripciones on e.ID equals i.EquipoID
-                               where i.CampeonatoID == jornadasCargaInicial.CampeonatoID &&
-                                     e.CategoriaID == jornadasCargaInicial.CategoriaID &&
-                                     e.SerieID == jornadasCargaInicial.SerieID
+                               where i.CampeonatoID == jornadasCarga.CampeonatoID &&
+                                     e.CategoriaID == jornadasCarga.CategoriaID &&
+                                     e.SerieID == jornadasCarga.SerieID
                                select e).OrderBy(x=> x.ID).ToList();
 
                 if (equipos.Count <= 1)
@@ -105,15 +106,15 @@ namespace TorneosAdmin.Web.Controllers
 
                 // Obtenemos primer dia de las jornadas.
                 DateTime fechaInicial; 
-                int dia = (int)jornadasCargaInicial.FechaInicial.DayOfWeek;
+                int dia = (int)jornadasCarga.FechaInicial.DayOfWeek;
                 if (dias.Contains(dia))
                 {
-                    fechaInicial = jornadasCargaInicial.FechaInicial.AddHours(jornadasCargaInicial.Hora);
+                    fechaInicial = jornadasCarga.FechaInicial.AddHours(jornadasCarga.Hora);
                 }
                 else {
                     int i = dias.Max();
                     if (dia > i)
-                        fechaInicial = jornadasCargaInicial.FechaInicial.AddDays(7 + (dias.Min() - dia)).AddHours(jornadasCargaInicial.Hora);
+                        fechaInicial = jornadasCarga.FechaInicial.AddDays(7 + (dias.Min() - dia)).AddHours(jornadasCarga.Hora);
                     else {
                         i = 0;
                         for (int x = 0; x < dias.Length; x++)
@@ -124,7 +125,7 @@ namespace TorneosAdmin.Web.Controllers
                                 break;
                             }
                         }
-                        fechaInicial = jornadasCargaInicial.FechaInicial.AddDays(i - dia).AddHours(jornadasCargaInicial.Hora);
+                        fechaInicial = jornadasCarga.FechaInicial.AddDays(i - dia).AddHours(jornadasCarga.Hora);
                     }
                 }
                 //Guardamos El dia que iniciamos
@@ -139,9 +140,11 @@ namespace TorneosAdmin.Web.Controllers
                     for (int j = equipos.Count() - 1; i < j; j--)
                     {
                         // Creamos el partido primero
-                        Partidos partido = new Partidos();
-                        partido.PartidoEstadoID = 1;
-                        partido.FechaHora = fechaInicial;
+                        Partidos partido = new Partidos
+                        {
+                            PartidoEstadoID = 1,
+                            FechaHora = fechaInicial
+                        };
                         _context.Partidos.Add(partido);
                         _context.SaveChanges();
 
@@ -149,14 +152,14 @@ namespace TorneosAdmin.Web.Controllers
                         Jornadas jornadas = new Jornadas()
                         {
                             // Le asignamos valores a la jornada
-                            CampeonatoID = jornadasCargaInicial.CampeonatoID,
+                            CampeonatoID = jornadasCarga.CampeonatoID,
                             PartidoID = partido.ID,
                             EquipoIDLocal = matriz[i],
                             EquipoIDVisita = matriz[j],
-                            CategoriaID = jornadasCargaInicial.CategoriaID,
-                            SerieID = jornadasCargaInicial.SerieID,
+                            CategoriaID = jornadasCarga.CategoriaID,
+                            SerieID = jornadasCarga.SerieID,
                             GrupoJornada = x,
-                            Ronda = jornadasCargaInicial.Ronda
+                            Ronda = jornadasCarga.Ronda
                         };
 
                         _context.Jornadas.Add(jornadas);
@@ -189,21 +192,21 @@ namespace TorneosAdmin.Web.Controllers
                     if (dias.Length == 1)
                     {
                         if (dias[0] == 6)
-                            fechaInicial = fechaInicial.AddDays(dias[0] - dia).AddHours(jornadasCargaInicial.Hora);
+                            fechaInicial = fechaInicial.AddDays(dias[0] - dia).AddHours(jornadasCarga.Hora);
                         else
-                            fechaInicial = fechaInicial.AddDays(7 + (dias[0] - dia)).AddHours(jornadasCargaInicial.Hora);
+                            fechaInicial = fechaInicial.AddDays(7 + (dias[0] - dia)).AddHours(jornadasCarga.Hora);
                     }
                     else
                     {
                         // Si se pasa del elementos del arreglo tomamos el primero
                         if (indexdias > (dias.Length - 1))
-                            fechaInicial = fechaInicial.AddDays(7 + (dias[0] - dia)).AddHours(jornadasCargaInicial.Hora);
+                            fechaInicial = fechaInicial.AddDays(7 + (dias[0] - dia)).AddHours(jornadasCarga.Hora);
                         else
                         {
                             if (dias[indexdias - 1] == 0)
-                                fechaInicial = fechaInicial.AddDays(dias[indexdias] - dia).AddHours(jornadasCargaInicial.Hora);
+                                fechaInicial = fechaInicial.AddDays(dias[indexdias] - dia).AddHours(jornadasCarga.Hora);
                             else
-                                fechaInicial = fechaInicial.AddDays(7 + (dias[indexdias] - dia)).AddHours(jornadasCargaInicial.Hora);
+                                fechaInicial = fechaInicial.AddDays(7 + (dias[indexdias] - dia)).AddHours(jornadasCarga.Hora);
                         }
                     }
 
@@ -224,90 +227,200 @@ namespace TorneosAdmin.Web.Controllers
             return Ok();
         }
 
-        //// GET: Jornadas
-        //public ActionResult Index()
-        //{
-        //    var jornadas = _context.Jornadas;
-        //    return View(jornadas.ToList());
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Crear([Bind("CampeonatoID, CategoriaID, SerieID, Ronda, GrupoJornada, EquipoIDLocal, EquipoIDVisita , FechaInicial, Hora")]JornadasCrear jornadasCrear)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
 
-        //    //var modelo = _context.Equipo.Include(d => d.Jornadas);
+            try
+            {
+                if (jornadasCrear.EquipoIDLocal == jornadasCrear.EquipoIDVisita)
+                {
+                    return BadRequest("El equipo local y visitante no pueden ser el mismo.");
+                }
 
+                if (JornadaExiste(jornadasCrear))
+                {
+                    return BadRequest("Ya existe esta relación de juego, seleccione otros equipos");
+                }
 
+                // Creamos el partido 
+                Partidos partido = new Partidos
+                {
+                    PartidoEstadoID = 1,
+                    FechaHora = jornadasCrear.FechaInicial.AddHours(jornadasCrear.Hora)
+                };
+                _context.Partidos.Add(partido);
+                _context.SaveChanges();
 
-        //}
+                //Creamos la jornada y pasamos el id del partido
+                Jornadas jornadas = new Jornadas()
+                {
+                    // Le asignamos valores a la jornada
+                    CampeonatoID = jornadasCrear.CampeonatoID,
+                    PartidoID = partido.ID,
+                    EquipoIDLocal = jornadasCrear.EquipoIDLocal,
+                    EquipoIDVisita = jornadasCrear.EquipoIDVisita,
+                    CategoriaID = jornadasCrear.CategoriaID,
+                    SerieID = jornadasCrear.SerieID,
+                    GrupoJornada = jornadasCrear.GrupoJornada,
+                    Ronda = jornadasCrear.Ronda
+                };
 
-        ////Jornadas calendario
-        //public ActionResult JornadasA()
-        //{
-        //    List<Jornadas> jornadas = _context.Jornadas.Where(x => x.idCampeonato == _context.Campeonato.Max(y => y.Id_campeonato) && x.serie == "A").ToList();
+                _context.Jornadas.Add(jornadas);
+                await _context.SaveChangesAsync();
+            }
+            catch (DbUpdateConcurrencyException ex)
+            {
+                string errMsg = FormateadorCadenas.ObtenerMensajesErrores(ex);
+                return BadRequest(errMsg);
+            }
+            catch (Exception ex)
+            {
+                string errMsg = FormateadorCadenas.ObtenerMensajesErrores(ex);
+                return BadRequest(errMsg);
+            }
 
-        //    if (jornadas == null || jornadas.Count() == 0)
-        //    {
-        //        int idCampeonato = _context.Campeonato.Max(y => y.Id_campeonato);
-        //        DateTime fecha = _context.Campeonato.Find(idCampeonato).fecha_ini;
-        //        CargaInicial("A", idCampeonato, fecha);
+            return Ok();
+        }
 
-        //        // llenamos jornadas nuevamente por la primera ves estuvo vacio.
-        //        jornadas = _context.Jornadas.Where(x => x.idCampeonato == _context.Campeonato.Max(y => y.Id_campeonato) && x.serie == "A").ToList();
-        //    }
+        [HttpPut]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Editar([Bind("ID, Grupo, Fecha, Hora")]JornadaEditar jornadaEditar)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
 
-        //    var tabla = from j in jornadas
-        //                join p in _context.Partido on j.idPartido equals p.id_partido
-        //                join local in _context.Equipo on j.equipoLocal equals local.Id_Equipo
-        //                join visitante in _context.Equipo on j.equipoVisita equals visitante.Id_Equipo
-        //                group new
-        //                {
-        //                    Fecha = j.fecha,
-        //                    Local = local.nom_equipo,
-        //                    LocalImagen = local.foto_equipo,
-        //                    Visitante = visitante.nom_equipo,
-        //                    VisitanteImagen = visitante.foto_equipo,
-        //                    Hora = p.FechaHora.Value.ToString("HH:mm")
-        //                } by j.fecha into jornadaPartido
-        //                orderby jornadaPartido.Key
-        //                select jornadaPartido;
+            try
+            {
+                var jornada = _context.Jornadas.Find(jornadaEditar.ID);
 
-        //    ViewBag.Jornadas = JsonConvert.DeserializeObject(JsonConvert.SerializeObject(tabla));
-        //    return View();
+                jornada.GrupoJornada = jornadaEditar.Grupo;
 
-        //}
+                _context.Jornadas.Update(jornada);
+                await _context.SaveChangesAsync();
 
-        ////Jornadas calendario
-        //public ActionResult JornadasB()
+                // TODO:Eliminar todo lo relacionado con partidos previmente.
+                var partido = _context.Partidos.Find(jornada.PartidoID);
 
-        //{
-        //    List<Jornadas> jornadas = _context.Jornadas.Where(x => x.idCampeonato == _context.Campeonato.Max(y => y.Id_campeonato) && x.serie == "B").ToList();
+                partido.FechaHora = jornadaEditar.Fecha.AddHours(jornadaEditar.Hora);
 
-        //    if (jornadas == null || jornadas.Count() == 0)
-        //    {
-        //        int idCampeonato = _context.Campeonato.Max(y => y.Id_campeonato);
-        //        DateTime fecha = _context.Campeonato.Find(idCampeonato).fecha_ini;
-        //        CargaInicial("B", idCampeonato, fecha);
+                _context.Partidos.Update(partido);
+                await _context.SaveChangesAsync();
+            }
+            catch (DbUpdateConcurrencyException ex)
+            {
+                string errMsg = FormateadorCadenas.ObtenerMensajesErrores(ex);
+                return BadRequest(errMsg);
+            }
+            catch (Exception ex)
+            {
+                string errMsg = FormateadorCadenas.ObtenerMensajesErrores(ex);
+                return BadRequest(errMsg);
+            }
 
-        //        // llenamos jornadas nuevamente por la primera ves estuvo vacio.
-        //        jornadas = _context.Jornadas.Where(x => x.idCampeonato == _context.Campeonato.Max(y => y.Id_campeonato) && x.serie == "B").ToList();
-        //    }
+            return Ok("Registro Actualizado");
+        }
 
-        //    var tabla = from j in jornadas
-        //                join p in _context.Partido on j.idPartido equals p.id_partido
-        //                join local in _context.Equipo on j.equipoLocal equals local.Id_Equipo
-        //                join visitante in _context.Equipo on j.equipoVisita equals visitante.Id_Equipo
-        //                group new
-        //                {
-        //                    Fecha = j.fecha,
-        //                    Local = local.nom_equipo,
-        //                    LocalImagen = local.foto_equipo,
-        //                    Visitante = visitante.nom_equipo,
-        //                    VisitanteImagen = visitante.foto_equipo,
-        //                    Hora = p.FechaHora.Value.ToString("HH:mm")
-        //                } by j.fecha into jornadaPartido
-        //                orderby jornadaPartido.Key
-        //                select jornadaPartido;
+        [HttpDelete]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> EliminarGrupo([Bind("ID, CampeonatoID, CategoriaID, SerieID, Ronda")]JornadasEliminar jornadasEliminarGrupo)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
 
-        //    ViewBag.Jornadas = JsonConvert.DeserializeObject(JsonConvert.SerializeObject(tabla));
+            try
+            {
+                var jornadas = _context.Jornadas.Where(x => x.CampeonatoID == jornadasEliminarGrupo.CampeonatoID &&
+                                                           x.CategoriaID == jornadasEliminarGrupo.CategoriaID &&
+                                                           x.SerieID == jornadasEliminarGrupo.SerieID &&
+                                                           x.Ronda == jornadasEliminarGrupo.Ronda &&
+                                                           x.GrupoJornada == jornadasEliminarGrupo.ID);
 
-        //    return View();
+                // TODO:Eliminar todo lo relacionado con partidos previmente.
+                var partidos = from p in _context.Partidos
+                               join j in _context.Jornadas on p.ID equals j.PartidoID
+                               where j.CampeonatoID == jornadasEliminarGrupo.CampeonatoID &&
+                                     j.CategoriaID == jornadasEliminarGrupo.CategoriaID &&
+                                     j.SerieID == jornadasEliminarGrupo.SerieID &&
+                                     j.Ronda == jornadasEliminarGrupo.Ronda &&
+                                     j.GrupoJornada == jornadasEliminarGrupo.ID
+                               select p;
 
-        //}
+                _context.Jornadas.RemoveRange(jornadas);
+                await _context.SaveChangesAsync();
+
+                _context.Partidos.RemoveRange(partidos);
+                await _context.SaveChangesAsync();
+            }
+            catch (DbUpdateConcurrencyException ex)
+            {
+                string errMsg = FormateadorCadenas.ObtenerMensajesErrores(ex);
+                return BadRequest(errMsg);
+            }
+            catch (Exception ex)
+            {
+                string errMsg = FormateadorCadenas.ObtenerMensajesErrores(ex);
+                return BadRequest(errMsg);
+            }
+
+            return Ok();
+        }
+
+        [HttpDelete]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Eliminar(int id)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            try
+            {
+                var jornada = _context.Jornadas.Find(id);
+
+                // TODO:Eliminar todo lo relacionado con partidos previmente.
+                var partido = _context.Partidos.Find(jornada.PartidoID);
+
+                _context.Jornadas.Remove(jornada);
+                await _context.SaveChangesAsync();
+
+                _context.Partidos.Remove(partido);
+                await _context.SaveChangesAsync();
+            }
+            catch (DbUpdateConcurrencyException ex)
+            {
+                string errMsg = FormateadorCadenas.ObtenerMensajesErrores(ex);
+                return BadRequest(errMsg);
+            }
+            catch (Exception ex)
+            {
+                string errMsg = FormateadorCadenas.ObtenerMensajesErrores(ex);
+                return BadRequest(errMsg);
+            }
+
+            return Ok();
+        }
+
+        [NonAction]
+        private bool JornadaExiste(JornadasCrear jornadasCrear)
+        {
+            return _context.Jornadas.Any(e => e.CampeonatoID == jornadasCrear.CampeonatoID &&
+                                              e.CategoriaID == jornadasCrear.CategoriaID &&
+                                              e.SerieID == jornadasCrear.SerieID &&
+                                              e.Ronda == jornadasCrear.Ronda &&
+                                              e.GrupoJornada == jornadasCrear.GrupoJornada &&
+                                              e.EquipoIDLocal == jornadasCrear.EquipoIDLocal &&
+                                              e.EquipoIDVisita == jornadasCrear.EquipoIDVisita);
+        }
     }
 }

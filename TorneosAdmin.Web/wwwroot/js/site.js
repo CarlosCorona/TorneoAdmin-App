@@ -292,22 +292,28 @@ function insertaJornadas(item, ronda, partidos) {
         var cloneJ = document.importNode(j.content, true),
             div = cloneJ.querySelector("#Fecha_"),
             titulo = div.querySelector("#titulo"),
-            contenedor = div.querySelector("#Fecha_Partidos_");
+            contenedor = div.querySelector("#Fecha_Partidos_"),
+            btnAgregarPartido = div.querySelector("#AgregarPartido"),
+            btnEliminarFecha = div.querySelector("#EliminarFecha");
 
         // Configuramos el clon 
         $(div).prop("id", "Fecha_" + item);
         $(titulo).text("Fecha " + item + " - " + partidos[0].fechaPartido);
         $(contenedor).prop("id", "Fecha_Partidos_" + item);
+        $(btnAgregarPartido).prop("id", "AgregarPartido_" + item);
+        $(btnEliminarFecha).prop("id", "EliminarFecha_" + item);
 
         $.each(partidos, function (index, partido) {
             var p = document.querySelector('#PartidoTemplate');
             var cloneP = document.importNode(p.content, true),
-                divPartido = cloneP.querySelector("#Partido_"),
+                divPartido = cloneP.querySelector("#Jornada_"),
                 span = divPartido.querySelectorAll("span"),
                 imgs = divPartido.querySelectorAll("img"),
                 btnInsertar = divPartido.querySelector("#Editar_Jornada_"),
                 btnEliminar = divPartido.querySelector("#Eliminar_Jornada_"),
                 horario = divPartido.querySelector("#horario");
+
+            $(divPartido).prop("id", "Jornada_" + partido.id);
 
             var equipoLocal = equiposFotos.filter(x => x.id === partido.equipoIDLocal);
             $(span[0]).text(equipoLocal[0].nombre);
