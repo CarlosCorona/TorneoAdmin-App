@@ -63,9 +63,27 @@ namespace TorneosAdmin.Web.Controllers
         }
 
         [HttpGet]
-        public JsonResult ObtenerFotos()
+        public JsonResult ObtenerTodosFotos()
         {
-            return Json(_context.Equipos.Select(x => new { x.ID, x.Nombre, x.Foto}));
+            // Obtenemos los equipos que se han inscripto en el campeonato
+            var equipos = from e in _context.Equipos
+                          select new { e.ID, e.Nombre, e.Foto };
+
+            return Json(equipos);
+        }
+
+        [HttpGet]
+        public JsonResult ObtenerFotos(int campeonatoID, int categoriaID, int serieID)
+        {
+            // Obtenemos los equipos que se han inscripto en el campeonato
+            var equipos =  from e in _context.Equipos
+                           join i in _context.Inscripciones on e.ID equals i.EquipoID
+                           where i.CampeonatoID == campeonatoID &&
+                                 e.CategoriaID == categoriaID &&
+                                 e.SerieID == serieID
+                           select new { e.ID, e.Nombre, e.Foto };
+
+            return Json(equipos);
         }
 
         [HttpGet]

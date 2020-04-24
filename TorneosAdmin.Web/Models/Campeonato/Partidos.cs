@@ -14,11 +14,11 @@ namespace TorneosAdmin.Web.Models
 
         public int PartidoEstadoID { get; set; }
 
-        public int ArbitroIDCentral { get; set; }
+        public int? ArbitroIDCentral { get; set; }
 
-        public int ArbitroIDLateraDerecho { get; set; }
+        public int? ArbitroIDLateraDerecho { get; set; }
 
-        public int ArbitroIDLateralIzquierdo { get; set; }
+        public int? ArbitroIDLateralIzquierdo { get; set; }
 
         public string VocalEquipoLocal { get; set; }
 
