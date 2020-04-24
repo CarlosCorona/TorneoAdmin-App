@@ -42,6 +42,17 @@ namespace TorneosAdmin.Web.Controllers
                                };
             return Json(jornadasLista);
         }
+        [HttpGet]
+        public JsonResult ObtenerJornadasFechas([Bind("CampeonatoID, CategoriaID, SerieID, Ronda")]PartidosCarga partidosCarga)
+        {
+            var jornadasFechasLista = _context.Jornadas.Where(x => x.CampeonatoID == partidosCarga.CampeonatoID && 
+                                                             x.CategoriaID == partidosCarga.CategoriaID && 
+                                                             x.SerieID == partidosCarga.SerieID &&
+                                                             x.Ronda == partidosCarga.Ronda)
+                                                 .Select(x =>new { ID = x.GrupoJornada, Fecha = "Fecha - " + x.GrupoJornada.ToString()})
+                                                 .Distinct();
+            return Json(jornadasFechasLista);
+        }
 
         [HttpPost]
         [ValidateAntiForgeryToken]

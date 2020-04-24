@@ -62,6 +62,12 @@ namespace TorneosAdmin.Web.Controllers
             return Json(jsonData);
         }
 
+        [HttpGet]
+        public JsonResult ObtenerFotoArbitro(int arbitroID)
+        {
+            return Json(_context.Arbitros.Find(arbitroID).Foto);
+        }
+
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Crear([Bind("Cedula, Nombre, Apellido, Direccion, Pais, Telefono, CorreoElectronico, NombreArchivo")] Arbitros arbitros)

@@ -506,7 +506,8 @@
                             }
                             if (rondaTorneo != 3) {
                                 $.post("../Jornadas/CargaInicial", jornadaModel, function (data) {
-                                    debugger;
+                                    limpiarTab();
+                                    obtenerJornadasVista();
                                     dialogJornadas.dialog('close');
                                 })
                                     .fail(function (data) {

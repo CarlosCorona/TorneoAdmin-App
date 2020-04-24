@@ -69,20 +69,75 @@ function imageFormat(cellvalue, options, rowObject) {
 function imageFormatEquipo(cellvalue, options, rowObject) {
     
     $.get("../Equipos/ObtenerFotoEquipo", { equipoID: cellvalue} ,function (data) {
-        $("#fotoEquipo_" + cellvalue).attr("src", "data:image/png;base64," + data);
+        if (data === null)
+            $("#fotoEquipo_" + cellvalue).attr("src", "../images/avatars/noimagen.png");
+        else
+            $("#fotoEquipo_" + cellvalue).attr("src", "data:image/png;base64," + data);
     });
     return '<img id="fotoEquipo_' + cellvalue + '" height="50" width="50"/>';
+}
+function imageFormatArbitroCentral(cellvalue, options, rowObject) {
+    if (cellvalue === null) {
+        return '<img id="Central_' + cellvalue + '" src="../images/avatars/noimagen.png" height="50" width="50"/>';
+    }
+    else {
+        $.get("../Arbitros/ObtenerFotoArbitro", { arbitroID: cellvalue }, function (data) {
+            if (data === null)
+                $("#Central_" + cellvalue).attr("src", "../images/avatars/noimagen.png");
+            else
+                $("#Central_" + cellvalue).attr("src", "data:image/png;base64," + data);
+        });
+        return '<img id="Central_' + cellvalue + '" height="50" width="50"/>';
+    }
+    
+}
+function imageFormatArbitroDerecho(cellvalue, options, rowObject) {
+    if (cellvalue === null) {
+        return '<img id="Derecho_' + cellvalue + '" src="../images/avatars/noimagen.png" height="50" width="50"/>';
+    }
+    else {
+        $.get("../Arbitros/ObtenerFotoArbitro", { arbitroID: cellvalue }, function (data) {
+            if (data === null)
+                $("#Derecho_" + cellvalue).attr("src", "../images/avatars/noimagen.png");
+            else
+                $("#Derecho_" + cellvalue).attr("src", "data:image/png;base64," + data);
+        });
+        return '<img id="Derecho_' + cellvalue + '" height="50" width="50"/>';
+    }
+}
+function imageFormatArbitroIzquierdo(cellvalue, options, rowObject) {
+    if (cellvalue === null) {
+        return '<img id="Izquierdo_' + cellvalue + '" src="../images/avatars/noimagen.png" height="50" width="50"/>';
+    }
+    else {
+        $.get("../Arbitros/ObtenerFotoArbitro", { arbitroID: cellvalue }, function (data) {
+            if (data === null)
+                $("#Izquierdo_" + cellvalue).attr("src", "../images/avatars/noimagen.png");
+            else
+                $("#Izquierdo_" + cellvalue).attr("src", "data:image/png;base64," + data);
+        });
+        return '<img id="Izquierdo_' + cellvalue + '" height="50" width="50"/>';
+    }
 }
 
 //Obtener el valor para su edición
 function imageUnFormat(cellvalue, options, cell) {
     return $('img', cell).attr('src');
 }
+
 function imageFormatEdit(value, options) {
     var el = document.createElement("img");
     el.src = value;
     el.width = 230;
     el.height = 230;
+    return el;
+}
+
+function imageFormatEditArbitro(value, options) {
+    var el = document.createElement("img");
+    el.src = value;
+    el.width = 100;
+    el.height = 100;
     return el;
 }
 

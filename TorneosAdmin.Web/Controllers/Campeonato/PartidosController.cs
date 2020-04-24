@@ -19,22 +19,29 @@ namespace TorneosAdmin.Web.Controllers.Campeonato
         }
 
         [HttpGet]
-        public JsonResult ObtenerPartidos(string si1dx, string sort, int page, int rows)
+        public JsonResult ObtenerPartidos(string si1dx, string sort, int page, int rows, [Bind("CampeonatoID, CategoriaID, SerieID, Ronda, Fecha")]PartidosCarga partidosCarga)
         {
             sort = (sort == null) ? "" : sort;
             int pageIndex = Convert.ToInt32(page) - 1;
             int pageSize = rows;
+            var partidosLista = from j in _context.Jornadas
+                                join eLocal in _context.Equipos on j.EquipoIDLocal equals eLocal.ID
+                                join eVisita in _context.Equipos on j.EquipoIDVisita equals eVisita.ID
+                                join p in _context.Partidos on j.PartidoID equals p.ID
+                                where j.CampeonatoID == partidosCarga.CampeonatoID && j.CategoriaID == partidosCarga.CategoriaID &&
+                                      j.SerieID == partidosCarga.SerieID && j.Ronda == partidosCarga.Ronda && j.GrupoJornada == partidosCarga.Fecha
+                                select new
+                                {
+                                    p.ID,
+                                    p.PartidoEstadoID,
+                                    Partido = eLocal.Nombre + " VS " + eVisita.Nombre, 
+                                    p.ArbitroIDCentral,
+                                    p.ArbitroIDLateraDerecho,
+                                    p.ArbitroIDLateralIzquierdo,
+                                    p.VocalEquipoLocal,
+                                    p.VocalEquipoVisitante
+                                };
 
-            var partidosLista = _context.Partidos.Select(x => new
-            {
-                x.ID,
-                x.PartidoEstadoID,
-                x.ArbitroIDCentral,
-                x.ArbitroIDLateraDerecho,
-                x.ArbitroIDLateralIzquierdo,
-                x.VocalEquipoLocal,
-                x.VocalEquipoVisitante
-            });
             int totalRecords = partidosLista.Count();
             var totalPages = (int)Math.Ceiling((float)totalRecords / (float)rows);
 
@@ -68,6 +75,13 @@ namespace TorneosAdmin.Web.Controllers.Campeonato
             }
             try
             {
+                if (partidos.ArbitroIDCentral == partidos.ArbitroIDLateraDerecho || 
+                    partidos.ArbitroIDLateraDerecho == partidos.ArbitroIDLateralIzquierdo || 
+                    partidos.ArbitroIDLateralIzquierdo == partidos.ArbitroIDCentral)
+                {
+                    return BadRequest("No se puede repetir árbitro.");
+                }
+
                 Partidos entidad = _context.Partidos.Find(id);
 
                 if (entidad.PartidoEstadoID != 1)
@@ -75,9 +89,9 @@ namespace TorneosAdmin.Web.Controllers.Campeonato
                     return BadRequest("Partido no se puede configurar debia que ya fue jugado.");
                 }
 
-                entidad.ArbitroIDCentral = partidos.ArbitroIDCentral;
-                entidad.ArbitroIDLateraDerecho = partidos.ArbitroIDLateraDerecho;
-                entidad.ArbitroIDLateralIzquierdo = partidos.ArbitroIDLateralIzquierdo;
+                entidad.ArbitroIDCentral = partidos.ArbitroIDCentral == 0 ? null : partidos.ArbitroIDCentral;
+                entidad.ArbitroIDLateraDerecho = partidos.ArbitroIDLateraDerecho == 0 ? null : partidos.ArbitroIDLateraDerecho;
+                entidad.ArbitroIDLateralIzquierdo = partidos.ArbitroIDLateralIzquierdo == 0 ? null : partidos.ArbitroIDLateralIzquierdo;
                 entidad.VocalEquipoLocal = partidos.VocalEquipoLocal;
                 entidad.VocalEquipoVisitante = partidos.VocalEquipoVisitante;
 
