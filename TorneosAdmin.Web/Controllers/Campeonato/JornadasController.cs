@@ -240,7 +240,7 @@ namespace TorneosAdmin.Web.Controllers
             {
                 if (jornadasCrear.EquipoIDLocal == jornadasCrear.EquipoIDVisita)
                 {
-                    return BadRequest("El equipo local y visitante no pueden ser el mismo.");
+                    return BadRequest("El equipo local y visitante no pueden ser el mismo equipo.");
                 }
 
                 if (JornadaExiste(jornadasCrear))
