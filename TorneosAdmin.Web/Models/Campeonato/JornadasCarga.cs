@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace TorneosAdmin.Web.Models
 {
-    public class JornadasCargaInicial
+    public class JornadasCarga
     {
         public int CampeonatoID { get; set; }
         public int CategoriaID { get; set; }
