@@ -9,7 +9,6 @@
     <Folder Include="wwwroot\font-awesome\5.13.0\" />
     <Folder Include="wwwroot\fonts\" />
     <Folder Include="wwwroot\images\TempFotos\" />
-    <Folder Include="wwwroot\images\TempFotos\" />
     <Folder Include="wwwroot\images\Portada\" />
   </ItemGroup>
 
