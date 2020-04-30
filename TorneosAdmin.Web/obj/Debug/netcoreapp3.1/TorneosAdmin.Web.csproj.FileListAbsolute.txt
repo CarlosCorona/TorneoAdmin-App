@@ -565,7 +565,6 @@ D:\AdminTorneos\Web\TorneoAdmin-App\TorneosAdmin.Web\obj\Debug\netcoreapp3.1\Raz
 D:\AdminTorneos\Web\TorneoAdmin-App\TorneosAdmin.Web\obj\Debug\netcoreapp3.1\Razor\Views\Administracion\UsuariosRoles.cshtml.g.cs
 D:\AdminTorneos\Web\TorneoAdmin-App\TorneosAdmin.Web\obj\Debug\netcoreapp3.1\Razor\Views\Campeonato\Inscripciones.cshtml.g.cs
 D:\AdminTorneos\Web\TorneoAdmin-App\TorneosAdmin.Web\obj\Debug\netcoreapp3.1\Razor\Views\Campeonato\Jornadas.cshtml.g.cs
-D:\AdminTorneos\Web\TorneoAdmin-App\TorneosAdmin.Web\obj\Debug\netcoreapp3.1\Razor\Views\Campeonato\Partidos.cshtml.g.cs
 D:\AdminTorneos\Web\TorneoAdmin-App\TorneosAdmin.Web\obj\Debug\netcoreapp3.1\Razor\Views\Campeonato\Pases.cshtml.g.cs
 D:\AdminTorneos\Web\TorneoAdmin-App\TorneosAdmin.Web\obj\Debug\netcoreapp3.1\Razor\Views\Catalogos\Categorias.cshtml.g.cs
 D:\AdminTorneos\Web\TorneoAdmin-App\TorneosAdmin.Web\obj\Debug\netcoreapp3.1\Razor\Views\Catalogos\EstadosCiviles.cshtml.g.cs
@@ -603,3 +602,4 @@ D:\AdminTorneos\Web\TorneoAdmin-App\TorneosAdmin.Web\obj\Debug\netcoreapp3.1\Tor
 D:\AdminTorneos\Web\TorneoAdmin-App\TorneosAdmin.Web\obj\Debug\netcoreapp3.1\TorneosAdmin.Web.pdb
 D:\AdminTorneos\Web\TorneoAdmin-App\TorneosAdmin.Web\obj\Debug\netcoreapp3.1\TorneosAdmin.Web.genruntimeconfig.cache
 D:\AdminTorneos\Web\TorneoAdmin-App\TorneosAdmin.Web\obj\Debug\netcoreapp3.1\TorneosAdmin.Web.csprojAssemblyReference.cache
+D:\AdminTorneos\Web\TorneoAdmin-App\TorneosAdmin.Web\obj\Debug\netcoreapp3.1\Razor\Views\Campeonato\Asignacion.cshtml.g.cs

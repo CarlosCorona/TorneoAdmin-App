@@ -19,36 +19,7 @@ namespace TorneosAdmin.Web.Controllers
             _context = context;
         }
 
-        public IActionResult Inscripciones()
-        {
-            var lista1 = _context.Campeonatos.ToDictionary(mc => mc.ID.ToString(), mc => mc.Nombre, StringComparer.OrdinalIgnoreCase);
-            var lista2 = _context.Equipos.ToDictionary(mc => mc.ID.ToString(), mc => mc.Nombre, StringComparer.OrdinalIgnoreCase);
-            //Filtrar por el rol que vaya hacer esta actividad
-            var lista3 = _context.Usuarios.ToDictionary(mc => mc.ID.ToString(), mc => mc.Nombre, StringComparer.OrdinalIgnoreCase);
-            ViewBag.CampeonatosLista = JsonSerializer.Serialize(lista1);
-            ViewBag.EquiposLista = JsonSerializer.Serialize(lista2);
-            ViewBag.UsuariosLista = JsonSerializer.Serialize(lista3);
-            return View();
-        }
-
-        public IActionResult Pases()
-        {
-            return View();
-        }
-
-        public IActionResult Jornadas()
-        {
-            var lista1 = _context.Campeonatos.ToDictionary(mc => mc.ID.ToString(), mc => mc.Nombre, StringComparer.OrdinalIgnoreCase);
-            var lista2 = _context.Categorias.ToDictionary(mc => mc.ID.ToString(), mc => mc.Nombre, StringComparer.OrdinalIgnoreCase);
-            var lista3 = _context.Series.ToDictionary(mc => mc.ID.ToString(), mc => mc.Nombre, StringComparer.OrdinalIgnoreCase);
-            ViewBag.CampeonatosLista = lista1;
-            ViewBag.CategoriasLista = lista2;
-            ViewBag.SeriesLista = lista3;
-
-            return View();
-        }
-
-        public IActionResult Partidos()
+        public IActionResult Asignacion()
         {
             var lista1 = _context.PartidosEstados.ToDictionary(mc => mc.ID.ToString(), mc => mc.Descripcion, StringComparer.OrdinalIgnoreCase);
             var lista2 = _context.Arbitros.ToDictionary(mc => mc.ID.ToString(), mc => mc.Nombre + ' ' + mc.Apellido, StringComparer.OrdinalIgnoreCase);
@@ -67,13 +38,47 @@ namespace TorneosAdmin.Web.Controllers
                                                       x.CategoriaID == Convert.ToInt32(lista4.First().Key) &&
                                                       x.SerieID == Convert.ToInt32(lista5.First().Key) &&
                                                       x.Ronda == 1)
-                                           .Select(x =>new {x.GrupoJornada, Fecha = "Fecha " + x.GrupoJornada.ToString()}).Distinct()
+                                           .Select(x => new { x.GrupoJornada, Fecha = "Fecha " + x.GrupoJornada.ToString() }).Distinct()
                                            .ToDictionary(mc => mc.GrupoJornada.ToString(), mc => mc.Fecha, StringComparer.OrdinalIgnoreCase);
             ViewBag.CampeonatosLista = lista3;
             ViewBag.CategoriasLista = lista4;
             ViewBag.SeriesLista = lista5;
             ViewBag.RondasLista = lista6;
             ViewBag.FechasLista = lista7;
+            return View();
+        }
+
+        public IActionResult Inscripciones()
+        {
+            var lista1 = _context.Campeonatos.ToDictionary(mc => mc.ID.ToString(), mc => mc.Nombre, StringComparer.OrdinalIgnoreCase);
+            var lista2 = _context.Equipos.ToDictionary(mc => mc.ID.ToString(), mc => mc.Nombre, StringComparer.OrdinalIgnoreCase);
+            //Filtrar por el rol que vaya hacer esta actividad
+            var lista3 = _context.Usuarios.ToDictionary(mc => mc.ID.ToString(), mc => mc.Nombre, StringComparer.OrdinalIgnoreCase);
+            ViewBag.CampeonatosLista = JsonSerializer.Serialize(lista1);
+            ViewBag.EquiposLista = JsonSerializer.Serialize(lista2);
+            ViewBag.UsuariosLista = JsonSerializer.Serialize(lista3);
+            return View();
+        }
+
+        public IActionResult Pases()
+        {
+            return View();
+        }
+
+        public IActionResult Partidos() 
+        {
+            return View();
+        }
+
+        public IActionResult Jornadas()
+        {
+            var lista1 = _context.Campeonatos.ToDictionary(mc => mc.ID.ToString(), mc => mc.Nombre, StringComparer.OrdinalIgnoreCase);
+            var lista2 = _context.Categorias.ToDictionary(mc => mc.ID.ToString(), mc => mc.Nombre, StringComparer.OrdinalIgnoreCase);
+            var lista3 = _context.Series.ToDictionary(mc => mc.ID.ToString(), mc => mc.Nombre, StringComparer.OrdinalIgnoreCase);
+            ViewBag.CampeonatosLista = lista1;
+            ViewBag.CategoriasLista = lista2;
+            ViewBag.SeriesLista = lista3;
+
             return View();
         }
     }
