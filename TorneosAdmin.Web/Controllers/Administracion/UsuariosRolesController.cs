@@ -24,7 +24,7 @@ namespace TorneosAdmin.Web.Controllers
             int pageIndex = Convert.ToInt32(page) - 1;
             int pageSize = rows;
 
-            var rolesLista = _context.UsuariosRoles.Select(x => new
+            var rolesLista = _context.UsuariosRoles.Where(x => x.RolID != 1).Select(x => new
             {
                 x.ID,
                 x.UsuarioID,

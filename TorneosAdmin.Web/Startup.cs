@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Authorization.Infrastructure;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
@@ -46,8 +47,12 @@ namespace TorneosAdmin.Web
             })
             .AddIdentityCookies(o => { });
 
+            // Authorization handlers.
+            services.AddTransient<IAuthorizationHandler, UsuariosAuthorizationHandler>();
+
             services.AddRazorPages();
             services.AddControllersWithViews();
+
             services.AddControllers(config =>
             {
                 var policy = new AuthorizationPolicyBuilder()
@@ -55,10 +60,6 @@ namespace TorneosAdmin.Web
                                  .Build();
                 config.Filters.Add(new AuthorizeFilter(policy));
             });
-
-            // Authorization handlers.
-            services.AddScoped<IAuthorizationHandler, UsuariosAuthorizationHandler>();
-
 
             services.ConfigureApplicationCookie(options =>
             {
@@ -69,7 +70,7 @@ namespace TorneosAdmin.Web
                 // Configuración de Paginas de login
                 options.LoginPath = $"/Acceso/Ingreso";
                 options.LogoutPath = $"/Acceso/Salida";
-                options.AccessDeniedPath = $"/Acceso/SinAcceso";
+                options.AccessDeniedPath = $"/Home/SinAcceso";
             });
         }
 

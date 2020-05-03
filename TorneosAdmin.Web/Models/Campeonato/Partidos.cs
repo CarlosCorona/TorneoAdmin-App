@@ -26,5 +26,7 @@ namespace TorneosAdmin.Web.Models
 
         [Required(ErrorMessage = "Ingrese la fecha del partido.")]
         public DateTime FechaHora { get; set; }
+
+        public string Observaciones { get; set; }
     }
 }

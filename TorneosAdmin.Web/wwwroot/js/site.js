@@ -176,7 +176,7 @@ function style_edit_form(form) {
     form.find('input[name=telefono]').mask('(999) 999-9999');
 
     //Spinner element when editing
-    form.find('input[name=carnet]').ace_spinner({ value: 1, min: 0, max: 200, step: 1, btn_up_class: 'btn-info', btn_down_class: 'btn-info' })
+    form.find('input[name=carnet]').ace_spinner({ value: 1, min: 0, max: 200, step: 1, on_sides: true, btn_up_class: 'btn-info', btn_down_class: 'btn-info' })
 
     // Agregamos al campo para carga de archivos
     if (form.find('input[name=foto]').length > 0) {
@@ -390,6 +390,192 @@ function insertaJornadas(item, ronda, partidos) {
         var tab = document.querySelector("#ContenedorJornadasRonda" + ronda);
         tab.appendChild(cloneJ);
 
+    } else {
+        // Find another way to add the rows to the table because 
+        // the HTML template element is not supported.
+    }
+}
+
+function insertaPartidoJugadores(jugadores, local, listajugadores) {
+    // Test to see if the browser supports the HTML template element by checking
+    // for the presence of the template element's content attribute.
+    if ('content' in document.createElement('template')) {
+
+       var jugadoresPartido = jugadores.filter((x) => x.cambio === false),
+            jugadoresCambio = jugadores.filter((x) => x.cambio === true);
+        
+        // agregamos los jugadores del partido
+        $.each(jugadoresPartido, function (index, jugador) {
+            var jp;
+            if (local)
+                jp = document.querySelector('#JugadorLocalTemplate');
+            else
+                jp = document.querySelector('#JugadorViditanteTemplate');
+
+            var cloneJugador = document.importNode(jp.content, true),
+                tr = cloneJugador.querySelector("tr"),
+                tds = tr.querySelectorAll('td');
+
+            // seteamos el id
+            $(tds[0]).html(jugador.id);
+
+            //Configuramos la lista de jugadores
+            var lista = $(tds[1].children[0]);
+            lista.append(new Option("Seleccione Jugador", 0));
+            $.each(listajugadores, function (index, jugadorLista) {
+                lista.append(new Option(jugadorLista.nombre, jugadorLista.id));
+            });
+            lista.val(jugador.jugadorID);
+
+            // TODO:Cuando exista el pase de jugador y ya el jugador ya no se encuentre en el equipo, falta relacionarlo.
+
+
+            // Configuramos el numero del jugador
+            $(tds[2]).html(listajugadores.filter(x => x.id === jugador.jugadorID)[0].carnet);
+
+            //Configuramos las tarjetas amarillas, rojas y goles del jugador
+            var tamarilla = $(tds[3].children[0]);
+            tamarilla.ace_spinner({ value: 0, min: 0, max: 2, step: 1, btn_up_class: 'btn-info', btn_down_class: 'btn-info', on_sides: true }).ace_spinner('value', jugador.tarjetaAmarilla);
+
+            var troja = $(tds[4].children[0]);
+            troja.ace_spinner({ value: 0, min: 0, max: 1, step: 1, btn_up_class: 'btn-info', btn_down_class: 'btn-info', on_sides: true }).ace_spinner('value', jugador.tarjetaRoja);
+
+            var goles = $(tds[5].children[0]);
+            goles.ace_spinner({ value: 0, min: 0, max: 20, step: 1, btn_up_class: 'btn-info', btn_down_class: 'btn-info', on_sides: true }).ace_spinner('value', jugador.goles);
+
+            // agregamos la fila a la tabla
+            var tbody;
+            if (local)
+                tbody = document.querySelector("#local-table > tbody" );
+            else
+                tbody = document.querySelector("#visita-table > tbody");
+            
+            tbody.appendChild(cloneJugador);
+        });
+
+        for (var i = 1; i <= (11 - jugadoresPartido.length); i++) {
+            var jp0;
+            if (local)
+                jp0 = document.querySelector('#JugadorLocalTemplate');
+            else
+                jp0 = document.querySelector('#JugadorViditanteTemplate');
+
+            var cloneJugador = document.importNode(jp0.content, true),
+                tr = cloneJugador.querySelector("tr"),
+                tds = tr.querySelectorAll('td');
+
+            //Configuramos la lista de jugadores
+            var lista = $(tds[1].children[0]);
+            lista.append(new Option("Seleccione Jugador", 0));
+            $.each(listajugadores, function (index, jugadorLista) {
+                lista.append(new Option(jugadorLista.nombre, jugadorLista.id));
+            });
+
+            //Configuramos las tarjetas amarillas, rojas y goles del jugador
+            var tamarilla = $(tds[3].children[0]);
+            tamarilla.ace_spinner({ value: 0, min: 0, max: 2, step: 1, btn_up_class: 'btn-info', btn_down_class: 'btn-info', on_sides: true }).ace_spinner('value', '0');
+
+            var troja = $(tds[4].children[0]);
+            troja.ace_spinner({ value: 0, min: 0, max: 1, step: 1, btn_up_class: 'btn-info', btn_down_class: 'btn-info', on_sides: true }).ace_spinner('value', '0');
+
+            var goles = $(tds[5].children[0]);
+            goles.ace_spinner({ value: 0, min: 0, max: 20, step: 1, btn_up_class: 'btn-info', btn_down_class: 'btn-info', on_sides: true }).ace_spinner('value', '0');
+
+            // agregamos la fila a la tabla
+            var tbody;
+            if (local)
+                tbody = document.querySelector("#local-table > tbody");
+            else
+                tbody = document.querySelector("#visita-table > tbody");
+
+            tbody.appendChild(cloneJugador);
+        }
+
+        // agregamos los jugadores de cambio
+        $.each(jugadoresCambio, function (index, jugador) {
+            var jp;
+            if (local)
+                jp = document.querySelector('#JugadorLocalTemplate');
+            else
+                jp = document.querySelector('#JugadorViditanteTemplate');
+
+            var cloneJugador = document.importNode(jp.content, true),
+                tr = cloneJugador.querySelector("tr"),
+                tds = tr.querySelectorAll('td');
+
+            // seteamos el id
+            $(tds[0]).html(jugador.id);
+
+            //Configuramos la lista de jugadores
+            var lista = $(tds[1].children[0]);
+            lista.append(new Option("Seleccione Jugador", 0));
+            $.each(listajugadores, function (index, jugadorLista) {
+                lista.append(new Option(jugadorLista.nombre, jugadorLista.id));
+            });
+            lista.val(jugador.jugadorID);
+
+            // TODO:Cuando exista el pase de jugador y ya el jugador ya no se encuentre en el equipo, falta relacionarlo.
+
+            // Configuramos el numero del jugador
+            $(tds[2]).html(listajugadores.filter(x => x.id === jugador.jugadorID)[0].carnet);
+
+            // Configuramos las tarjetas amarillas, rojas y goles del jugador
+            var tamarilla = $(tds[3].children[0]);
+            tamarilla.ace_spinner({ value: 0, min: 0, max: 2, step: 1, btn_up_class: 'btn-info', btn_down_class: 'btn-info', on_sides: true }).ace_spinner('value', jugador.tarjetaAmarilla);
+
+            var troja = $(tds[4].children[0]);
+            troja.ace_spinner({ value: 0, min: 0, max: 1, step: 1, btn_up_class: 'btn-info', btn_down_class: 'btn-info', on_sides: true }).ace_spinner('value', jugador.tarjetaRoja);
+
+            var goles = $(tds[5].children[0]);
+            goles.ace_spinner({ value: 0, min: 0, max: 20, step: 1, btn_up_class: 'btn-info', btn_down_class: 'btn-info', on_sides: true }).ace_spinner('value', jugador.goles);
+
+            // agregamos la fila a la tabla
+            var tbody;
+            if (local)
+                tbody = document.querySelector("#localCambios-table > tbody");
+            else
+                tbody = document.querySelector("#visitaCambios-table > tbody");
+
+            tbody.appendChild(cloneJugador);
+        });
+
+        for (var j = 1; j <= (3 - jugadoresCambio.length); j++) {
+            var jc0;
+            if (local)
+                jc0 = document.querySelector('#JugadorLocalTemplate');
+            else
+                jc0 = document.querySelector('#JugadorViditanteTemplate');
+
+            var cloneJugadorCambio = document.importNode(jc0.content, true),
+                tr = cloneJugadorCambio.querySelector("tr"),
+                tds = tr.querySelectorAll('td');
+
+            //Configuramos la lista de jugadores
+            var lista = $(tds[1].children[0]);
+            lista.append(new Option("Seleccione Jugador", 0));
+            $.each(listajugadores, function (index, jugadorLista) {
+                lista.append(new Option(jugadorLista.nombre, jugadorLista.id));
+            });
+
+            //Configuramos las tarjetas amarillas, rojas y goles del jugador
+            var tamarilla = $(tds[3].children[0]);
+            tamarilla.ace_spinner({ value: 0, min: 0, max: 2, step: 1, btn_up_class: 'btn-info', btn_down_class: 'btn-info', on_sides: true }).ace_spinner('value', '0');
+
+            var troja = $(tds[4].children[0]);
+            troja.ace_spinner({ value: 0, min: 0, max: 1, step: 1, btn_up_class: 'btn-info', btn_down_class: 'btn-info', on_sides: true }).ace_spinner('value', '0');
+
+            var goles = $(tds[5].children[0]);
+            goles.ace_spinner({ value: 0, min: 0, max: 20, step: 1, btn_up_class: 'btn-info', btn_down_class: 'btn-info', on_sides: true }).ace_spinner('value', '0');
+
+            // agregamos la fila a la tabla
+            var tbody;
+            if (local)
+                tbody = document.querySelector("#localCambios-table > tbody");
+            else
+                tbody = document.querySelector("#visitaCambios-table > tbody");
+
+            tbody.appendChild(cloneJugadorCambio);
+        }
     } else {
         // Find another way to add the rows to the table because 
         // the HTML template element is not supported.

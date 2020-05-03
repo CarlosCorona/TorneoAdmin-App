@@ -42,6 +42,7 @@ namespace TorneosAdmin.Web.Controllers
                                };
             return Json(jornadasLista);
         }
+
         [HttpGet]
         public JsonResult ObtenerJornadasFechas([Bind("CampeonatoID, CategoriaID, SerieID, Ronda")]PartidosCarga partidosCarga)
         {
@@ -52,6 +53,64 @@ namespace TorneosAdmin.Web.Controllers
                                                  .Select(x =>new { ID = x.GrupoJornada, Fecha = "Fecha - " + x.GrupoJornada.ToString()})
                                                  .Distinct();
             return Json(jornadasFechasLista);
+        }
+
+        [HttpGet]
+        public JsonResult ObtenerJornadasFechasPartidos([Bind("CampeonatoID, CategoriaID, SerieID, Ronda")]PartidosCarga partidosCarga, int fecha)
+        {
+            var jornadasLista = _context.Jornadas.Where(x => x.CampeonatoID == partidosCarga.CampeonatoID &&
+                                                             x.CategoriaID == partidosCarga.CategoriaID &&
+                                                             x.SerieID == partidosCarga.SerieID &&
+                                                             x.Ronda == partidosCarga.Ronda &&
+                                                             x.GrupoJornada == fecha)
+                                                 .Select(x => x.ID);
+            var jornadasPartidosLista = from j in _context.Jornadas
+                                        join el in _context.Equipos on j.EquipoIDLocal equals el.ID
+                                        join ev in _context.Equipos on j.EquipoIDVisita equals ev.ID
+                                        where jornadasLista.Contains(j.ID)
+                                        select new
+                                        {
+                                            j.ID,
+                                            equipos = el.Nombre + " vs " + ev.Nombre
+                                        };
+
+            return Json(jornadasPartidosLista);
+        }
+
+        [HttpGet]
+        public JsonResult ObtenerJornadasPartidoVista(int jornadaID)
+        {
+            var partido = (from j in _context.Jornadas
+                          join el in _context.Equipos on j.EquipoIDLocal equals el.ID
+                          join ev in _context.Equipos on j.EquipoIDVisita equals ev.ID
+                          join p in _context.Partidos on j.PartidoID equals p.ID
+                          where j.ID == jornadaID
+                          select new PartidoVista
+                          {
+                              EquipolocalID = el.ID,
+                              Equipolocal = el.Nombre,
+                              EquipolocalImg = el.Foto,
+                              EquipolocalVocal = p.VocalEquipoLocal,
+                              EquipoVisitaID = ev.ID,
+                              EquipoVisita = ev.Nombre,
+                              EquipoVisitaImg = ev.Foto,
+                              EquipoVisitaVocal = p.VocalEquipoVisitante,
+                              PartidoID = p.ID,
+                              ArbitroCentral = p.ArbitroIDCentral.HasValue == false ? "Sin Árbitro" : p.ArbitroIDCentral.ToString(),
+                              ArbitroDerecho = p.ArbitroIDLateraDerecho.HasValue == false ? "Sin Árbitro" : p.ArbitroIDLateraDerecho.ToString(),
+                              ArbitroIzquierdo = p.ArbitroIDLateralIzquierdo.HasValue == false ? "Sin Árbitro" : p.ArbitroIDLateralIzquierdo.ToString(),
+                              FechaPartido = p.FechaHora.ToString("ddd", new CultureInfo("es-EC")) + " " + p.FechaHora.ToString("dd/MM/yyyy"),
+                              HoraPartido = p.FechaHora.ToString("HH:mm"),
+                              PartidoEstadoID = p.PartidoEstadoID,
+                              Observaciones = p.Observaciones
+                          }).FirstOrDefault();
+
+            var arbitroslista = _context.Arbitros.Select(x => new { x.ID, Nombre = (x.Nombre + " " + x.Apellido) }).ToList();
+
+            partido.ArbitroCentral = partido.ArbitroCentral == "Sin Árbitro" ? partido.ArbitroCentral : arbitroslista.FirstOrDefault(x => x.ID == Convert.ToInt32(partido.ArbitroCentral)).Nombre;
+            partido.ArbitroDerecho = partido.ArbitroDerecho == "Sin Árbitro" ? partido.ArbitroDerecho : arbitroslista.FirstOrDefault(x => x.ID == Convert.ToInt32(partido.ArbitroDerecho)).Nombre;
+            partido.ArbitroIzquierdo = partido.ArbitroIzquierdo == "Sin Árbitro" ? partido.ArbitroIzquierdo : arbitroslista.FirstOrDefault(x => x.ID == Convert.ToInt32(partido.ArbitroIzquierdo)).Nombre;
+            return Json(partido);
         }
 
         [HttpPost]

@@ -135,8 +135,8 @@ namespace TorneosAdmin.Web.Controllers
                     SerieID = equipos.SerieID == 0 ? null : equipos.SerieID,
                     CategoriaID = equipos.CategoriaID == 0 ? null : equipos.CategoriaID,
                     DirigenteID = equipos.DirigenteID == 0 ? null : equipos.DirigenteID,
-                    Nombre = equipos.Nombre,
-                    Color = equipos.Color,
+                    Nombre = equipos.Nombre.Trim(),
+                    Color = equipos.Color.Trim(),
                     FechaFundacion = equipos.FechaFundacion,
                     Foto = string.IsNullOrWhiteSpace(equipos.NombreArchivo) == false ? FormateadorImagen.CambiarTamanio(path + "\\" + equipos.NombreArchivo, 200, 200) : null,
 
@@ -183,8 +183,8 @@ namespace TorneosAdmin.Web.Controllers
                 entidad.SerieID = equipos.SerieID == 0 ? null : equipos.SerieID;
                 entidad.CategoriaID = equipos.CategoriaID == 0 ? null : equipos.CategoriaID;
                 entidad.DirigenteID = equipos.DirigenteID == 0 ? null : equipos.DirigenteID;
-                entidad.Nombre = equipos.Nombre;
-                entidad.Color = equipos.Color;
+                entidad.Nombre = equipos.Nombre.Trim();
+                entidad.Color = equipos.Color.Trim();
                 entidad.FechaFundacion = equipos.FechaFundacion;
 
                 if (!string.IsNullOrWhiteSpace(equipos.NombreArchivo))

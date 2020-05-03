@@ -74,10 +74,10 @@ namespace TorneosAdmin.Web.Controllers
 
                 Dirigentes entidad = new Dirigentes
                 {
-                    Cedula = dirigentes.Cedula,
-                    Nombre = dirigentes.Nombre,
-                    Apellido = dirigentes.Apellido,
-                    Direccion = dirigentes.Direccion,
+                    Cedula = dirigentes.Cedula.Trim(),
+                    Nombre = dirigentes.Nombre.Trim(),
+                    Apellido = dirigentes.Apellido.Trim(),
+                    Direccion = dirigentes.Direccion.Trim(),
                     Telefono = dirigentes.Telefono,
                     Foto = string.IsNullOrWhiteSpace(dirigentes.NombreArchivo) == false ? FormateadorImagen.CambiarTamanio(path + "\\" + dirigentes.NombreArchivo, 275, 350) : null,
 
@@ -119,10 +119,10 @@ namespace TorneosAdmin.Web.Controllers
 
                 Dirigentes entidad = _context.Dirigentes.Find(id);
 
-                entidad.Cedula = dirigentes.Cedula;
-                entidad.Nombre = dirigentes.Nombre;
-                entidad.Apellido = dirigentes.Apellido;
-                entidad.Direccion = dirigentes.Direccion;
+                entidad.Cedula = dirigentes.Cedula.Trim();
+                entidad.Nombre = dirigentes.Nombre.Trim();
+                entidad.Apellido = dirigentes.Apellido.Trim();
+                entidad.Direccion = dirigentes.Direccion.Trim();
                 entidad.Telefono = dirigentes.Telefono;
                 if (!string.IsNullOrWhiteSpace(dirigentes.NombreArchivo))
                 {

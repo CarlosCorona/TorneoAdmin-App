@@ -98,7 +98,7 @@ $.extend($.jgrid,{
 		date : {
 			dayNames:   [
 				"Do", "Lu", "Ma", "Mi", "Ju", "Vi", "Sa",
-				"Domingo", "Lunes", "Martes", "Miercoles", "Jueves", "Viernes", "Sabado"
+				"Domingo", "Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado"
 			],
 			monthNames: [
 				"Ene", "Feb", "Mar", "Abr", "May", "Jun", "Jul", "Ago", "Sep", "Oct", "Nov", "Dic",

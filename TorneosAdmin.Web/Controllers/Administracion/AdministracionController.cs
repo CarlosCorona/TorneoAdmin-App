@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Linq;
 using System.Text.Json;
@@ -14,9 +15,10 @@ namespace TorneosAdmin.Web.Controllers
         {
             _context = context;
         }
+
         public IActionResult Permisos()
         {
-            ViewBag.RolesLista = _context.Roles.Where(x => x.Estado == false && x.ID != 1);
+            ViewBag.RolesLista = _context.Roles.Where(x => x.Estado == true && x.ID != 1);
             return View();
         }
 

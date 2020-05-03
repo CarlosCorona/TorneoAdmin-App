@@ -69,6 +69,16 @@ namespace TorneosAdmin.Web.Controllers
             return Json(jsonData);
         }
 
+        [HttpGet]
+        public JsonResult ObtenerJugadoresLista(int equipoID)
+        {
+            //TODO: falta validar que no tenga multas.
+            var jugadoresLista = _context.Jugadores.Where(x => x.EquipoID == equipoID &&
+                                                               x.Calificado == true)
+                                                        .Select(x => new { x.ID, Nombre = x.Nombre + " " + x.Apellido, x.Carnet });
+            return Json(jugadoresLista);
+        }
+
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Crear([Bind("EquipoID, EstadoCivilID, InstruccionID, ProfesionID, ProvinciaID, ParroquiaID, Cedula, Nombre, Apellido, FechaNacimiento, Carnet, FechaAfiliacion, NombreArchivo")] Jugadores jugadores)
@@ -89,9 +99,9 @@ namespace TorneosAdmin.Web.Controllers
                     ProfesionID = jugadores.ProfesionID,
                     ProvinciaID = jugadores.ProvinciaID,
                     ParroquiaID = jugadores.ParroquiaID,
-                    Cedula = jugadores.Cedula,
-                    Nombre = jugadores.Nombre,
-                    Apellido = jugadores.Apellido,
+                    Cedula = jugadores.Cedula.Trim(),
+                    Nombre = jugadores.Nombre.Trim(),
+                    Apellido = jugadores.Apellido.Trim(),
                     FechaNacimiento = jugadores.FechaNacimiento,
                     Carnet = jugadores.Carnet,
                     FechaAfiliacion = jugadores.FechaAfiliacion,
@@ -143,12 +153,15 @@ namespace TorneosAdmin.Web.Controllers
                 entidad.ProfesionID = jugadores.ProfesionID;
                 entidad.ProvinciaID = jugadores.ProvinciaID;
                 entidad.ParroquiaID = jugadores.ParroquiaID;
-                entidad.Cedula = jugadores.Cedula;
-                entidad.Nombre = jugadores.Nombre;
-                entidad.Apellido = jugadores.Apellido;
+                entidad.Cedula = jugadores.Cedula.Trim();
+                entidad.Nombre = jugadores.Nombre.Trim();
+                entidad.Apellido = jugadores.Apellido.Trim();
                 entidad.FechaNacimiento = jugadores.FechaNacimiento;
                 entidad.Carnet = jugadores.Carnet;
                 entidad.FechaAfiliacion = jugadores.FechaAfiliacion;
+
+                //Cada vez que se modifique algo sera enviado a calificar.
+                entidad.Calificado = false;
 
                 if (!string.IsNullOrWhiteSpace(jugadores.NombreArchivo))
                 {

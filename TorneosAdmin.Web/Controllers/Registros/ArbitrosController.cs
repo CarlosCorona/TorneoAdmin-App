@@ -82,13 +82,13 @@ namespace TorneosAdmin.Web.Controllers
 
                 Arbitros entidad = new Arbitros
                 {
-                    Cedula = arbitros.Cedula,
-                    Nombre = arbitros.Nombre,
-                    Apellido = arbitros.Apellido,
-                    Direccion = arbitros.Direccion,
-                    Pais = arbitros.Pais,
+                    Cedula = arbitros.Cedula.Trim(),
+                    Nombre = arbitros.Nombre.Trim(),
+                    Apellido = arbitros.Apellido.Trim(),
+                    Direccion = arbitros.Direccion.Trim(),
+                    Pais = arbitros.Pais.Trim(),
                     Telefono = arbitros.Telefono,
-                    CorreoElectronico = arbitros.CorreoElectronico,
+                    CorreoElectronico = arbitros.CorreoElectronico.Trim(),
                     Foto = string.IsNullOrWhiteSpace(arbitros.NombreArchivo) == false ? FormateadorImagen.CambiarTamanio(path + "\\" + arbitros.NombreArchivo, 275, 350) : null,
 
                     //Valores fijos
@@ -129,13 +129,13 @@ namespace TorneosAdmin.Web.Controllers
 
                 Arbitros entidad = _context.Arbitros.Find(id);
 
-                entidad.Cedula = arbitros.Cedula;
-                entidad.Nombre = arbitros.Nombre;
-                entidad.Apellido = arbitros.Apellido;
-                entidad.Direccion = arbitros.Direccion;
-                entidad.Pais = arbitros.Pais;
+                entidad.Cedula = arbitros.Cedula.Trim();
+                entidad.Nombre = arbitros.Nombre.Trim();
+                entidad.Apellido = arbitros.Apellido.Trim();
+                entidad.Direccion = arbitros.Direccion.Trim();
+                entidad.Pais = arbitros.Pais.Trim();
                 entidad.Telefono = arbitros.Telefono;
-                entidad.CorreoElectronico = arbitros.CorreoElectronico;
+                entidad.CorreoElectronico = arbitros.CorreoElectronico.Trim();
 
                 if (!string.IsNullOrWhiteSpace(arbitros.NombreArchivo))
                 {

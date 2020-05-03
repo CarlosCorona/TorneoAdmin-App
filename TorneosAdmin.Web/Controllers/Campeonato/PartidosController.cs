@@ -34,7 +34,7 @@ namespace TorneosAdmin.Web.Controllers.Campeonato
                                 {
                                     p.ID,
                                     p.PartidoEstadoID,
-                                    Partido = eLocal.Nombre + " VS " + eVisita.Nombre, 
+                                    Partido = eLocal.Nombre + " VS " + eVisita.Nombre,
                                     p.ArbitroIDCentral,
                                     p.ArbitroIDLateraDerecho,
                                     p.ArbitroIDLateralIzquierdo,
@@ -65,6 +65,12 @@ namespace TorneosAdmin.Web.Controllers.Campeonato
             return Json(jsonData);
         }
 
+        [HttpGet]
+        public JsonResult ObtenerPartidoJugadores(int partidoID, int equipoID)
+        {
+            return Json(_context.PartidosJugadores.Where(x => x.PartidoID == partidoID && x.EquipoID == equipoID));
+        }
+
         [HttpPut]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Editar(int id, [Bind("ArbitroIDCentral, ArbitroIDLateraDerecho, ArbitroIDLateralIzquierdo, VocalEquipoLocal, VocalEquipoVisitante")] Partidos partidos)
@@ -86,7 +92,7 @@ namespace TorneosAdmin.Web.Controllers.Campeonato
 
                 if (entidad.PartidoEstadoID != 1)
                 {
-                    return BadRequest("Partido no se puede configurar debia que ya fue jugado.");
+                    return BadRequest("Partido no se puede configurar debido a que ya fue jugado.");
                 }
 
                 entidad.ArbitroIDCentral = partidos.ArbitroIDCentral == 0 ? null : partidos.ArbitroIDCentral;
@@ -95,6 +101,38 @@ namespace TorneosAdmin.Web.Controllers.Campeonato
                 entidad.VocalEquipoLocal = partidos.VocalEquipoLocal;
                 entidad.VocalEquipoVisitante = partidos.VocalEquipoVisitante;
 
+
+                _context.Partidos.Update(entidad);
+                await _context.SaveChangesAsync();
+            }
+            catch (DbUpdateConcurrencyException ex)
+            {
+                string errMsg = FormateadorCadenas.ObtenerMensajesErrores(ex);
+                return BadRequest(errMsg);
+            }
+            catch (Exception ex)
+            {
+                string errMsg = FormateadorCadenas.ObtenerMensajesErrores(ex);
+                return BadRequest(errMsg);
+            }
+
+            return Ok("Registro Actualizado");
+        }
+
+        [HttpPut]
+        public async Task<IActionResult> ActualizarEstatusPartido(int partidoID, int partidoEstadoID, string observaciones)
+        {
+            try
+            {
+                if (partidoEstadoID == 1)
+                {
+                    return BadRequest("No se puede actualizar y dejar el estado del partido como \"No Jugado\", favor de cambiar el estado.");
+                }
+
+                Partidos entidad = _context.Partidos.Find(partidoID);
+
+                entidad.PartidoEstadoID = partidoEstadoID;
+                entidad.Observaciones = observaciones == null ? "" : observaciones.Trim();
 
                 _context.Partidos.Update(entidad);
                 await _context.SaveChangesAsync();

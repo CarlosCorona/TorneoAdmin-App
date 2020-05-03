@@ -69,6 +69,8 @@ namespace TorneosAdmin.Web.Controllers
                 {
                     if (campeonatos.FechaInicio < campeonatos.FechaFin)
                     {
+                        campeonatos.Nombre = campeonatos.Nombre.Trim();
+
                         //Valores fijos
                         campeonatos.Estado = true;
 
