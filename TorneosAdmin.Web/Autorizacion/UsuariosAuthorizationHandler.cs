@@ -25,25 +25,28 @@ namespace TorneosAdmin.Web.Autorizacion
                 context.Fail();
             }
 
-            var mvcContext = context.Resource as AuthorizationFilterContext;
-            var descriptor = mvcContext?.ActionDescriptor as ControllerActionDescriptor;
-            if (controllers.Contains(descriptor.ControllerName))
+            if (!context.User.IsInRole("Administrador"))
             {
-                var permisos = (from ur in _context.UsuariosRoles
-                               join p in _context.Permisos on ur.RolID equals p.RolID
-                               join m in _context.Menus on p.MenuID equals m.ID
-                               where ur.UsuarioID == Convert.ToInt32(context.User.Claims.First().Value) && 
-                                     m.Ruta != ""
-                               select new { 
-                                   controlador = m.Ruta.Split("/", StringSplitOptions.None)[0],
-                                   vista = m.Ruta.Split("/", StringSplitOptions.None)[1]
-                               }).ToList();
-                var permiso = permisos.Where(x => x.controlador == descriptor.ControllerName && x.vista == descriptor.ActionName);
+                var mvcContext = context.Resource as AuthorizationFilterContext;
+                var descriptor = mvcContext?.ActionDescriptor as ControllerActionDescriptor;
+                if (controllers.Contains(descriptor.ControllerName))
+                {
+                    var permisos = (from ur in _context.UsuariosRoles
+                                    join p in _context.Permisos on ur.RolID equals p.RolID
+                                    join m in _context.Menus on p.MenuID equals m.ID
+                                    where ur.UsuarioID == Convert.ToInt32(context.User.Claims.First().Value) &&
+                                          m.Ruta != ""
+                                    select new
+                                    {
+                                        controlador = m.Ruta.Split("/", StringSplitOptions.None)[0],
+                                        vista = m.Ruta.Split("/", StringSplitOptions.None)[1]
+                                    }).ToList();
+                    var permiso = permisos.Where(x => x.controlador == descriptor.ControllerName && x.vista == descriptor.ActionName);
 
-                if(permiso.Count() == 0)
-                    context.Fail();
+                    if (permiso.Count() == 0)
+                        context.Fail();
+                }
             }
-
             return Task.CompletedTask;
         }
     }
