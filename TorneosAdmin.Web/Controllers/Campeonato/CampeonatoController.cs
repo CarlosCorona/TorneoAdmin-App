@@ -65,7 +65,7 @@ namespace TorneosAdmin.Web.Controllers
             return View();
         }
 
-        public IActionResult Partidos() 
+        public IActionResult Partidos()
         {
             var lista1 = _context.PartidosEstados.ToDictionary(mc => mc.ID.ToString(), mc => mc.Descripcion, StringComparer.OrdinalIgnoreCase);
             var lista3 = _context.Campeonatos.ToDictionary(mc => mc.ID.ToString(), mc => mc.Nombre, StringComparer.OrdinalIgnoreCase);
@@ -107,7 +107,7 @@ namespace TorneosAdmin.Web.Controllers
             ViewBag.SeriesLista = lista5;
             ViewBag.RondasLista = lista6;
             ViewBag.FechasLista = lista7;
-            
+
             return View();
         }
 
@@ -120,6 +120,22 @@ namespace TorneosAdmin.Web.Controllers
             ViewBag.CategoriasLista = lista2;
             ViewBag.SeriesLista = lista3;
 
+            return View();
+        }
+
+        public IActionResult TableroPosiciones()
+        {
+            var lista1 = _context.Campeonatos.ToDictionary(mc => mc.ID.ToString(), mc => mc.Nombre, StringComparer.OrdinalIgnoreCase);
+            var lista2 = _context.Categorias.ToDictionary(mc => mc.ID.ToString(), mc => mc.Nombre, StringComparer.OrdinalIgnoreCase);
+            var lista3 = _context.Series.ToDictionary(mc => mc.ID.ToString(), mc => mc.Nombre, StringComparer.OrdinalIgnoreCase);
+            var lista4 = new Dictionary<string, string>();
+            lista4.Add("1", "Ronda 1");
+            lista4.Add("2", "Ronda 2");
+            lista4.Add("3", "Ronda Final");
+            ViewBag.CampeonatosLista = lista1;
+            ViewBag.CategoriasLista = lista2;
+            ViewBag.SeriesLista = lista3;
+            ViewBag.RondasLista = lista4;
             return View();
         }
     }

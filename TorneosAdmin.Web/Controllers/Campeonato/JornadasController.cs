@@ -113,6 +113,144 @@ namespace TorneosAdmin.Web.Controllers
             return Json(partido);
         }
 
+        [HttpGet]
+        public JsonResult ObtenerJornadasTablero([Bind("CampeonatoID, CategoriaID, SerieID, Ronda")]PartidosCarga partidosCarga)
+        {
+            List<Tablero> tablero = _context.Jornadas.Where(x => x.CampeonatoID == partidosCarga.CampeonatoID &&
+                                                                 x.CategoriaID == partidosCarga.CategoriaID &&
+                                                                 x.SerieID == partidosCarga.SerieID &&
+                                                                 x.Ronda == partidosCarga.Ronda)
+                                                     .Select(x => new Tablero
+                                                     {
+                                                         EquipoID = x.EquipoIDLocal,
+                                                         Equipo = "",
+                                                         PartidosJugados = 0,
+                                                         PartidosGanados = 0,
+                                                         PartidosEmpatados = 0,
+                                                         PartidosPerdidos = 0,
+                                                         GolesAFavor = 0,
+                                                         GolesEnContra = 0,
+                                                         GolesDiferencia = 0,
+                                                         Puntos = 0,
+                                                         Posicion = 0,
+                                                     }).Distinct().ToList();
+
+            var visita = _context.Jornadas.Where(x => x.CampeonatoID == partidosCarga.CampeonatoID &&
+                                                      x.CategoriaID == partidosCarga.CategoriaID &&
+                                                      x.SerieID == partidosCarga.SerieID &&
+                                                      x.Ronda == partidosCarga.Ronda)
+                                          .Select(x => new Tablero
+                                          {
+                                              EquipoID = x.EquipoIDVisita,
+                                              Equipo = "",
+                                              PartidosJugados = 0,
+                                              PartidosGanados = 0,
+                                              PartidosEmpatados = 0,
+                                              PartidosPerdidos = 0,
+                                              GolesAFavor = 0,
+                                              GolesEnContra = 0,
+                                              GolesDiferencia = 0,
+                                              Puntos = 0,
+                                              Posicion = 0,
+                                          }).Distinct().ToList();
+
+            tablero.AddRange(visita);
+            tablero = tablero.Distinct(new TableroComparer()).ToList();
+
+            //Obtenemos todos los partidos de la ronda
+            var partidos = (from j in _context.Jornadas
+                            join p in _context.Partidos on j.PartidoID equals p.ID
+                            where j.CampeonatoID == partidosCarga.CampeonatoID &&
+                                  j.CategoriaID == partidosCarga.CategoriaID &&
+                                  j.SerieID == partidosCarga.SerieID &&
+                                  j.Ronda == partidosCarga.Ronda &&
+                                  (p.PartidoEstadoID == 5 || p.PartidoEstadoID == 6 || p.PartidoEstadoID == 7)
+                            select new { p.ID, p.PartidoEstadoID, j.EquipoIDLocal, j.EquipoIDVisita }).ToList();
+
+            foreach (var partido in partidos)
+            {
+                if(partido.PartidoEstadoID == 5 || partido.PartidoEstadoID == 6 || partido.PartidoEstadoID == 7)
+                {
+                    // Obtenemos el equipo local
+                    var local = tablero.FirstOrDefault(x => x.EquipoID == partido.EquipoIDLocal);
+                    
+                    // Obtenemos el equipo visitante
+                    var visitante = tablero.FirstOrDefault(x => x.EquipoID == partido.EquipoIDVisita);
+
+                    // Registramos el partido jugado en el respectivo equipo
+                    local.PartidosJugados++;
+                    visitante.PartidosJugados++;
+
+                    // Agrgamos los goles que cada equipo realizo
+                    local.GolesAFavor += _context.PartidosJugadores.Where(x => x.PartidoID == partido.ID && x.EquipoID == local.EquipoID).Sum(x => x.Goles);
+                    visitante.GolesAFavor += _context.PartidosJugadores.Where(x => x.PartidoID == partido.ID && x.EquipoID == visitante.EquipoID).Sum(x => x.Goles);
+
+                    // Agregamos los goles en contra(los que hizo el equipo contrario)
+                    local.GolesEnContra += _context.PartidosJugadores.Where(x => x.PartidoID == partido.ID && x.EquipoID == visitante.EquipoID).Sum(x => x.Goles);
+                    visitante.GolesEnContra += _context.PartidosJugadores.Where(x => x.PartidoID == partido.ID && x.EquipoID == local.EquipoID).Sum(x => x.Goles);
+
+                    // Colocamos la diferiencia de goles
+                    local.GolesDiferencia = local.GolesAFavor - local.GolesEnContra;
+                    visitante.GolesDiferencia = visitante.GolesAFavor - visitante.GolesEnContra;
+
+                    switch (partido.PartidoEstadoID)
+                    {
+                        // Juego Empatado
+                        case 5:
+                            visitante.PartidosEmpatados++;
+                            local.PartidosEmpatados++;
+                            local.Puntos += 1;
+                            visitante.Puntos += 1;
+                            break;
+                        // Gana local
+                        case 6:
+                            local.PartidosGanados++;
+                            visitante.PartidosPerdidos++;
+                            local.Puntos += 3;
+                            break;
+                        // Gana Visitante
+                        case 7:
+                            visitante.PartidosGanados++;
+                            local.PartidosPerdidos++;
+                            visitante.Puntos += 3;
+                            break;
+                    }
+
+                    int indexLocal = tablero.FindIndex(x => x.EquipoID == partido.EquipoIDLocal);
+                    tablero[indexLocal] = local;
+
+                    int indexVisitante = tablero.FindIndex(x => x.EquipoID == partido.EquipoIDVisita);
+                    tablero[indexVisitante] = visitante;
+                }
+            }
+
+            //Asignamos la posicion en base a los puntos o por ID y considerando que hayan tenido partidos jugados
+            int pos = 1;
+            foreach (var equipo in tablero.Where(x => x.PartidosJugados > 0).OrderByDescending(x => x.Puntos).ThenByDescending(x => x.GolesDiferencia))
+            {
+                equipo.Posicion = pos;
+                pos++;
+            }
+
+            // Asignamos la posición a los equipos que no hayan jugado en base al ID
+            int maxPosicion = tablero.Max(x => x.Posicion);
+            maxPosicion = maxPosicion + 1;
+            foreach (var equipo in tablero.Where(x => x.Posicion < 1))
+            {
+                equipo.Posicion = maxPosicion;
+                maxPosicion++;
+            }
+
+            // Colocamos el nombre la foto
+            foreach (var item in tablero)
+            {
+                item.Equipo = _context.Equipos.Find(item.EquipoID).Nombre;
+                item.Foto = _context.Equipos.Find(item.EquipoID).Foto;
+            }
+
+            return Json(tablero.OrderBy(x => x.Posicion).ToList());
+        }
+
         [HttpPost]
         [ValidateAntiForgeryToken]
         public IActionResult CargaInicial([Bind("CampeonatoID, CategoriaID, SerieID, Ronda, Dias, FechaInicial, Hora")]JornadasCarga jornadasCarga)

@@ -581,3 +581,57 @@ function insertaPartidoJugadores(jugadores, local, listajugadores) {
         // the HTML template element is not supported.
     }
 }
+
+function insertaTablero(items) {
+    // Test to see if the browser supports the HTML template element by checking
+    // for the presence of the template element's content attribute.
+    if ('content' in document.createElement('template')) {
+        var t = document.querySelector('#posicionesTemplate');
+
+        // agregamos los equipos
+        $.each(items, function (index, item) {
+            var cloneEquipo = document.importNode(t.content, true),
+                tr = cloneEquipo.querySelector("tr"),
+                tds = tr.querySelectorAll('td');
+
+            // Configuramos la posición
+            $(tds[0]).html(item.posicion);
+
+            // Configuramos la imagen y el nombre del equipo
+            $(tds[1].children[0]).attr("src", "data:image/png;base64," + item.foto);
+            $(tds[1].children[2]).text(item.equipo);
+
+            // Partidos jugados
+            $(tds[2]).html(item.partidosJugados);
+
+            // Partidos ganados
+            $(tds[3]).html(item.partidosGanados);
+
+            // Partidos empatados
+            $(tds[4]).html(item.partidosEmpatados);
+
+            // Partidos perdidos
+            $(tds[5]).html(item.partidosPerdidos);
+
+            // Goles a favor
+            $(tds[6]).html(item.golesAFavor);
+
+            // Goles en contra
+            $(tds[7]).html(item.golesEnContra);
+
+            // Goles de diferencia
+            $(tds[8]).html(item.golesDiferencia);
+
+            // Puntos de equipo
+            $(tds[9]).html(item.puntos);
+
+            // Obtenemos el tbody de la tabla
+            var tb = document.querySelector("#posiciones-table > tbody");
+
+            tb.appendChild(cloneEquipo);
+        });
+    } else {
+        // Find another way to add the rows to the table because 
+        // the HTML template element is not supported.
+    }
+}
