@@ -10,6 +10,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using Rotativa.AspNetCore;
 using System;
 using TorneosAdmin.Web.Autorizacion;
 using TorneosAdmin.Web.Identidad;
@@ -75,7 +76,8 @@ namespace TorneosAdmin.Web
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, ILoggerFactory loggerFactory)
+        [Obsolete]
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, ILoggerFactory loggerFactory, Microsoft.AspNetCore.Hosting.IHostingEnvironment env2)
         {
             if (env.IsDevelopment())
             {
@@ -106,6 +108,10 @@ namespace TorneosAdmin.Web
                     name: "default",
                     pattern: "{controller=Portada}/{action=Inicio}/{id?}");
             });
+
+            // Configuramos Rotativa indicándole el Path RELATIVO donde se
+            // encuentran los archivos de la herramienta wkhtmltopdf.
+            RotativaConfiguration.Setup(env2, "Rotativa");
         }
     }
 }

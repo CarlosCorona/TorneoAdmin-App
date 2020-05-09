@@ -67,14 +67,23 @@ function imageFormat(cellvalue, options, rowObject) {
         return '<img src="data:image/png;base64,' + cellvalue + '" height="50" width="50"/>';
 }
 function imageFormatEquipo(cellvalue, options, rowObject) {
-    
     $.get("../Equipos/ObtenerFotoEquipo", { equipoID: cellvalue} ,function (data) {
         if (data === null)
-            $("#fotoEquipo_" + cellvalue).attr("src", "../images/avatars/noimagen.png");
+            $("#fotoEquipo_" + options.rowId + "_" + cellvalue).attr("src", "../images/avatars/noimagen.png");
         else
-            $("#fotoEquipo_" + cellvalue).attr("src", "data:image/png;base64," + data);
+            $("#fotoEquipo_" + options.rowId + "_" + cellvalue).attr("src", "data:image/png;base64," + data);
     });
-    return '<img id="fotoEquipo_' + cellvalue + '" height="50" width="50"/>';
+    return '<img id="fotoEquipo_' + options.rowId + "_" + cellvalue + '" height="50" width="50"/>';
+}
+function imageFormatJugador(cellvalue, options, rowObject) {
+
+    $.get("../Jugadores/ObtenerFotoJugador", { jugadorID: cellvalue }, function (data) {
+        if (data === null)
+            $("#fotoJugador_" + options.rowId + "_" + cellvalue).attr("src", "../images/avatars/noimagen.png");
+        else
+            $("#fotoJugador_" + options.rowId + "_" + cellvalue).attr("src", "data:image/png;base64," + data);
+    });
+    return '<img id="fotoJugador_' + options.rowId + "_" + cellvalue + '" height="50" width="50"/>';
 }
 function imageFormatArbitroCentral(cellvalue, options, rowObject) {
     if (cellvalue === null) {
@@ -132,8 +141,21 @@ function imageFormatEdit(value, options) {
     el.height = 230;
     return el;
 }
-
+function imageFormatEditEquipo(value, options) {
+    var el = document.createElement("img");
+    el.src = value;
+    el.width = 100;
+    el.height = 100;
+    return el;
+}
 function imageFormatEditArbitro(value, options) {
+    var el = document.createElement("img");
+    el.src = value;
+    el.width = 100;
+    el.height = 100;
+    return el;
+}
+function imageFormatEditJugador(value, options) {
     var el = document.createElement("img");
     el.src = value;
     el.width = 100;
@@ -168,7 +190,7 @@ function telefonoCell(cellvalue, options, cell) {
 function style_edit_form(form) {
     //enable datepicker on "sdate" field and switches for "stock" field
     form.find('input[name*="fecha"]').datepicker();
-    form.find('input[name*="fecha"]').datepicker('setDate', new Date());
+    //form.find('input[name*="fecha"]').datepicker('setDate', new Date());
     //Enable switch element when editing
     //form.find('input[name=estado]').addClass('ace ace-switch ace-switch-5').wrap('<label class="inline" />').after('<span class="lbl"></span>');
 
@@ -176,7 +198,8 @@ function style_edit_form(form) {
     form.find('input[name=telefono]').mask('(999) 999-9999');
 
     //Spinner element when editing
-    form.find('input[name=carnet]').ace_spinner({ value: 1, min: 0, max: 200, step: 1, on_sides: true, btn_up_class: 'btn-info', btn_down_class: 'btn-info' })
+    form.find('input[name=carnet]').ace_spinner({ value: 1, min: 0, max: 200, step: 1, on_sides: true, btn_up_class: 'btn-info', btn_down_class: 'btn-info' });
+    form.find('input[name=valor]').ace_spinner({ value: 10, min: 0, max: 200, step: 1, on_sides: true, btn_up_class: 'btn-info', btn_down_class: 'btn-info' })
 
     // Agregamos al campo para carga de archivos
     if (form.find('input[name=foto]').length > 0) {

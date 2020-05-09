@@ -70,6 +70,12 @@ namespace TorneosAdmin.Web.Controllers
         }
 
         [HttpGet]
+        public JsonResult ObtenerJugadoresEquipo(int jugadorID)
+        {
+            return Json(_context.Jugadores.Find(jugadorID).EquipoID);
+        }
+
+        [HttpGet]
         public JsonResult ObtenerJugadoresLista(int equipoID)
         {
             //TODO: falta validar que no tenga multas.
@@ -77,6 +83,12 @@ namespace TorneosAdmin.Web.Controllers
                                                                x.Calificado == true)
                                                         .Select(x => new { x.ID, Nombre = x.Nombre + " " + x.Apellido, x.Carnet });
             return Json(jugadoresLista);
+        }
+
+        [HttpGet]
+        public JsonResult ObtenerFotoJugador(int jugadorID)
+        {
+            return Json(_context.Jugadores.Find(jugadorID).Foto);
         }
 
         [HttpPost]

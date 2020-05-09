@@ -62,6 +62,10 @@ namespace TorneosAdmin.Web.Controllers
 
         public IActionResult Pases()
         {
+            var lista1 = _context.Equipos.ToDictionary(mc => mc.ID.ToString(), mc => mc.Nombre, StringComparer.OrdinalIgnoreCase);
+            var lista2 = _context.Jugadores.ToDictionary(mc => mc.ID.ToString(), mc => mc.Nombre + ' ' + mc.Apellido, StringComparer.OrdinalIgnoreCase);
+            ViewBag.EquiposLista = JsonSerializer.Serialize(lista1);
+            ViewBag.JugadoresLista = JsonSerializer.Serialize(lista2);
             return View();
         }
 

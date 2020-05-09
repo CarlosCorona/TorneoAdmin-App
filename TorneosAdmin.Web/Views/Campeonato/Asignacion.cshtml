@@ -87,7 +87,7 @@
             var pager_selector = "#grid-pager";
             var parent_column = $(grid_selector).closest('[class*="col-"]');
 
-            // Actualizar las parroquias cuando se hace cambio de provincia.
+            // Actualizar las parroquias cuando se hace cambio de árbitro.
             var cambioArbitrol = function (id, control) {
                 if (control.id == "arbitroIDCentral") {
                     
@@ -161,7 +161,7 @@
                     campeonatoID: $("#formCampeonatos").val(), categoriaID: $("#formCategoria").val(), serieID: $("#formSerie").val(), ronda: $("#formRonda").val(), fecha: $("#formFecha").val()
                 },
                 height: 400,
-                colNames: ['ID', 'Estado del Partido', 'Partido ', 'Árbitro Central', 'Foto', 'Árbitro Latera Derecho', 'Foto', 'Árbitro Lateral Izquierdo', 'Foto', 'Vocal Equipo Local', 'Vocal Equipo Visitante',''],
+                colNames: ['ID', 'Estado del Partido', 'Partido', 'Árbitro Central', 'Foto', 'Árbitro Latera Derecho', 'Foto', 'Árbitro Lateral Izquierdo', 'Foto', 'Vocal Equipo Local', 'Vocal Equipo Visitante',''],
                 colModel: [
                     { key: true, hidden: true, name: 'id', index: 'id', editable: true },
                     { name: 'partidoEstadoID', index: 'partidoEstadoID', editable: false, edittype: 'select', formatter: 'select', editoptions: { value: getEstados() } },
@@ -216,7 +216,7 @@
                         enableTooltips(table);
                     }, 0);
                 },
-                caption: "Árbitros",
+                caption: "Asignación de Árbitros y vocales",
 
             });
 

@@ -15,6 +15,9 @@
     showMonthAfterYear: false,
     changeMonth: true,
     changeYear: true,
-    yearSuffix: ''
+    yearSuffix: '',
+    showOn: "button",
+    buttonImage: "/images/avatars/Calendar-icon.png",
+    buttonImageOnly: true,
 };
 $.datepicker.setDefaults($.datepicker.regional['es']);

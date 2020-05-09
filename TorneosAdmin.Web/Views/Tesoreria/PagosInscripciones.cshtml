@@ -72,6 +72,16 @@
                 }
             })
 
+            getColumnIndexByName = function (columnName) {
+                var cm = jQuery(grid_selector).jqGrid('getGridParam', 'colModel'), i, l = cm.length;
+                for (i = 0; i < l; i++) {
+                    if (cm[i].name === columnName) {
+                        return i; // return the index
+                    }
+                }
+                return -1;
+            }
+
             function getCampeonatos() {
                 return listaCampeonatos;
             }
@@ -95,7 +105,7 @@
                     { name: 'montoGarantia', index: 'montoGarantia', editable: true, editoptions: { size: "20", maxlength: "50" } },
                     { name: 'observacion', index: 'observacion',  editable: true, editoptions: { size: "20", maxlength: "300" } },
                     {
-                        name: 'myac', width: 80, fixed: true, sortable: false, resize: false, formatter: 'actions',
+                        name: 'myac', width: 150, fixed: true, sortable: false, resize: false, formatter: 'actions',
                         formatoptions: {
                             key: true,
                             editbutton: true,
@@ -152,7 +162,29 @@
 
                 loadComplete: function () {
                     var table = this;
+                    var iCol = getColumnIndexByName('myac');
+
                     setTimeout(function () {
+                        $(table).find(">tbody>tr.jqgrow>td:nth-child(" + (iCol + 1) + ")")
+                            .each(function () {
+                                $("<div>", {
+                                    title: "Imprimir",
+                                    mouseover: function () {
+                                        $(this).addClass('ui-state-hover');
+                                    },
+                                    mouseout: function () {
+                                        $(this).removeClass('ui-state-hover');
+                                    },
+                                    click: function (e) {
+                                        var id = $(e.target).closest("tr.jqgrow").attr("id")
+                                        window.open("/Recibos/PagoInscripciones/" + id.toString(16), '_blank');
+                                    }
+                                }
+                                ).css({ "margin-right": "10px", float: "left", cursor: "pointer" })
+                                    .addClass("ui-pg-div ui-inline-custom")
+                                    .append('<span class="ui-icon green fas fa-print"></span>')
+                                    .prependTo($(this).children("div"));
+                            });
                         updatePagerIcons(table);
                         enableTooltips(table);
                     }, 0);
